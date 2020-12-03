@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+
+    tools:context=".LoginActivity">
+
+    <include layout="@layout/app_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                style="@style/hintStyle"
+                android:layout_marginTop="8dp"
+                android:text="@string/txt_email" />
+
+            <EditText
+                android:id="@+id/edemail"
+                style="@style/edittextStyle"
+                android:hint="@string/txt_email"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                style="@style/hintStyle"
+                android:layout_marginTop="12dp"
+                android:text="@string/txt_name" />
+
+            <EditText
+                android:id="@+id/edname"
+                style="@style/edittextStyle"
+                android:hint="@string/txt_name"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords" />
+
+            <TextView
+                style="@style/hintStyle"
+                android:layout_marginTop="12dp"
+                android:text="@string/txt_mobile_number" />
+
+            <EditText
+                android:id="@+id/edmobile"
+                style="@style/edittextStyle"
+                android:digits="0123456789"
+                android:maxLength="10"
+                android:hint="@string/txt_mobile_number"
+                android:imeOptions="actionNext"
+                android:inputType="phone" />
+
+            <TextView
+                style="@style/hintStyle"
+                android:layout_marginTop="12dp"
+                android:text="@string/txt_referal" />
+
+            <EditText
+                android:id="@+id/edreferal"
+                style="@style/edittextStyle"
+                android:hint="@string/txt_referal"
+                android:imeOptions="actionDone" />
+
+            <Button
+                android:id="@+id/btnsubmit"
+                style="@style/buttonStyle"
+                android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
+                android:paddingLeft="30dp"
+                android:paddingRight="20dp"
+                android:text="@string/txt_next" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/txt_already_account"
+            android:textColor="@color/colorBlack"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/tvsignin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:gravity="center"
+            android:text="@string/txt_sign_in"
+            android:textColor="@color/colorBlack"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>

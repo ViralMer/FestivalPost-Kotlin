@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lottieNoInternet"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:background="@color/colorWhite"
+    android:layout_height="match_parent"
+    android:visibility="visible">
+
+
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textColor="@color/colorBlack"
+        android:src="@drawable/no_internet"
+
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:text="SLOW OR NO INTERNET CONNNECTION"
+        android:textSize="@dimen/_15sdp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_45sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:textColor="@color/colorBlack"
+
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:text="Check your internet settings and try again"
+        android:textSize="@dimen/_10sdp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:textColor="@color/colorBlack"
+
+        />
+
+    <Button
+        android:id="@+id/btnTryAgain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/buttonStyle"
+        android:padding="@dimen/_10sdp"
+        android:text="Try again"
+        android:textSize="@dimen/_18sdp"
+        android:layout_gravity="center"
+        android:textColor="@color/colorBlack"
+
+        />
+
+</LinearLayout>

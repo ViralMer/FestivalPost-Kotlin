@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_main"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <FrameLayout
+        android:layout_width="@dimen/_90sdp"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_margin="@dimen/_3sdp"
+        android:background="@drawable/contact_white_bg_new"
+        android:orientation="vertical">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:riv_corner_radius="8dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/ivphoto"
+            android:layout_gravity="center"
+
+            android:layout_width="@dimen/_85sdp"
+            android:layout_height="@dimen/_85sdp"/>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tvdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="1"
+                    android:visibility="gone"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="36dp" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/tvname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="8dp"
+                android:background="@drawable/small_button_bg_black"
+                android:layout_margin="@dimen/_2sdp"
+                android:visibility="gone"
+                android:textColor="@color/colorWhite"
+                android:textSize="8dp" />
+        </LinearLayout>
+
+
+
+    </FrameLayout>
+
+
+
+
+</LinearLayout>
+

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/laymain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="14dp">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/ivlogo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp" />
+
+            <ImageView
+                android:layout_gravity="center"
+                android:id="@+id/ivcurrentbusiness"
+                android:layout_width="20dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_baseline_check_24"
+                android:background="@drawable/small_button_bg"
+                android:layout_height="20dp"/>
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvheading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:gravity="center|left"
+                android:text=""
+                android:textColor="@color/colorBlack"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvdescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:gravity="center|left"
+                android:text=""
+                android:textColor="@color/colorDarkGrey"
+                android:textSize="14dp" />
+            <TextView
+                android:id="@+id/tvexpiration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:gravity="center|left"
+                android:text=""
+                android:textColor="@color/colorAccent"
+                android:textSize="13dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center|end"
+            >
+
+        <TextView
+            android:id="@+id/tvupgrade"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/small_button_bg"
+            android:text="@string/txt_upgrade"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/tvedit"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:background="@drawable/small_button_bg"
+            android:text="@string/txt_edit"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack"
+            android:textSize="14dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

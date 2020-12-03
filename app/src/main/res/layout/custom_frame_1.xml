@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ivframebg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/square_size"
+        android:background="@drawable/frame_01"
+        android:orientation="vertical" />
+
+    <FrameLayout
+        android:id="@+id/frameLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/linearLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:id="@+id/ivframelogo"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="left|center"
+                android:layout_margin="@dimen/_5sdp"
+                 />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgLogoClose"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_gravity="top|start"
+            android:elevation="1dp"
+            android:src="@drawable/ic_remove"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/frameName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="@dimen/_10sdp"
+        >
+
+        <LinearLayout
+            android:id="@+id/linearName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:background="@drawable/rounded_border_tv_new"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/tvframename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/_8sdp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgNameClose"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
+            android:layout_gravity="top|start"
+            android:elevation="1dp"
+            android:src="@drawable/ic_remove"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/_18sdp"
+        android:layout_marginBottom="@dimen/_18sdp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|left"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/framePhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/linearPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/rounded_border_tv_new"
+                    >
+
+                    <ImageView
+                        android:id="@+id/ivPhone"
+                        android:layout_width="@dimen/_6sdp"
+                        android:layout_height="@dimen/_6sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:background="@drawable/ic_baseline_call_24" />
+
+                    <TextView
+                        android:id="@+id/tvframephone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_6sdp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgPhoneClose"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="top|start"
+                    android:elevation="1dp"
+                    android:src="@drawable/ic_remove"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/frameEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+
+                <LinearLayout
+                    android:id="@+id/linearEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/rounded_border_tv_new"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivEmail"
+                        android:layout_width="@dimen/_6sdp"
+android:layout_height="@dimen/_6sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:background="@drawable/ic_baseline_email_24" />
+
+                    <TextView
+                        android:id="@+id/tvframeemail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_6sdp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgEmailClose"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="top|start"
+                    android:elevation="1dp"
+                    android:src="@drawable/ic_remove"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/frameWebsite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+
+                <LinearLayout
+                    android:id="@+id/linearWebsite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/rounded_border_tv_new"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivWebsite"
+                        android:layout_width="@dimen/_6sdp"
+                        android:layout_height="@dimen/_6sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:background="@drawable/ic_baseline_public_24" />
+
+                    <TextView
+                        android:id="@+id/tvframeweb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_6sdp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgWebsiteClose"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="top|start"
+                    android:elevation="1dp"
+                    android:src="@drawable/ic_remove"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|left"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/frameLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+
+                <LinearLayout
+                    android:id="@+id/linearLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/rounded_border_tv_new"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivAddress"
+                        android:layout_width="@dimen/_6sdp"
+                        android:layout_height="@dimen/_6sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:background="@drawable/ic_baseline_location_on_24" />
+
+                    <TextView
+                        android:id="@+id/tvframelocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_6sdp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgLocationClose"
+                    android:layout_width="@dimen/_8sdp"
+android:layout_height="@dimen/_8sdp"
+                    android:layout_gravity="top|start"
+                    android:elevation="1dp"
+                    android:src="@drawable/ic_remove"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/viewPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_2sdp"
+        android:layout_marginRight="@dimen/_2sdp"
+        android:visibility="gone"
+        android:text="|"
+        android:textSize="@dimen/_7ssp"
+        android:textColor="@color/colorWhite"
+        />
+
+    <TextView
+        android:id="@+id/viewwebsite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_2sdp"
+        android:layout_marginRight="@dimen/_2sdp"
+        android:visibility="gone"
+        android:text="|"
+        android:textSize="@dimen/_7ssp"
+        android:textColor="@color/colorWhite"
+        />
+
+</FrameLayout>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+
+    tools:context=".LoginActivity">
+
+    <include layout="@layout/app_bar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal"
+                >
+
+            <TextView
+                android:layout_marginTop="8dp"
+                android:text="@string/txt_your_mobile_number"
+                style="@style/hintStyle"
+                android:layout_width="wrap_content"
+                />
+
+
+                <TextView
+                    android:id="@+id/tvedit"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/txt_edit"
+                    android:gravity="end"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    style="@style/hintStyle" />
+        </LinearLayout>
+
+            <EditText
+                android:id="@+id/edtmobile"
+                android:hint="@string/txt_your_mobile_number"
+                android:digits="0123456789"
+                android:maxLength="10"
+                android:visibility="gone"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                style="@style/edittextStyle"/>
+
+
+            <TextView
+                android:layout_marginTop="8dp"
+                android:text="@string/txt_otp"
+                style="@style/hintStyle" />
+
+            <EditText
+                android:id="@+id/edotp"
+                android:hint="@string/txt_otp"
+                android:digits="0123456789"
+                android:maxLength="6"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                style="@style/edittextStyle"/>
+
+
+
+            <Button
+                android:id="@+id/btnsubmit"
+                android:text="@string/txt_next"
+                android:paddingLeft="30dp"
+                android:gravity="center"
+                android:paddingRight="20dp"
+                android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
+                style="@style/buttonStyle"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_dont_account"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvresendOtp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center"
+                    android:text="@string/txt_resend_otp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:text="@string/txt_dont_account"
+            android:textSize="16dp"/>
+        <TextView
+            android:layout_marginLeft="8dp"
+            android:id="@+id/tvsignup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:text="@string/txt_signup"
+            android:textStyle="bold"
+            android:textSize="16dp"/>
+
+    </LinearLayout>
+</LinearLayout>

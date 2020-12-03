@@ -1,0 +1,72 @@
+{
+  "project_info": {
+    "project_number": "529658830387",
+    "firebase_url": "https://festival-post.firebaseio.com",
+    "project_id": "festival-post",
+    "storage_bucket": "festival-post.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529658830387:android:aca49743340147a0d48d46",
+        "android_client_info": {
+          "package_name": "com.app.festivalpost"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529658830387-97vbl6hdm2aj3i60on3vidf5orfmfc6v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.festivalpost",
+            "certificate_hash": "df573bf44265c9ca8d7a10bb42eeca6c80316e9b"
+          }
+        },
+        {
+          "client_id": "529658830387-0jlcmk1df7d7k0o9fuphu3i623dkhano.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.festivalpost",
+            "certificate_hash": "2b8dcf4315d00e6d96aa1bdac613664431432d19"
+          }
+        },
+        {
+          "client_id": "529658830387-uhvjfev53gl4v4n18hieufcfahrtaght.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.festivalpost",
+            "certificate_hash": "d2cb7da65fdb8c7ea0ec932126309346a91b49cc"
+          }
+        },
+        {
+          "client_id": "529658830387-0frkg7n9fshah49os2f70qll10srp54e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.festivalpost",
+            "certificate_hash": "05e6c33d0c34eb2cbe24ccd8aac738b3a9659415"
+          }
+        },
+        {
+          "client_id": "529658830387-o01qb46sbjq4ulevqf554gf7v5o1v8qm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7w5WU-JGIYXHwGt6HVEJkM2EWlRlO8bc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529658830387-o01qb46sbjq4ulevqf554gf7v5o1v8qm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

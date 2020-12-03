@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayout"
+    android:layout_width="125dp"
+    android:layout_height="125dp">
+
+
+    <ImageView
+        android:id="@+id/ivselected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/frame_selection_bg" />
+
+    <ImageView
+        android:layout_margin="@dimen/frame_selection_width"
+            android:src="@drawable/frame_26"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+</FrameLayout>

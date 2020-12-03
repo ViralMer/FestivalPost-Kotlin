@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_main"
+    android:layout_width="@dimen/square_size"
+    android:layout_height="@dimen/square_size"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ivframe"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tvusethis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/txt_use_this_frame"
+        android:textColor="@color/colorBlack"
+        android:textSize="15dp" />
+
+
+
+
+
+
+</FrameLayout>
+

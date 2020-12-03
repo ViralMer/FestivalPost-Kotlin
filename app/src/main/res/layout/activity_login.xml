@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+
+    tools:context=".LoginActivity">
+
+    <include layout="@layout/app_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                style="@style/hintStyle"
+                android:layout_marginTop="8dp"
+                android:text="@string/txt_mobile_number" />
+
+
+
+            <EditText
+                android:id="@+id/edmobile"
+                style="@style/edittextStyle"
+                android:digits="0123456789"
+                android:maxLength="10"
+                android:hint="@string/txt_mobile_number"
+                android:imeOptions="actionDone"
+                android:inputType="phone" />
+
+            <TextView
+                android:id="@+id/tvError"
+                style="@style/errorStyle"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                />
+
+
+            <Button
+                android:id="@+id/btnsubmit"
+                style="@style/buttonStyle"
+                android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
+                android:paddingLeft="30dp"
+                android:visibility="visible"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/large_button_bg_light"
+                android:paddingRight="20dp"
+                android:text="@string/txt_send_otp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_dont_account"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvsignup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center"
+                    android:text="@string/txt_signup"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

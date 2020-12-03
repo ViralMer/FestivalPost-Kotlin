@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FCDF6D</color>
+    <color name="colorPrimaryDark">#FCDF6D</color>
+    <color name="colorAccent">#30BA9E</color>
+    <color name="colorBorder">#FCDF6D</color>
+    <color name="colorhightlight">#ECE1B9</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorRed">#ED0909</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGrey">#7C7C7C</color>
+    <color name="colorHint">#424242</color>
+    <color name="colorLightGrey">#8B8B8B</color>
+    <color name="colorDivider">#F4F4F4</color>
+    <color name="colorDarkGrey">#585858</color>
+    <color name="colorWatermark">#70FFFFFF</color>
+    <color name="addTextBackgroundColor">#FFFFFF</color>
+    <color name="frame_border">#9A5E5E5E</color>
+    <color name="teal_500">#009688</color>
+    <color name="teal_600">#00897B</color>
+    <color name="teal_700">#00796B</color>
+
+    <color name="ucrop_color_toolbar">@color/teal_500</color>
+    <color name="ucrop_color_statusbar">@color/teal_700</color>
+    <color name="ucrop_color_widget_active">@color/teal_500</color>
+    <color name="ucrop_color_toolbar_widget">#fff</color>
+    <color name="blue">#013D6C</color>
+</resources>
