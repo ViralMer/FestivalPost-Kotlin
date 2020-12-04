@@ -755,25 +755,7 @@ object Global {
         }
     }
 
-    fun generateMD5(inputString: String): String? {
-        Log.v("MD5 InputString : ", inputString)
-        try {
-            val digest: MessageDigest = MessageDigest.getInstance("MD5")
-            digest.reset()
-            digest.update(inputString.toByteArray())
-            val a = digest.digest()
-            val len = a.size
-            val md5String = StringBuilder(len shl 1)
-            for (i in 0 until len) {
-                md5String.append(Character.forDigit(a[i] and  0xf0 shr 4, 16))
-                md5String.append(Character.forDigit(a[i] and  0x0f, 16))
-            }
-            return md5String.toString()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
+
 
     fun checkEmail(email: String?): Boolean {
         val EMAIL_ADDRESS_PATTERN =
