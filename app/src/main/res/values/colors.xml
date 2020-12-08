@@ -27,4 +27,5 @@
     <color name="ucrop_color_widget_active">@color/teal_500</color>
     <color name="ucrop_color_toolbar_widget">#fff</color>
     <color name="blue">#013D6C</color>
+    <color name="colorBlue">#48A8BC</color>
 </resources>

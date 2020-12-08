@@ -45,13 +45,16 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/txt_sign_up"
+                android:fontFamily="@font/antipastopro_medium_trial"
                 android:textSize="@dimen/_30sdp" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_name"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
+
                 android:layout_marginLeft="@dimen/_15sdp"
+                android:fontFamily="@font/sf_ui_medium"
                 android:layout_marginTop="@dimen/_50sdp"
                 android:layout_marginRight="@dimen/_15sdp"
                 android:background="@drawable/edit_text_border"
@@ -65,11 +68,12 @@
                 android:orientation="horizontal"
                 android:weightSum="2">
 
-                <androidx.appcompat.widget.AppCompatSpinner
+                <com.hbb20.CountryCodePicker
                     android:id="@+id/spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_70sdp"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_marginLeft="@dimen/_15sdp"
                     android:layout_weight="0.70"
                     android:background="@drawable/edit_text_border" />
@@ -81,6 +85,9 @@
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_15sdp"
                     android:layout_weight="1.30"
+                    android:inputType="number"
+                    android:maxLength="10"
+                    android:fontFamily="@font/sf_ui_medium"
                     android:background="@drawable/edit_text_border"
                     android:hint="@string/hint_number"
                     android:padding="@dimen/_10sdp" />
@@ -89,7 +96,7 @@
 
             <LinearLayout
                 android:layout_width="@dimen/_90sdp"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_15sdp"
@@ -102,19 +109,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginLeft="@dimen/_20sdp"
                     android:text="@string/txt_next"
+                    android:fontFamily="@font/sf_ui_medium"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_18sdp" />
 
                 <ImageView
                     android:id="@+id/ivnext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
                     android:src="@drawable/ic_baseline_arrow_right_alt_24"
                     app:tint="@color/white" />
 

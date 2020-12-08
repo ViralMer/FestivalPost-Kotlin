@@ -529,8 +529,9 @@
     <string name="txt_your_mobile_number">Your Mobile Number</string>
     <string name="txt_greetings">Video Greetings</string>
     <string name="txt_choose_video_post">Choose Video Post</string>
-    <string name="txt_sign_up">Signup</string>
+    <string name="txt_sign_up"><font color='#48A8BC'>S</font>ignup</string>
     <string name="hint_name">Enter your name</string>
     <string name="hint_number">Enter your number</string>
+    <string name="tv_sign_in"><font color='#48A8BC'>S</font>ignin</string>
 
 </resources>

@@ -22,9 +22,11 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.emegamart.lelys.utils.extensions.color
+import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONObject
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener, ApiResponseListener {
+class LoginActivity : AppCompatActivity(), /*View.OnClickListener,*/View.OnFocusChangeListener/*, ApiResponseListener */{
     var apiManager: ApiManager? = null
     var status = false
     var btnsubmit: Button? = null
@@ -34,9 +36,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, ApiResponseList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        setActionbar()
-        apiManager = ApiManager(this@LoginActivity)
-        findViewById<View>(R.id.btnsubmit).setOnClickListener(this)
+
+        et_number.onFocusChangeListener=this
+        /*apiManager = ApiManager(this@LoginActivity)*/
+       /*
         btnsubmit = findViewById(R.id.btnsubmit)
         tvsignup = findViewById<View>(R.id.tvsignup) as TextView
         tvError = findViewById<View>(R.id.tvError) as TextView
@@ -68,8 +71,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, ApiResponseList
                 }
             }
         })
+*/
     }
 
+/*
     fun setActionbar() {
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -79,6 +84,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, ApiResponseList
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvtitle.text = resources.getString(R.string.txt_sign_in)
     }
+*/
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -96,6 +102,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, ApiResponseList
         return super.onOptionsItemSelected(item)
     }
 
+/*
     private val edmobile: EditText
         private get() = findViewById<View>(R.id.edmobile) as EditText
 
@@ -216,6 +223,18 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, ApiResponseList
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+*/
+
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+
+        if (hasFocus) {
+            (v as EditText).setTextColor(this.color(R.color.colorPrimary))
+            v.background = resources.getDrawable(R.drawable.edit_text_border_selected)
+        } else {
+            (v as EditText).setTextColor(this.color(R.color.colorBackground))
+            v.background = resources.getDrawable(R.drawable.edit_text_border)
         }
     }
 }

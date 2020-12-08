@@ -1,6 +1,6 @@
 package com.app.festivalpost.activity
 
-import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Patterns
 import android.view.MenuItem
@@ -8,14 +8,12 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.RegisterVerificationActivity
 import com.app.festivalpost.apifunctions.ApiManager
-import com.app.festivalpost.globals.Global
+import com.emegamart.lelys.utils.extensions.color
 import kotlinx.android.synthetic.main.activity_register.*
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity(),View.OnFocusChangeListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -23,11 +21,12 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        setActionbar()
+        //setActionbar()
 
-        val signup=getString(R.string.txt_sign_up)
-        signup.replace("Signup","<font color='#EE0000'>S</font>ignup")
-        tvsign_up.text=signup
+
+
+        et_name.onFocusChangeListener = this
+        et_number.onFocusChangeListener = this
 
 
         tvsignin = findViewById<View>(R.id.tvsignin) as TextView
@@ -40,7 +39,7 @@ class RegisterActivity : AppCompatActivity() {
         tvsignin!!.setOnClickListener { onBackPressed() }
     }
 
-    fun setActionbar() {
+    /*fun setActionbar() {
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -48,7 +47,7 @@ class RegisterActivity : AppCompatActivity() {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvtitle.text = resources.getString(R.string.txt_signup)
-    }
+    }*/
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -106,5 +105,16 @@ class RegisterActivity : AppCompatActivity() {
     private fun validEmail(email: String): Boolean {
         val pattern = Patterns.EMAIL_ADDRESS
         return pattern.matcher(email).matches()
+    }
+
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+
+        if (hasFocus) {
+            (v as EditText).setTextColor(this.color(R.color.colorPrimary))
+            v.background = resources.getDrawable(R.drawable.edit_text_border_selected)
+        } else {
+            (v as EditText).setTextColor(this.color(R.color.colorBackground))
+            v.background = resources.getDrawable(R.drawable.edit_text_border)
+        }
     }
 }
