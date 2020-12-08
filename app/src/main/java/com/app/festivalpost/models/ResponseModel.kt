@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings.Secure
-import com.app.festivalpost.festivalpost.R
+import com.app.festivalpost.R
 import java.io.Serializable
 
 @SuppressLint("HardwareIds")

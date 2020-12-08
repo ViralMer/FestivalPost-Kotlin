@@ -22,12 +22,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.app.festivalpost.festivalpost.HomeActivity
-import com.app.festivalpost.festivalpost.R
-import com.app.festivalpost.festivalpost.apifunctions.ApiEndpoints
-import com.app.festivalpost.festivalpost.apifunctions.ApiManager
-import com.app.festivalpost.festivalpost.apifunctions.ApiResponseListener
-import com.app.festivalpost.festivalpost.globals.Global
+import com.app.festivalpost.activity.HomeActivity
+import com.app.festivalpost.R
+import com.app.festivalpost.apifunctions.ApiEndpoints
+import com.app.festivalpost.apifunctions.ApiManager
+import com.app.festivalpost.apifunctions.ApiResponseListener
+import com.app.festivalpost.globals.Global
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.getError
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.getFilePath
@@ -257,7 +257,7 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
         return super.onOptionsItemSelected(item)
     }
 
-    override fun isConnected(requestService: String, isConnected: Boolean) {
+    override fun isConnected(requestService: String?, isConnected: Boolean) {
         Handler(Looper.getMainLooper()).post {
             Global.dismissProgressDialog(this@AddFirstBusinessActivity)
             if (!isConnected) {
@@ -267,15 +267,15 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
     }
 
     override fun onSuccessResponse(
-        requestService: String,
-        responseString: String,
+        requestService: String?,
+        responseString: String?,
         responseCode: Int
     ) {
         Handler(Looper.getMainLooper()).post {
             Global.dismissProgressDialog(this@AddFirstBusinessActivity)
             if (requestService.equals(ApiEndpoints.addbusiness, ignoreCase = true)) {
                 try {
-                    Log.d("response", responseString)
+                    Log.d("response", responseString!!)
                     processResponse(responseString)
                     if (status) {
                         Global.showSuccessDialog(this@AddFirstBusinessActivity, message)
@@ -293,8 +293,8 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
     }
 
     override fun onErrorResponse(
-        requestService: String,
-        responseString: String,
+        requestService: String?,
+        responseString: String?,
         responseCode: Int
     ) {
         Handler(Looper.getMainLooper()).post {
@@ -302,6 +302,7 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
             Global.showFailDialog(this@AddFirstBusinessActivity, responseString)
         }
     }
+
 
     fun processResponse(responseString: String?) {
         status = false

@@ -10,7 +10,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
-import com.app.festivalpost.festivalpost.R
+import com.app.festivalpost.R
+
 
 /**
  *
@@ -125,14 +126,14 @@ class PhotoEditorView : RelativeLayout {
     fun saveFilter(onSaveBitmap: OnSaveBitmap) {
         if (mImageFilterView!!.visibility == VISIBLE) {
             mImageFilterView!!.saveBitmap(object : OnSaveBitmap {
-                override fun onBitmapReady(saveBitmap: Bitmap) {
+                override fun onBitmapReady(saveBitmap: Bitmap?) {
                     Log.e(TAG, "saveFilter: $saveBitmap")
                     mImgSource!!.setImageBitmap(saveBitmap)
                     mImageFilterView!!.visibility = GONE
                     onSaveBitmap.onBitmapReady(saveBitmap)
                 }
 
-                override fun onFailure(e: Exception) {
+                override fun onFailure(e: Exception?) {
                     onSaveBitmap.onFailure(e)
                 }
             })

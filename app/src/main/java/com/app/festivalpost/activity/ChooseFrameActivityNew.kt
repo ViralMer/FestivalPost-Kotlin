@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.festivalpost.MyBounceInterpolator
+
 import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.SaveAndShareActivity
@@ -58,7 +58,7 @@ import org.json.JSONObject
 import top.defaults.colorpicker.ColorPickerView
 import java.util.*
 
-class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener {
+class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -226,7 +226,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener {
         layroot = findViewById<View>(R.id.layroot) as LinearLayout
         llframe = findViewById<View>(R.id.llframe) as LinearLayout
         photoEditorView = findViewById<View>(R.id.photoEditorView) as PhotoEditorView
-        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView)
+        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
             .setPinchTextScalable(true)
             .build()
         tvaddtext = findViewById<View>(R.id.tvaddtext) as TextView
@@ -242,10 +242,10 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener {
         } catch (e: OutOfMemoryError) {
         } catch (e: Exception) {
         }
-        var frameListItems1 = ArrayList<FrameListItem>()
+        var frameListItems1: ArrayList<FrameListItem>
         val gson = Gson()
         val json = Global.getPreference(Constant.PREF_FRAME_LIST, "")
-        frameListItems1 = if (json.isEmpty()) {
+        frameListItems1 = if (json!!.isEmpty()) {
             ArrayList()
         } else {
             val type = object : TypeToken<ArrayList<FrameListItem?>?>() {}.type
@@ -269,8 +269,8 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener {
 
         mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
-                rootView: View,
-                text: String,
+                rootView: View?,
+                text: String?,
                 colorCode: Int,
                 viewList: Int
             ) {
@@ -285,11 +285,11 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener {
 
             }
 
-            override fun onAddViewListener(viewType: ViewType, numberOfAddedViews: Int) {
+            override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
                 backpressed = false
             }
 
-            override fun onRemoveViewListener(viewType: ViewType, numberOfAddedViews: Int) {
+            override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
                 if (numberOfAddedViews == 0) {
                     i = 0
                     views.clear()
@@ -312,17 +312,17 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener {
             }
 
             override fun onStartViewChangeListener(
-                viewType: ViewType,
+                viewType: ViewType?,
                 numberOfAddedViews: Int,
-                view: View
+                view: View?
             ) {
                 selectedPosition = numberOfAddedViews
             }
 
             override fun onStopViewChangeListener(
-                viewType: ViewType,
+                viewType: ViewType?,
                 numberOfAddedViews: Int,
-                view: View
+                view: View?
             ) {
             }
         })
@@ -2953,7 +2953,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener {
         }
     }
 
-    override fun onItemClicked(`object`: Any, index: Int) {
+    override fun onItemClicked(`object`: Any?, index: Int) {
         val photoItem = `object` as FramePreview
         index1 = index
         setFrameNEW(photoItem)

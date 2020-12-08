@@ -27,6 +27,9 @@ import com.app.festivalpost.models.IncidentsItem
 import com.app.festivalpost.models.PostContentItem
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.DefaultItemAnimator
+import com.app.festivalpost.activity.ChooseFrameForPhotoActivityNew
+import com.app.festivalpost.activity.MyBounceInterpolator
+import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
@@ -39,7 +42,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChoosePhotoActivity : AppCompatActivity(), ApiResponseListener, OnItemClickListener {
+class ChoosePhotoActivity : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -247,7 +250,7 @@ class ChoosePhotoActivity : AppCompatActivity(), ApiResponseListener, OnItemClic
 
     fun animateButton() {
         val myAnim = AnimationUtils.loadAnimation(this@ChoosePhotoActivity, R.anim.bounce)
-        val interpolator = com.app.festivalpost.MyBounceInterpolator(0.2, 20.0)
+        val interpolator = MyBounceInterpolator(0.2, 20.0)
         myAnim.interpolator = interpolator
         tvaction!!.startAnimation(myAnim)
     }
@@ -298,7 +301,7 @@ class ChoosePhotoActivity : AppCompatActivity(), ApiResponseListener, OnItemClic
     }
 
     var photo_path = ""
-    override fun onItemClicked(`object`: Any, index: Int) {
+    override fun onItemClicked(`object`: Any?, index: Int) {
         val photoItem = `object` as PhotoItem
         if (photoItem.post_content != null && !photoItem.post_content.equals(
                 "",

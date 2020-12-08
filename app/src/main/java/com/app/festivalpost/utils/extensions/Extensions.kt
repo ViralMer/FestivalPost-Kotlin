@@ -41,8 +41,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.emegamart.lelys.R
-import com.emegamart.lelys.WooBoxApp.Companion.getAppInstance
+import com.app.festivalpost.FestivalPost.Companion.getAppInstance
+import com.app.festivalpost.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import java.text.DecimalFormat
@@ -70,7 +70,7 @@ fun Fragment.snackBar(msg: String) = activity!!.snackBar(msg)
 fun Activity.snackBarError(msg: String) {
     val snackBar = Snackbar.make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG)
     val sbView = snackBar.view
-    sbView.setBackgroundColor(getAppInstance().resources.getColor(R.color.tomato));snackBar.setTextColor(
+    sbView.setBackgroundColor(getAppInstance().resources.getColor(R.color.red));snackBar.setTextColor(
         Color.WHITE
     );snackBar.show()
 }
@@ -81,25 +81,7 @@ fun Snackbar.setTextColor(color: Int): Snackbar {
     return this
 }
 
-fun Activity.showPermissionAlert(view: View) {
-    val snackBar = Snackbar.make(
-        view,
-        getString(R.string.error_permission_required),
-        Snackbar.LENGTH_INDEFINITE
-    )
-    val sbView = snackBar.view
-    snackBar.setAction("Enable") {
-        val intent = Intent()
-        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        val uri = Uri.fromParts("package", packageName, null)
-        intent.data = uri
-        startActivity(intent)
-        snackBar.dismiss()
-    }
-    sbView.setBackgroundColor(getAppInstance().resources.getColor(R.color.tomato));snackBar.setTextColor(
-        Color.WHITE
-    );snackBar.show()
-}
+
 
 fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int) =
     supportFragmentManager.inTransaction { replace(frameId, fragment) }
@@ -164,15 +146,7 @@ fun Activity.hideSoftKeyboard() {
     }
 }
 
-fun Toolbar.changeToolbarFont() {
-    for (i in 0 until childCount) {
-        val view = getChildAt(i)
-        if (view is TextView && view.text == title) {
-            view.typeface = view.context.fontBold()
-            break
-        }
-    }
-}
+
 
 fun ImageView.applyColorFilter(color: Int) {
     drawable.let { DrawableCompat.wrap(it) }.let {
@@ -283,24 +257,7 @@ fun Activity.getVerticalLayout(aReverseLayout: Boolean = false): LinearLayoutMan
     return LinearLayoutManager(this, RecyclerView.VERTICAL, aReverseLayout)
 }
 
-fun FragmentActivity.showGPSEnableDialog() {
-    AlertDialog.Builder(this).setMessage(getString(R.string.error_gps_not_enabled))
-        .setPositiveButton(getString(R.string.lbl_enable)) { dialog, _ ->
-            dialog.dismiss()
-            launchPermissionSettingScreen()
-        }
-        .setNegativeButton(getString(R.string.lbl_cancel)) { dialog, _ -> dialog.dismiss() }
-        .show()
-}
 
-fun FragmentActivity.showQtyChangeDialog(qt: Int, onResult: (string: String) -> Unit) {
-    val qty = resources.getStringArray(R.array.qty_array)
-    AlertDialog.Builder(this).setTitle(getString(R.string.lbl_change_qty))
-        .setSingleChoiceItems(qty, qt - 1) { dialog, which ->
-            onResult(qty[which])
-            dialog.dismiss()
-        }.show()
-}
 
 fun Context.color(color: Int): Int = ContextCompat.getColor(this, color)
 
@@ -334,15 +291,7 @@ fun BottomSheetBehavior<View>.onStateChanged(onStateChanged: (View, Int) -> Unit
     })
 }
 
-fun AppCompatActivity.switchToDarkMode(isDark: Boolean) {
-    if (isDark) {
-        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-        makeNormalStatusBar(color(R.color.background_color))
-    } else {
-        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
-        lightStatusBar(color(R.color.background_color))
-    }
-}
+
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 fun Activity.makeNormalStatusBar(statusBarColor: Int = -1) {

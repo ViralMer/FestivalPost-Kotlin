@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.multidex.BuildConfig
 import com.app.festivalpost.*
+import com.app.festivalpost.activity.*
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
@@ -199,7 +200,7 @@ class AccountFragment : Fragment(), View.OnClickListener, ApiResponseListener {
         Handler(Looper.getMainLooper()).post {
             Global.dismissProgressDialog(activity)
             if (!isConnected) {
-                Global.noInternetConnectionDialog(activity)
+                Global.noInternetConnectionDialog(activity!!)
             }
         }
     }
@@ -244,6 +245,7 @@ class AccountFragment : Fragment(), View.OnClickListener, ApiResponseListener {
             Global.showFailDialog(activity, responseString)
         }
     }
+
 
     fun processResponse(responseString: String?) {
         status = false

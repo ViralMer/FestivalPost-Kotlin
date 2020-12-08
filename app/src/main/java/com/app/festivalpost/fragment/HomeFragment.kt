@@ -23,9 +23,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.app.festivalpost.ChoosePhotoActivity
-import com.app.festivalpost.LoginActivity
+import com.app.festivalpost.activity.LoginActivity
 import com.app.festivalpost.R
-import com.app.festivalpost.VideoDetailActivity
+import com.app.festivalpost.activity.VideoDetailActivity
 import com.app.festivalpost.activity.AddFirstBusinessActivity
 import com.app.festivalpost.adapter.CustomFestivalAdapter
 import com.app.festivalpost.adapter.ThisMonthFestivalAdapter
@@ -280,7 +280,7 @@ class HomeFragment : Fragment(), ApiResponseListener {
         Handler(Looper.getMainLooper()).post {
             Global.dismissProgressDialog(activity)
             if (!isConnected) {
-                Global.noInternetConnectionDialog(activity)
+                Global.noInternetConnectionDialog(activity!!)
             }
         }
     }
@@ -379,6 +379,8 @@ class HomeFragment : Fragment(), ApiResponseListener {
             Global.showFailDialog(activity, responseString)
         }
     }
+
+
 
     var current_date_index = 0
     fun processResponse(responseString: String?) {

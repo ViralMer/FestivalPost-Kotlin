@@ -1,20 +1,15 @@
+/*
 package com.emegamart.lelys.utils.extensions
 
 import android.util.Log
 import com.google.gson.Gson
-import com.emegamart.lelys.BuildConfig
-import com.emegamart.lelys.R
-import com.emegamart.lelys.WooBoxApp.Companion.getAppInstance
-import com.emegamart.lelys.network.RestApis
-import com.emegamart.lelys.network.RetrofitClientFactory
+
 import okhttp3.Request
 import okhttp3.ResponseBody
 import okio.Buffer
 import org.json.JSONException
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+
 
 fun getRestApis(useSignature: Boolean = true): RestApis {
     return RetrofitClientFactory().getRetroFitClient(useSignature).create(RestApis::class.java)
@@ -124,3 +119,4 @@ fun getErrorMessageByHttpCode(aHttpCode: Int): String {
         else -> "Something went wrong"
     }
 }
+*/

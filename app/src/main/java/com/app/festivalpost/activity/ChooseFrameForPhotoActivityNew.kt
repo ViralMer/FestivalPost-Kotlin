@@ -61,7 +61,7 @@ import top.defaults.colorpicker.ColorPickerView
 import java.io.IOException
 import java.util.*
 
-class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener
+class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,OnItemClickListener
     {
     var apiManager: ApiManager? = null
     var status = false
@@ -190,7 +190,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener
         llframe = findViewById<View>(R.id.llframe) as LinearLayout
         llwatermark = findViewById<View>(R.id.llwatermark) as LinearLayout
         photoEditorView = findViewById<View>(R.id.photoEditorView) as PhotoEditorView
-        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView)
+        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
             .setPinchTextScalable(true)
             .build()
         tvaddtext = findViewById<View>(R.id.tvaddtext) as TextView
@@ -233,7 +233,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener
         var frameListItems1 = ArrayList<FrameListItem>()
         val gson = Gson()
         val json = Global.getPreference(Constant.PREF_FRAME_LIST, "")
-        frameListItems1 = if (json.isEmpty()) {
+        frameListItems1 = if (json!!.isEmpty()) {
             ArrayList()
         } else {
             val type = object : TypeToken<ArrayList<FrameListItem?>?>() {}.type
@@ -423,8 +423,8 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener
 
 */mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
-                rootView: View,
-                text: String,
+                rootView: View?,
+                text: String?,
                 colorCode: Int,
                 viewList: Int
             ) {
@@ -437,11 +437,11 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener
                 }
             }
 
-            override fun onAddViewListener(viewType: ViewType, numberOfAddedViews: Int) {
+            override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
                 backpressed = false
             }
 
-            override fun onRemoveViewListener(viewType: ViewType, numberOfAddedViews: Int) {
+            override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
                 if (numberOfAddedViews == 0) {
                     i = 0
                     views.clear()
@@ -464,17 +464,17 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener
             }
 
             override fun onStartViewChangeListener(
-                viewType: ViewType,
+                viewType: ViewType?,
                 numberOfAddedViews: Int,
-                view: View
+                view: View?
             ) {
                 selectedPosition = numberOfAddedViews
             }
 
             override fun onStopViewChangeListener(
-                viewType: ViewType,
+                viewType: ViewType?,
                 numberOfAddedViews: Int,
-                view: View
+                view: View?
             ) {
             }
         })
@@ -3116,7 +3116,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener
     }
 
 
-    override fun onItemClicked(`object`: Any, index: Int) {
+    override fun onItemClicked(`object`: Any?, index: Int) {
         Log.d("index123", "" + index)
         val photoItem = `object` as FramePreview
         index1 = index

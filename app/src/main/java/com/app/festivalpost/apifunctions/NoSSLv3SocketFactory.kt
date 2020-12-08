@@ -75,7 +75,7 @@ class NoSSLv3SocketFactory : SSLSocketFactory {
         return makeSocketSafe(delegate.createSocket(address, port, localAddress, localPort))
     }
 
-    private inner class NoSSLv3SSLSocket private constructor(delegate: SSLSocket) :
+    private inner class NoSSLv3SSLSocket(delegate: SSLSocket) :
         DelegateSSLSocket(delegate) {
         override fun setEnabledProtocols(protocols: Array<String>) {
             var protocols = protocols

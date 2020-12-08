@@ -40,7 +40,8 @@ import java.util.Arrays
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import com.emegamart.lelys.BuildConfig
+import com.app.festivalpost.BuildConfig
+
 
 object ImagePicker {
 

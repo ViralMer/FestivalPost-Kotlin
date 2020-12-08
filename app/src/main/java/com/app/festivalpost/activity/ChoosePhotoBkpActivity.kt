@@ -25,9 +25,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.app.festivalpost.GridSpacingItemDecoration
-import com.app.festivalpost.OnItemClickListener
+import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
-import com.app.festivalpost.SaveAndShareActivity
+import com.app.festivalpost.activity.SaveAndShareActivity
 import com.app.festivalpost.adapter.ChoosePhotoAdapter
 import com.app.festivalpost.adapter.LocalFrameAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
@@ -44,7 +44,7 @@ import com.google.gson.Gson
 import org.json.JSONObject
 import java.util.*
 
-class ChoosePhotoBkpActivity : AppCompatActivity(), ApiResponseListener, OnItemClickListener {
+class ChoosePhotoBkpActivity : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -76,7 +76,7 @@ class ChoosePhotoBkpActivity : AppCompatActivity(), ApiResponseListener, OnItemC
         layroot = findViewById<View>(R.id.layroot) as LinearLayout
         ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
         photoEditorView = findViewById<View>(R.id.photoEditorView) as PhotoEditorView
-        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView)
+        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
             .setPinchTextScalable(true)
             .build()
         rvdata = findViewById<View>(R.id.rvdata) as RecyclerView
@@ -386,7 +386,7 @@ class ChoosePhotoBkpActivity : AppCompatActivity(), ApiResponseListener, OnItemC
         }
     }
 
-    override fun onItemClicked(`object`: Any, index: Int) {
+    override fun onItemClicked(`object`: Any?, index: Int) {
         val photoItem = `object` as PhotoItem
         if (photoItem.post_content != null && !photoItem.post_content.equals(
                 "",

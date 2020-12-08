@@ -192,9 +192,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, ApiResponseList
         }
     }
 
-    override fun onItemClicked(`object`: Any, index: Int) {
-        TODO("Not yet implemented")
-    }
 
     var isbusiness = false
     fun processResponse(responseString: String?) {

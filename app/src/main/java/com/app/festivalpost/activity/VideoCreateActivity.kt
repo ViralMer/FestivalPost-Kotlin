@@ -166,17 +166,19 @@ import com.arthenica.mobileffmpeg.FFmpeg;*/   class VideoCreateActivity : AppCom
         videoPath = File(Constant.FOLDER_NAME, videoName).absolutePath
         Log.d("VideoPAth", "" + videoPath)
         inputCode = arrayOf(
-            "ffmpeg",
-            "-y",
-            "-i",
-            Global.getPreference("video_name", ""),
-            "-i",
-            Global.getPreference("image_name", ""),
-            "-filter_complex",
-            "overlay=(W-w):(H-h)",
-            "-codec:a",
-            "copy",
-            "/storage/emulated/0/FestivalPost/$videoName"
+            arrayOf(
+                "ffmpeg",
+                "-y",
+                "-i",
+                Global.getPreference("video_name", ""),
+                "-i",
+                Global.getPreference("image_name", ""),
+                "-filter_complex",
+                "overlay=(W-w):(H-h)",
+                "-codec:a",
+                "copy",
+                "/storage/emulated/0/FestivalPost/$videoName"
+            ).toString()
         )
         try {
             addVideoWaterMark(inputCode, this@VideoCreateActivity)

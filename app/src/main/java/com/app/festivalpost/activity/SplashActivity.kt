@@ -11,8 +11,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
-import com.app.festivalpost.LoginActivity
-import com.app.festivalpost.MyBounceInterpolatorNew
+
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.globals.Constant

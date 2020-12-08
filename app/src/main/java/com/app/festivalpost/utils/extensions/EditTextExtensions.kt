@@ -7,7 +7,8 @@ import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
-import com.emegamart.lelys.R
+import com.app.festivalpost.R
+
 
 fun EditText.textToString(): String = this.text.toString()
 
@@ -27,8 +28,8 @@ fun EditText.validPassword(): Boolean = text.length < 6
 fun EditText.setupClearButtonWithAction() {
     addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(editable: Editable?) {
-            val clearIcon = if (editable?.isNotEmpty() == true) R.drawable.ic_clear_24 else 0
-            setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, clearIcon, 0)
+            val clearIcon = if (editable?.isNotEmpty() == true) R.drawable.icon_logo else 0
+            setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account, 0, clearIcon, 0)
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit

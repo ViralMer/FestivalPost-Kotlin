@@ -13,29 +13,30 @@ import java.util.Locale
 import androidx.annotation.RequiresApi
 
 import android.os.Build.VERSION_CODES.N
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.app.festivalpost.FestivalPost.Companion.language
+
 
 class LocaleManager(context: Context) {
 
 
-    val language: String?
-        get() = getSharedPrefInstance().getStringValue(LANGUAGE_KEY, LANGUAGE_ENGLISH)
-
+    /*val language: String?
+        get() = getS.getStringValue(LANGUAGE_KEY, LANGUAGE_ENGLISH)
+*/
     fun setLocale(c: Context): Context {
         return updateResources(c, language)
     }
 
     fun setNewLocale(c: Context, language: String): Context {
-        persistLanguage(language)
+        //persistLanguage(language)
         return updateResources(c, language)
     }
 
-    @SuppressLint("ApplySharedPref")
+  /*  @SuppressLint("ApplySharedPref")
     private fun persistLanguage(language: String) {
         // use commit() instead of apply(), because sometimes we kill the application process
         // immediately that prevents apply() from finishing
         getSharedPrefInstance().setValue(LANGUAGE_KEY,language)
-    }
+    }*/
 
     private fun updateResources(context: Context, language: String?): Context {
         var context = context

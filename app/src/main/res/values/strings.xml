@@ -106,7 +106,7 @@
     <string name="txt_generating_image">Generating Image...</string>
     <string name="txt_next_festival">Next Festivals</string>
     <string name="under_approval">Under Approval</string>
-    <string name="festival">FESTIVAL</string>
+    <string name="festival" translatable="false">FESTIVAL</string>
     <string name="post">POST</string>
     <string name="view_all">View All</string>
     <string name="lbl_no_post_found">No post available</string>
@@ -529,5 +529,8 @@
     <string name="txt_your_mobile_number">Your Mobile Number</string>
     <string name="txt_greetings">Video Greetings</string>
     <string name="txt_choose_video_post">Choose Video Post</string>
+    <string name="txt_sign_up">Signup</string>
+    <string name="hint_name">Enter your name</string>
+    <string name="hint_number">Enter your number</string>
 
 </resources>

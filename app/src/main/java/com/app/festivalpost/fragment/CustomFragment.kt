@@ -87,7 +87,7 @@ class CustomFragment : Fragment(), ApiResponseListener {
         Handler(Looper.getMainLooper()).post {
             Global.dismissProgressDialog(activity)
             if (!isConnected) {
-                Global.noInternetConnectionDialog(activity)
+                Global.noInternetConnectionDialog(activity!!)
             }
         }
     }
@@ -202,6 +202,7 @@ class CustomFragment : Fragment(), ApiResponseListener {
             Global.showFailDialog(activity, responseString)
         }
     }
+
 
     inner class PagerAdapter : androidx.viewpager.widget.PagerAdapter() {
         override fun getCount(): Int {

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.app.festivalpost">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -16,7 +15,7 @@
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.android.vending.BILLING" />
@@ -29,7 +28,7 @@
 
 
     <application
-        android:name=".MyApplication"
+        android:name=".activity.MyApplication"
         android:allowBackup="true"
         android:extractNativeLibs="true"
         android:hardwareAccelerated="true"
@@ -45,22 +44,22 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".VideoCreateActivity"
+            android:name=".activity.VideoCreateActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".VideoDetailActivity"
+            android:name=".activity.VideoDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CustomPhotoFrameActivity"
+            android:name=".activity.CustomPhotoFrameActivity"
             android:configChanges="fontScale"
             android:screenOrientation="portrait"
 
             />
-        <activity android:name=".CustomFrameActivity" />
-        <activity android:name=".MyPostActivity" />
-        <activity android:name=".SampleActivity" />
+        <activity android:name=".activity.CustomFrameActivity" />
+        <activity android:name=".activity.MyPostActivity" />
+        <activity android:name=".activity.SampleActivity" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activity.SplashActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -70,43 +69,43 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".HelpandSupportActivity"
+            android:name=".activity.HelpandSupportActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".RegisterVerificationActivity"
+            android:name=".activity.RegisterVerificationActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AddFirstBusinessActivity"
+            android:name=".activity.AddFirstBusinessActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".activity.EditProfileActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".activity.HomeActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".PremiumActivity"
+            android:name=".activity.PremiumActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ManageBusinessActivity"
+            android:name=".activity.ManageBusinessActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activity.RegisterActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChoosePhotoBkpActivity"
+            android:name=".activity.ChoosePhotoBkpActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
@@ -114,19 +113,19 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChooseFrameBkpActivity"
+            android:name=".activity.ChooseFrameBkpActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SaveAndShareActivity"
+            android:name=".activity.SaveAndShareActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChooseFrameActivityNew"
+            android:name=".activity.ChooseFrameActivityNew"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChooseFrameForPhotoActivityNew"
+            android:name=".activity.ChooseFrameForPhotoActivityNew"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
@@ -134,15 +133,15 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".VerificationActivity"
+            android:name=".activity.VerificationActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ImageTextEditorActivity"
+            android:name=".activity.ImageTextEditorActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ImagePickerActivity"
+            android:name=".activity.ImagePickerActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
@@ -155,7 +154,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".WebBrowserActivity"
+            android:name=".activity.WebBrowserActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
 
@@ -169,9 +168,9 @@
                 android:resource="@xml/file_provider" />
         </provider>
 
-        <receiver android:name="com.app.apifunctions.ConnectivityReceiver" />
+        <receiver android:name=".apifunctions.ConnectivityReceiver" />
 
-        <service android:name=".MyFirebaseMessagingService">
+        <service android:name=".activity.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -205,7 +204,7 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
-        <receiver android:name="com.app.Utils.NetworkStateChecker">
+        <receiver android:name=".utility.NetworkStateChecker">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>

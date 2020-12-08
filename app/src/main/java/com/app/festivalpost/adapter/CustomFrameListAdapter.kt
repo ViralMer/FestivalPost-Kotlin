@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.app.festivalpost.models.FrameContentItem
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.app.festivalpost.CustomFrameActivity
+import com.app.festivalpost.activity.CustomFrameActivity
 import com.app.festivalpost.R
 import com.makeramen.roundedimageview.RoundedImageView
 import java.util.ArrayList

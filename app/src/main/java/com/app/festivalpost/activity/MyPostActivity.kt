@@ -58,7 +58,7 @@ class MyPostActivity : AppCompatActivity(), ApiResponseListener {
         mSwipeRefreshLayout = findViewById(R.id.swipeToRefresh)
         linearLayout = findViewById(R.id.rlNoData)
         btnCreatePost = findViewById(R.id.btnCreatePost)
-        btnCreatePost.setOnClickListener(View.OnClickListener {
+        btnCreatePost!!.setOnClickListener(View.OnClickListener {
             instance!!.mBottomNavigationView!!.menu.findItem(R.id.action_home).isChecked = true
             instance!!.loadHomeFragment1()
         })
@@ -92,11 +92,11 @@ class MyPostActivity : AppCompatActivity(), ApiResponseListener {
                 super.onScrolled(recyclerView, dx, dy)
             }
         })
-        mSwipeRefreshLayout.setOnRefreshListener(OnRefreshListener {
+        mSwipeRefreshLayout!!.setOnRefreshListener(OnRefreshListener {
             countLoadMore = 1
             dataArrayList.clear()
             loadMoreDetails(countLoadMore)
-            mSwipeRefreshLayout.setRefreshing(false)
+            mSwipeRefreshLayout!!.setRefreshing(false)
         })
     }
 
@@ -239,5 +239,5 @@ class MyPostActivity : AppCompatActivity(), ApiResponseListener {
         }
     }
 
-    override fun onItemClicked(`object`: Any, index: Int) {}
+
 }

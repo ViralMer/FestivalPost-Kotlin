@@ -20,8 +20,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.festivalpost.MyBounceInterpolator
-import com.app.festivalpost.OnItemClickListener
+import com.app.festivalpost.activity.MyBounceInterpolator
+
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.VideoCreateActivity
 import com.app.festivalpost.adapter.ChooseVideoAdapter
@@ -46,7 +46,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-class VideoDetailActivity : AppCompatActivity(), ApiResponseListener, OnItemClickListener {
+class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -320,7 +320,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener, OnItemClic
     }
 
     var video_path = ""
-    override fun onItemClicked(`object`: Any, index: Int) {
+    override fun onItemClicked(`object`: Any?, index: Int) {
         videoListItem = `object` as VideoListItem
         setVideoData(videoListItem)
         if (videoListItem!!.thumbnail != null && !videoListItem!!.thumbnail.equals(

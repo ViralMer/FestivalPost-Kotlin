@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.app.festivalpost.OnItemClickListener
+import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.models.FramePreview
 import com.bumptech.glide.Glide

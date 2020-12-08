@@ -605,10 +605,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         }
     }
 
-    override fun onItemClicked(`object`: Any, index: Int) {
-        TODO("Not yet implemented")
-    }
-
+    
     fun processResponse(responseString: String?) {
         planItemArrayList = ArrayList()
         status = false

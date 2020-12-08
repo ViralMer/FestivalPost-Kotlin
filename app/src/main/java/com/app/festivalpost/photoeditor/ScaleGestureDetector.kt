@@ -89,7 +89,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
      * A convenience class to extend when you only want to listen for a subset
      * of scaling-related events. This implements all methods in
      */
-    open class SimpleOnScaleGestureListener : OnScaleGestureListener {
+    open class SimpleOnScaleGestureListener(mPrevSpanVector: com.app.festivalpost.utility.Vector2D, CurrentSpanVector: Vector2D) : OnScaleGestureListener {
         override fun onScale(view: View?, detector: ScaleGestureDetector?): Boolean {
             return false
         }
@@ -111,7 +111,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
         private set
     private var mPrevEvent: MotionEvent? = null
     private var mCurrEvent: MotionEvent? = null
-    private val mCurrSpanVector: Vector2D
+    private val mCurrSpanVector: Vector2D = Vector2D()
     private var mFocusX = 0f
     private var mFocusY = 0f
     private var mPrevFingerDiffX = 0f
@@ -355,6 +355,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
      * @return X coordinate of the focal point in pixels.
      */
     fun getFocusX(): Float {
+        val field = 0.0f
         return field
     }
 
@@ -495,7 +496,4 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
         private const val PRESSURE_THRESHOLD = 0.67f
     }
 
-    init {
-        mCurrSpanVector = Vector2D()
-    }
 }

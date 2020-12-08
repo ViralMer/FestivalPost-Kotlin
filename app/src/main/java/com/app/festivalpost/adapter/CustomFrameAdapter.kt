@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-import com.app.festivalpost.CustomFrameActivity
+import com.app.festivalpost.activity.CustomFrameActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.models.FrameContentListItem
 import java.util.*

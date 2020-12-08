@@ -1,3 +1,4 @@
+/*
 package com.emegamart.lelys.utils.extensions
 
 import android.app.Activity
@@ -20,16 +21,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
-import androidx.browser.customtabs.CustomTabsIntent
+
 import androidx.recyclerview.widget.RecyclerView
+import com.app.festivalpost.FestivalPost
+import com.app.festivalpost.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.emegamart.lelys.AppBaseActivity
-import com.emegamart.lelys.R
-import com.emegamart.lelys.WooBoxApp
-import com.emegamart.lelys.WooBoxApp.Companion.getAppInstance
-import com.emegamart.lelys.WooBoxApp.Companion.noInternetDialog
-import com.emegamart.lelys.activity.*
 import com.emegamart.lelys.models.*
 import com.emegamart.lelys.utils.Constants
 import com.emegamart.lelys.utils.Constants.AppBroadcasts.ADDRESS_UPDATE
@@ -74,9 +71,6 @@ import com.emegamart.lelys.utils.Constants.SharedPref.WISHLIST_DATA
 import com.emegamart.lelys.utils.SharedPrefUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.dialog_no_internet.*
-import kotlinx.android.synthetic.main.item_product_new.view.*
-import kotlinx.android.synthetic.main.layout_paymentdetail.*
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 
@@ -104,9 +98,11 @@ fun getCartCount(): String = getSharedPrefInstance().getIntValue(KEY_CART_COUNT,
 fun getRewardPoints(): String = getSharedPrefInstance().getStringValue(REDEEM_POINTS)
 
 
+*/
 /**
  * Add shared preference related to user session here
- */
+ *//*
+
 fun clearLoginPref() {
     getSharedPrefInstance().removeKey(IS_LOGGED_IN)
     getSharedPrefInstance().removeKey(USER_ID)
@@ -130,11 +126,11 @@ fun clearLoginPref() {
 }
 
 fun getSharedPrefInstance(): SharedPrefUtils {
-    return if (WooBoxApp.sharedPrefUtils == null) {
-        WooBoxApp.sharedPrefUtils = SharedPrefUtils()
-        WooBoxApp.sharedPrefUtils!!
+    return if (FestivalPost.sharedPrefUtils == null) {
+        FestivalPost.sharedPrefUtils = SharedPrefUtils()
+        FestivalPost.sharedPrefUtils!!
     } else {
-        WooBoxApp.sharedPrefUtils!!
+        FestivalPost.sharedPrefUtils!!
     }
 }
 
@@ -142,8 +138,6 @@ fun RecyclerView.rvItemAnimation() {
     layoutAnimation = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down)
 }
 
-fun Context.openCustomTab(url: String) =
-    CustomTabsIntent.Builder().build().launchUrl(this, Uri.parse(url))
 
 fun ImageView.loadImageFromUrl(
     aImageUrl: String,
@@ -350,7 +344,9 @@ fun setExpandableListViewHeight(listView: ExpandableListView, group: Int) {
 
     val params = listView.layoutParams
     var height =
-        totalHeight + (listView.dividerHeight * (listAdapter.groupCount - 1)) + (item / 2)/*+((totalHeight/(listAdapter.groupCount-1)))/2)*/
+        totalHeight + (listView.dividerHeight * (listAdapter.groupCount - 1)) + (item / 2)*/
+/*+((totalHeight/(listAdapter.groupCount-1)))/2)*//*
+
     if (height < 10)
         height = 200
     params.height = height
@@ -474,9 +470,11 @@ fun AppBaseActivity.saveLoginResponse(
             getSharedPrefInstance().setValue(USER_EMAIL, it.user_email)
             getSharedPrefInstance().setValue(USER_NICE_NAME, it.user_nicename)
             getSharedPrefInstance().setValue(USER_TOKEN, it.token)
-            /*if (it.profile_image.isNotEmpty()){
+            */
+/*if (it.profile_image.isNotEmpty()){
                 getSharedPrefInstance().setValue(USER_PROFILE, it.profile_image)
-            }*/
+            }*//*
+
             getSharedPrefInstance().setValue(IS_SOCIAL_LOGIN, isSocialLogin)
             getSharedPrefInstance().setValue(Constants.SharedPref.USER_PASSWORD, password)
             Log.d("ISLogin",""+isSocialLogin);
@@ -1150,17 +1148,5 @@ fun Activity.changePassword(requestModel: RequestModel, onSuccess: (Boolean) -> 
     })
 }
 
-fun Activity.saveProfileImage(requestModel: RequestModel, onSuccess: (Boolean) -> Unit) {
-    callApi(getRestApis().saveProfileImage(requestModel), onApiSuccess = {
-        Log.e("res", it.profile_image)
-        getSharedPrefInstance().setValue(USER_PROFILE, it.profile_image)
-        onSuccess(true)
-    }, onApiError = {
-        snackBarError(it);onSuccess(false)
-    }, onNetworkError = {
-        noInternetSnackBar();onSuccess(false)
-    })
 
-
-}
-
+*/

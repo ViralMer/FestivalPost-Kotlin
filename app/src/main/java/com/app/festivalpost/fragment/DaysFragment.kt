@@ -133,7 +133,7 @@ class DaysFragment : Fragment(), ApiResponseListener {
         Handler(Looper.getMainLooper()).post {
             Global.dismissProgressDialog(activity)
             if (!isConnected) {
-                Global.noInternetConnectionDialog(activity)
+            Global.noInternetConnectionDialog(activity!!)
             }
         }
     }
@@ -182,6 +182,8 @@ class DaysFragment : Fragment(), ApiResponseListener {
             Global.showFailDialog(activity, responseString)
         }
     }
+
+
 
     fun processResponse(responseString: String?) {
         dataArrayList = ArrayList()

@@ -26,12 +26,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.festivalpost.OnItemClickListener
-import com.app.festivalpost.PickerBuilder
-import com.app.festivalpost.PickerBuilder.onImageReceivedListener
-import com.app.festivalpost.PickerBuilder.onPermissionRefusedListener
 import com.app.festivalpost.R
-import com.app.festivalpost.SaveAndShareActivity
 import com.app.festivalpost.adapter.ChooseFrameAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
@@ -56,7 +51,7 @@ import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.io.IOException
 import java.util.*
 
-class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnItemClickListener {
+class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -92,13 +87,13 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnIte
         layroot = findViewById<View>(R.id.layroot) as LinearLayout
         ivframe = findViewById<View>(R.id.ivframe) as ImageView
         photoEditorView = findViewById<View>(R.id.photoEditorView) as PhotoEditorView
-        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView)
+        mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
             .setPinchTextScalable(true)
             .build()
         mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
-                rootView: View,
-                text: String,
+                rootView: View?,
+                text: String?,
                 colorCode: Int,
                 viewList: Int
             ) {
@@ -109,19 +104,19 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnIte
                 frameaddtext!!.visibility = View.VISIBLE
             }
 
-            override fun onAddViewListener(viewType: ViewType, numberOfAddedViews: Int) {}
-            override fun onRemoveViewListener(viewType: ViewType, numberOfAddedViews: Int) {}
+            override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {}
+            override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {}
             override fun onStartViewChangeListener(
-                viewType: ViewType,
+                viewType: ViewType?,
                 numberOfAddedViews: Int,
-                view: View
+                view: View?
             ) {
             }
 
             override fun onStopViewChangeListener(
-                viewType: ViewType,
+                viewType: ViewType?,
                 numberOfAddedViews: Int,
-                view: View
+                view: View?
             ) {
             }
         })
@@ -263,8 +258,8 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnIte
 
     fun startCamera() {
         PickerBuilder(this@ChooseFrameBkpActivity, PickerBuilder.SELECT_FROM_CAMERA)
-            .setOnImageReceivedListener(object : onImageReceivedListener {
-                override fun onImageReceived(imageUri: Uri) {
+            .setOnImageReceivedListener(object : PickerBuilder.onImageReceivedListener {
+                override fun onImageReceived(imageUri: Uri?) {
                     Toast.makeText(
                         this@ChooseFrameBkpActivity,
                         "Got image - $imageUri",
@@ -282,8 +277,8 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnIte
 
     fun startGallery() {
         PickerBuilder(this@ChooseFrameBkpActivity, PickerBuilder.SELECT_FROM_GALLERY)
-            .setOnImageReceivedListener(object : onImageReceivedListener {
-                override fun onImageReceived(imageUri: Uri) {
+            .setOnImageReceivedListener(object : PickerBuilder.onImageReceivedListener {
+                override fun onImageReceived(imageUri: Uri?) {
                     Toast.makeText(
                         this@ChooseFrameBkpActivity,
                         "Got image - $imageUri",
@@ -295,7 +290,7 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnIte
             .setImageName("test")
             .setImageFolderName(resources.getString(R.string.app_name))
             .setCropScreenColor(resources.getColor(R.color.colorPrimary))
-            .setOnPermissionRefusedListener(object : onPermissionRefusedListener {
+            .setOnPermissionRefusedListener(object : PickerBuilder.onPermissionRefusedListener {
                 override fun onPermissionRefused() {}
             })
             .start()
@@ -885,6 +880,20 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnIte
         })
     }
 
+    override fun onItemClicked(`object`: Any?, index: Int) {
+        val frameItem = `object` as FrameItem
+        if (frameItem.img_url != "") {
+            Glide.with(this@ChooseFrameBkpActivity).load(frameItem.img_url)
+                .placeholder(R.drawable.placeholder_img).error(
+                    R.drawable.placeholder_img
+                ).into(
+                    (ivframe)!!
+                )
+        }
+    }
+
+
+
     fun processFrameResponse(responseString: String?) {
         dataArrayList = ArrayList()
         status = false
@@ -913,15 +922,8 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener, OnIte
         }
     }
 
-    override fun onItemClicked(`object`: Any, index: Int) {
-        val frameItem = `object` as FrameItem
-        if (frameItem.img_url != "") {
-            Glide.with(this@ChooseFrameBkpActivity).load(frameItem.img_url)
-                .placeholder(R.drawable.placeholder_img).error(
-                    R.drawable.placeholder_img
-                ).into(
-                    (ivframe)!!
-                )
-        }
-    }
+
+
+
+
 }

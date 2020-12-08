@@ -137,14 +137,7 @@ class HomeActivity : AppCompatActivity() {
         tvtitle!!.text = resources.getString(R.string.txt_festival)
     }
 
-    private fun loadPostFragment() {
-        tvaction!!.visibility = View.INVISIBLE
-        val fragment = PostFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
-        tvtitle!!.text = resources.getString(R.string.txt_post)
-    }
+
 
     private fun loadCustomFragment() {
         tvaction!!.visibility = View.INVISIBLE

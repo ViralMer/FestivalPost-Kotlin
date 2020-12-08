@@ -15,10 +15,10 @@ class SaveSettings private constructor(builder: Builder) {
     val compressQuality: Int
 
     class Builder {
-        private var isTransparencyEnabled = true
-        private var isClearViewsEnabled = true
-        private var compressFormat = Bitmap.CompressFormat.PNG
-        private var compressQuality = 100
+        var isTransparencyEnabled = true
+        var isClearViewsEnabled = true
+        var compressFormat = Bitmap.CompressFormat.PNG
+        var compressQuality = 100
 
         /**
          * Define a flag to enable transparency while saving image

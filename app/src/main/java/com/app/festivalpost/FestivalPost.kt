@@ -4,11 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
-import com.emegamart.lelys.network.RestApis
-import com.emegamart.lelys.utils.Constants
-import com.emegamart.lelys.utils.Constants.SharedPref.LANGUAGE
 import com.emegamart.lelys.utils.SharedPrefUtils
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.google.firebase.FirebaseApp
 import okhttp3.OkHttpClient
 
@@ -31,7 +27,7 @@ class FestivalPost : MultiDexApplication() {
 
     companion object {
         private lateinit var appInstance: FestivalPost
-        var restApis: RestApis? = null
+        //var restApis: RestApis? = null
         var okHttpClient: OkHttpClient? = null
         var sharedPrefUtils: SharedPrefUtils? = null
         var noInternetDialog: Dialog? = null

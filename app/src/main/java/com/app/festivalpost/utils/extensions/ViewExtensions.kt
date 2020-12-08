@@ -9,8 +9,8 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorInt
-import com.emegamart.lelys.R
-import com.emegamart.lelys.WooBoxApp.Companion.getAppInstance
+import com.app.festivalpost.FestivalPost.Companion.getAppInstance
+import com.app.festivalpost.R
 import com.google.android.material.snackbar.Snackbar
 import kotlin.math.roundToInt
 
@@ -18,16 +18,12 @@ import kotlin.math.roundToInt
 fun View.snackBarError(msg: String) {
     val snackBar = Snackbar.make(this, msg, Snackbar.LENGTH_LONG)
     val sbView = snackBar.view
-    sbView.setBackgroundColor(getAppInstance().resources.getColor(R.color.tomato));snackBar.setTextColor(Color.WHITE);snackBar.show()
+    sbView.setBackgroundColor(getAppInstance().resources.getColor(R.color.red));snackBar.setTextColor(Color.WHITE);snackBar.show()
 }
 
 fun View.hideSoftKeyboard() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(windowToken, 0)
-}
-
-fun Activity.noInternetSnackBar() {
-    this.snackBarError(getAppInstance().getString(R.string.error_no_internet))
 }
 
 fun View.showSoftKeyboard() {

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.app.festivalpost.OnItemClickListener
+import com.app.festivalpost.activity.OnItemClickListener
 
 import com.app.festivalpost.R
 import com.app.festivalpost.models.PhotoItem

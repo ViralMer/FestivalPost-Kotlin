@@ -65,16 +65,16 @@ fun String.equalsZero(): Boolean {
     return this == "0.00"
 }
 
-fun String.currencyFormat(code: String = "INR"): String {
+/*fun String.currencyFormat(code: String = "INR"): String {
     return if (this.checkIsEmpty()) "" else {
         "${getDefaultCurrency().getHtmlString()}$this"
     }
-    /*return when (code) {
+    *//*return when (code) {
         "USD" -> "$$this"
         "INR" -> "₹$this"
         else -> "₹$this"
-    }*/
-}
+    }*//*
+}*/
 
 /**
  * returns the md5 of the String

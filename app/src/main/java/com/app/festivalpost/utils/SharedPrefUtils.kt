@@ -2,7 +2,7 @@ package com.emegamart.lelys.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.emegamart.lelys.WooBoxApp.Companion.getAppInstance
+import com.app.festivalpost.FestivalPost.Companion.getAppInstance
 import com.emegamart.lelys.utils.Constants.myPreferences
 
 class SharedPrefUtils {

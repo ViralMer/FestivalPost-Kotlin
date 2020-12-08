@@ -13,7 +13,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
-import com.app.photoeditor.PhotoFilter.NONE
+
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -53,7 +53,7 @@ internal class ImageFilterView : GLSurfaceView, GLSurfaceView.Renderer {
         setEGLContextClientVersion(2)
         setRenderer(this)
         renderMode = RENDERMODE_WHEN_DIRTY
-        setFilterEffect(NONE)
+        setFilterEffect(PhotoFilter.NONE)
     }
 
     fun setSourceBitmap(sourceBitmap: Bitmap?) {
@@ -77,7 +77,7 @@ internal class ImageFilterView : GLSurfaceView, GLSurfaceView.Renderer {
             loadTextures()
             mInitialized = true
         }
-        if (mCurrentEffect !== NONE || mCustomEffect != null) {
+        if (mCurrentEffect !== PhotoFilter.NONE || mCustomEffect != null) {
             //if an effect is chosen initialize it and apply it to the texture
             initEffect()
             applyEffect()
@@ -138,27 +138,27 @@ internal class ImageFilterView : GLSurfaceView, GLSurfaceView.Renderer {
             mEffect = effectFactory.createEffect(mCustomEffect!!.effectName)
             val parameters = mCustomEffect!!.parameters
             for ((key, value) in parameters) {
-                mEffect.setParameter(key, value)
+                mEffect!!.setParameter(key, value)
             }
         } else {
             // Initialize the correct effect based on the selected menu/action item
             when (mCurrentEffect) {
                 PhotoFilter.AUTO_FIX -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_AUTOFIX)
-                    mEffect.setParameter("scale", 0.5f)
+                    mEffect!!.setParameter("scale", 0.5f)
                 }
                 PhotoFilter.BLACK_WHITE -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_BLACKWHITE)
-                    mEffect.setParameter("black", .1f)
-                    mEffect.setParameter("white", .7f)
+                mEffect!!.setParameter("black", .1f)
+                    mEffect!!.setParameter("white", .7f)
                 }
                 PhotoFilter.BRIGHTNESS -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_BRIGHTNESS)
-                    mEffect.setParameter("brightness", 2.0f)
+                    mEffect!!.setParameter("brightness", 2.0f)
                 }
                 PhotoFilter.CONTRAST -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_CONTRAST)
-                    mEffect.setParameter("contrast", 1.4f)
+                    mEffect!!.setParameter("contrast", 1.4f)
                 }
                 PhotoFilter.CROSS_PROCESS -> mEffect =
                     effectFactory.createEffect(EffectFactory.EFFECT_CROSSPROCESS)
@@ -166,28 +166,28 @@ internal class ImageFilterView : GLSurfaceView, GLSurfaceView.Renderer {
                     effectFactory.createEffect(EffectFactory.EFFECT_DOCUMENTARY)
                 PhotoFilter.DUE_TONE -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_DUOTONE)
-                    mEffect.setParameter("first_color", Color.YELLOW)
-                    mEffect.setParameter("second_color", Color.DKGRAY)
+                    mEffect!!.setParameter("first_color", Color.YELLOW)
+                    mEffect!!.setParameter("second_color", Color.DKGRAY)
                 }
                 PhotoFilter.FILL_LIGHT -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_FILLLIGHT)
-                    mEffect.setParameter("strength", .8f)
+                    mEffect!!.setParameter("strength", .8f)
                 }
                 PhotoFilter.FISH_EYE -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_FISHEYE)
-                    mEffect.setParameter("scale", .5f)
+                    mEffect!!.setParameter("scale", .5f)
                 }
                 PhotoFilter.FLIP_HORIZONTAL -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_FLIP)
-                    mEffect.setParameter("horizontal", true)
+                    mEffect!!.setParameter("horizontal", true)
                 }
                 PhotoFilter.FLIP_VERTICAL -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_FLIP)
-                    mEffect.setParameter("vertical", true)
+                    mEffect!!.setParameter("vertical", true)
                 }
                 PhotoFilter.GRAIN -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_GRAIN)
-                    mEffect.setParameter("strength", 1.0f)
+                    mEffect!!.setParameter("strength", 1.0f)
                 }
                 PhotoFilter.GRAY_SCALE -> mEffect =
                     effectFactory.createEffect(EffectFactory.EFFECT_GRAYSCALE)
@@ -201,11 +201,11 @@ internal class ImageFilterView : GLSurfaceView, GLSurfaceView.Renderer {
                     effectFactory.createEffect(EffectFactory.EFFECT_POSTERIZE)
                 PhotoFilter.ROTATE -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_ROTATE)
-                    mEffect.setParameter("angle", 180)
+                    mEffect!!.setParameter("angle", 180)
                 }
                 PhotoFilter.SATURATE -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_SATURATE)
-                    mEffect.setParameter("scale", .5f)
+                    mEffect!!.setParameter("scale", .5f)
                 }
                 PhotoFilter.SEPIA -> mEffect =
                     effectFactory.createEffect(EffectFactory.EFFECT_SEPIA)
@@ -213,15 +213,15 @@ internal class ImageFilterView : GLSurfaceView, GLSurfaceView.Renderer {
                     effectFactory.createEffect(EffectFactory.EFFECT_SHARPEN)
                 PhotoFilter.TEMPERATURE -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_TEMPERATURE)
-                    mEffect.setParameter("scale", .9f)
+                    mEffect!!.setParameter("scale", .9f)
                 }
                 PhotoFilter.TINT -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_TINT)
-                    mEffect.setParameter("tint", Color.MAGENTA)
+                    mEffect!!.setParameter("tint", Color.MAGENTA)
                 }
                 PhotoFilter.VIGNETTE -> {
                     mEffect = effectFactory.createEffect(EffectFactory.EFFECT_VIGNETTE)
-                    mEffect.setParameter("scale", .5f)
+                    mEffect!!.setParameter("scale", .5f)
                 }
             }
         }
@@ -232,7 +232,7 @@ internal class ImageFilterView : GLSurfaceView, GLSurfaceView.Renderer {
     }
 
     private fun renderResult() {
-        if (mCurrentEffect !== NONE || mCustomEffect != null) {
+        if (mCurrentEffect !== PhotoFilter.NONE || mCustomEffect != null) {
             // if no effect is chosen, just render the original bitmap
             mTexRenderer!!.renderTexture(mTextures[1])
         } else {

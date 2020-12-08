@@ -48,12 +48,12 @@ internal class TextureRenderer {
             TEX_VERTICES.size * FLOAT_SIZE_BYTES
         )
             .order(ByteOrder.nativeOrder()).asFloatBuffer()
-        mTexVertices.put(TEX_VERTICES).position(0)
+        mTexVertices!!.put(TEX_VERTICES).position(0)
         mPosVertices = ByteBuffer.allocateDirect(
             POS_VERTICES.size * FLOAT_SIZE_BYTES
         )
             .order(ByteOrder.nativeOrder()).asFloatBuffer()
-        mPosVertices.put(POS_VERTICES).position(0)
+        mPosVertices!!.put(POS_VERTICES).position(0)
     }
 
     fun tearDown() {

@@ -262,6 +262,7 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
         }
     }
 
+
     fun processResponse(responseString: String?) {
         status = false
         message = ""

@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import com.app.festivalpost.MyApplication
+import com.app.festivalpost.activity.MyApplication
 
 /**
  */
@@ -31,7 +31,7 @@ class ConnectivityReceiver : BroadcastReceiver() {
         val isConnected: Boolean
             @SuppressLint("MissingPermission")
             get() {
-                val cm = MyApplication.instance.getApplicationContext()
+                val cm = MyApplication.instance!!.applicationContext
                     .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 val activeNetwork = cm.activeNetworkInfo
                 return (activeNetwork != null

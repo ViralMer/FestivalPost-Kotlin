@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import com.app.festivalpost.OnItemClickListener
-import com.app.festivalpost.PremiumActivity
+import com.app.festivalpost.activity.OnItemClickListener
+import com.app.festivalpost.activity.PremiumActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.AddBusinessActivity
 import com.app.festivalpost.models.BusinessItem

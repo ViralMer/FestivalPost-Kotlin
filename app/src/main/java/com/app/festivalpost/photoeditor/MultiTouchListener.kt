@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.lifecycle.MutableLiveData
 import com.app.festivalpost.photoeditor.Vector2D.Companion.getAngle
 import java.util.*
 
@@ -18,7 +19,7 @@ import java.util.*
  *
  */
 class MultiTouchListener : View.OnTouchListener {
-    private var views: List<View> = ArrayList()
+    private var views= mutableListOf<View?>()
     private val mGestureListener: GestureDetector
     private val isRotateEnabled = true
     private val isTranslateEnabled = true
@@ -67,14 +68,14 @@ class MultiTouchListener : View.OnTouchListener {
     internal constructor(
         deleteView: View?, parentView: RelativeLayout,
         photoEditImageView: ImageView, isTextPinchZoomable: Boolean,
-        onPhotoEditorListener: OnPhotoEditorListener?, views: List<View>
+        onPhotoEditorListener: OnPhotoEditorListener?, views: MutableList<View?>
     ) {
         mIsTextPinchZoomable = isTextPinchZoomable
         mScaleGestureDetector = ScaleGestureDetector(ScaleGestureListener())
         mGestureListener = GestureDetector(GestureListener())
         this.deleteView = deleteView
         this.parentView = parentView
-        this.views = views
+        this.views = views!!
         this.photoEditImageView = photoEditImageView
         mOnPhotoEditorListener = onPhotoEditorListener
         outRect = if (deleteView != null) {
@@ -172,7 +173,8 @@ class MultiTouchListener : View.OnTouchListener {
         this.onMultiTouchListener = onMultiTouchListener
     }
 
-    inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+    inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener(com.app.festivalpost.utility.Vector2D(),Vector2D()) {
         private var mPivotX = 0f
         private var mPivotY = 0f
         private val mPrevSpanVector = Vector2D()

@@ -2,9 +2,12 @@ package com.app.festivalpost.apifunctions
 
 import android.content.Context
 import android.util.Log
-import com.app.festivalpost.Utility.BuildConfig
-import com.app.festivalpost.festivalpost.MyApplication
-import com.app.festivalpost.festivalpost.R
+
+
+import com.app.festivalpost.activity.MyApplication
+import com.app.festivalpost.R
+import com.app.festivalpost.globals.BuildConfig
+import com.app.festivalpost.globals.BuildConfig.URL_NAME
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.squareup.okhttp.*
@@ -130,10 +133,10 @@ class ApiManager {
     }
 
     fun get_customer_address(servicename: String, id_customer: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val params = "?id=%s"
             val formatted_string = String.format(params, id_customer)
-            val url: String = BuildConfig.URL_NAME.toString() + servicename + formatted_string
+            val url: String = com.app.festivalpost.globals.BuildConfig.URL_NAME.toString() + servicename + formatted_string
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
                     .get().build()
@@ -144,8 +147,8 @@ class ApiManager {
     }
 
     fun plans(servicename: String) {
-        if (ConnectivityReceiver.isConnected()) {
-            val url: String = BuildConfig.URL_NAME.toString() + servicename
+        if (ConnectivityReceiver.isConnected) {
+            val url: String = com.app.festivalpost.globals.BuildConfig.URL_NAME.toString() + servicename
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
                     .get().build()
@@ -156,7 +159,7 @@ class ApiManager {
     }
 
     fun testplans(servicename: String, business_id: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("business_id", business_id)
@@ -171,7 +174,7 @@ class ApiManager {
     }
 
     fun gethomepage(servicename: String, token: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -186,7 +189,7 @@ class ApiManager {
     }
 
     fun getdays(servicename: String, dateVal: String?, token: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             Log.d("Date Val", dateVal!!)
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
@@ -208,7 +211,7 @@ class ApiManager {
         is_delete: String?,
         preference_value: String?
     ) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -225,7 +228,7 @@ class ApiManager {
     }
 
     fun getcustomcategorypost(servicename: String) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
@@ -237,7 +240,7 @@ class ApiManager {
     }
 
     fun getphotos(servicename: String, token: String?, page: Int) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             Log.d("PREFETOKEN", "" + Global.getPreference(Constant.PREF_TOKEN, ""))
             val formBody = FormEncodingBuilder()
@@ -260,7 +263,7 @@ class ApiManager {
         mobile: String?,
         referral_code: String?
     ) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val deviceToken = deviceToken
             val formBody = FormEncodingBuilder()
@@ -268,7 +271,7 @@ class ApiManager {
                 .add("email", email)
                 .add("mobile", mobile)
                 .add("ref_code", referral_code)
-                .add("device_id", MyApplication.deviceInfo.deviceUDID)
+                .add("device_id", MyApplication.deviceInfo!!.deviceUDID)
                 .add("device_token", deviceToken)
                 .build()
             val request =
@@ -281,16 +284,16 @@ class ApiManager {
     }
 
     val deviceToken: String
-        get() = Global.getPreference(Constant.PREF_DEVICE_TOKEN, "NA")
+        get() = Global.getPreference(Constant.PREF_DEVICE_TOKEN, "NA")!!
 
     fun login(servicename: String, mobile: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val deviceToken = deviceToken
             val formBody = FormEncodingBuilder()
                 .add("mobile", mobile)
                 .add("device_token", deviceToken)
-                .add("device_id", MyApplication.deviceInfo.deviceUDID)
+                .add("device_id", MyApplication.deviceInfo!!.deviceUDID)
                 .build()
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
@@ -309,7 +312,7 @@ class ApiManager {
         order_id: String?,
         amount: String?
     ) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -317,7 +320,7 @@ class ApiManager {
                 .add("plan_id", plan_id)
                 .add("order_id", order_id)
                 .add("remainingcredit", amount)
-                .add("device_id", MyApplication.deviceInfo.deviceUDID)
+                .add("device_id", MyApplication.deviceInfo!!.deviceUDID)
                 .build()
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
@@ -329,7 +332,7 @@ class ApiManager {
     }
 
     fun getfestivalimages(servicename: String, postcategoryid: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("postcategoryid", postcategoryid)
@@ -344,7 +347,7 @@ class ApiManager {
     }
 
     fun getFestivalVideos(servicename: String, token: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -359,7 +362,7 @@ class ApiManager {
     }
 
     fun getcustomframeimages(servicename: String, token: String?, custom_cateogry_id: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -375,7 +378,7 @@ class ApiManager {
     }
 
     fun markascurrentbusiness(servicename: String, token: String?, business_id: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -391,7 +394,7 @@ class ApiManager {
     }
 
     fun getmyallbusiness(servicename: String, token: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -406,7 +409,7 @@ class ApiManager {
     }
 
     fun getTemplates(servicename: String, token: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -421,7 +424,7 @@ class ApiManager {
     }
 
     fun getmycurrentbusiness(servicename: String, token: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -436,7 +439,7 @@ class ApiManager {
     }
 
     fun removemybusiness(servicename: String, id: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("id", id)
@@ -460,7 +463,7 @@ class ApiManager {
         address: String?,
         profilePath: String
     ) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             var result = ""
             val charset = "UTF-8"
             try {
@@ -496,7 +499,7 @@ class ApiManager {
         address: String?,
         profilePath: String
     ) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             var result = ""
             val charset = "UTF-8"
             try {
@@ -531,7 +534,7 @@ class ApiManager {
         email: String?,
         mobile: String?
     ) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -549,7 +552,7 @@ class ApiManager {
     }
 
     fun getmyprofile(servicename: String, token: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("token", token)
@@ -564,7 +567,7 @@ class ApiManager {
     }
 
     fun savephotos(servicename: String, image: String, business_id: String?) {
-        if (ConnectivityReceiver.isConnected()) {
+        if (ConnectivityReceiver.isConnected) {
             var result = ""
             val charset = "UTF-8"
             try {

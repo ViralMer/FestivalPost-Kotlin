@@ -18,9 +18,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.festivalpost.CustomPhotoFrameActivity
-import com.app.festivalpost.MyBounceInterpolator
-import com.app.festivalpost.OnItemClickListener
+import com.app.festivalpost.activity.CustomPhotoFrameActivity
+import com.app.festivalpost.activity.MyBounceInterpolator
+import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.ChoosePhotoFrameAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
@@ -37,7 +37,7 @@ import com.google.gson.Gson
 import org.json.JSONObject
 import java.util.*
 
-class CustomFrameActivity : AppCompatActivity(), ApiResponseListener, OnItemClickListener {
+class CustomFrameActivity : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -286,7 +286,7 @@ class CustomFrameActivity : AppCompatActivity(), ApiResponseListener, OnItemClic
 
     var photo_path: String? = ""
     var frameContentItemDetail: FrameContentItemDetail? = null
-    override fun onItemClicked(`object`: Any, index: Int) {
+    override fun onItemClicked(`object`: Any?, index: Int) {
         val photoItem = `object` as FrameContentItemDetail
         frameContentItemDetail = `object`
         if (photoItem.banner_image != null && !photoItem.banner_image.equals(

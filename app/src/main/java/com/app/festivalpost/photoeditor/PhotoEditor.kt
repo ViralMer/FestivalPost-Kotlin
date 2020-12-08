@@ -20,7 +20,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresPermission
 import androidx.annotation.UiThread
-import com.app.festivalpost.festivalpost.R
+import com.app.festivalpost.R
 import com.app.festivalpost.photoeditor.PhotoEditor.Builder
 import java.io.File
 import java.io.FileOutputStream
@@ -328,11 +328,11 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
         private get() =//multiTouchListener.setOnMultiTouchListener(this);
             MultiTouchListener(
                 deleteView,
-                parentView,
-                imageView,
+                parentView!!,
+                imageView!!,
                 isTextPinchZoomable,
                 mOnPhotoEditorListener,
-                addedViews
+                addedViews!!
             )
 
     /**
@@ -427,7 +427,7 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
      * @see PhotoEditor.setBrushEraserSize
      */
     val eraserSize: Float
-        get() = brushDrawingView?.eraserSize ?: 0
+        get() = (brushDrawingView?.eraserSize ?: 0) as Float
     /**
      * @return provide the size of eraser
      * @see PhotoEditor.setBrushSize
@@ -438,7 +438,7 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
      * @param size size of brush
      */
     var brushSize: Float
-        get() = brushDrawingView?.brushSize ?: 0
+        get() = (brushDrawingView?.brushSize ?: 0) as Float
         set(size) {
             if (brushDrawingView != null) brushDrawingView.brushSize = size
         }
@@ -641,7 +641,7 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
     ) {
         Log.d(TAG, "Image Path: $imagePath")
         parentView!!.saveFilter(object : OnSaveBitmap {
-            override fun onBitmapReady(saveBitmap: Bitmap) {
+            override fun onBitmapReady(saveBitmap: Bitmap?) {
                 object : AsyncTask<String?, String?, Exception?>() {
                     override fun onPreExecute() {
                         super.onPreExecute()
@@ -650,7 +650,7 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
                     }
 
                     @SuppressLint("MissingPermission")
-                    protected override fun doInBackground(vararg strings: String): Exception? {
+                    override fun doInBackground(vararg p0: String?): Exception? {
                         // Create a media file name
                         val file = File(imagePath)
                         return try {
@@ -691,8 +691,8 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
                 }.execute()
             }
 
-            override fun onFailure(e: Exception) {
-                onSaveListener.onFailure(e)
+            override fun onFailure(e: Exception?) {
+                onSaveListener.onFailure(e!!)
             }
         })
     }
@@ -721,7 +721,7 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
         onSaveBitmap: OnSaveBitmap
     ) {
         parentView!!.saveFilter(object : OnSaveBitmap {
-            override fun onBitmapReady(saveBitmap: Bitmap) {
+            override fun onBitmapReady(saveBitmap: Bitmap?) {
                 object : AsyncTask<String?, String?, Bitmap?>() {
                     override fun onPreExecute() {
                         super.onPreExecute()
@@ -729,7 +729,7 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
                         parentView.isDrawingCacheEnabled = false
                     }
 
-                    protected override fun doInBackground(vararg strings: String): Bitmap? {
+                     override fun doInBackground(vararg p0: String?): Bitmap? {
                         return if (parentView != null) {
                             parentView.isDrawingCacheEnabled = true
                             if (saveSettings.isTransparencyEnabled) BitmapUtil.removeTransparency(
@@ -752,8 +752,8 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
                 }.execute()
             }
 
-            override fun onFailure(e: Exception) {
-                onSaveBitmap.onFailure(e)
+            override fun onFailure(e: Exception?) {
+                onSaveBitmap.onFailure(e!!)
             }
         })
     }
@@ -814,15 +814,15 @@ class PhotoEditor private constructor(builder: Builder) : BrushViewChangeListene
     /**
      * Builder pattern to define [PhotoEditor] Instance
      */
-    class Builder(private val context: Context, private val parentView: PhotoEditorView) {
-        private val imageView: ImageView?
-        private var deleteView: View? = null
-        private val brushDrawingView: BrushDrawingView?
-        private var textTypeface: Typeface? = null
-        private var emojiTypeface: Typeface? = null
+    class Builder(val context: Context, val parentView: PhotoEditorView) {
+        val imageView: ImageView?
+        var deleteView: View? = null
+        val brushDrawingView: BrushDrawingView?
+        var textTypeface: Typeface? = null
+        var emojiTypeface: Typeface? = null
 
         //By Default pinch zoom on text is enabled
-        private var isTextPinchZoomable = true
+        var isTextPinchZoomable = true
         fun setDeleteView(deleteView: View?): Builder {
             this.deleteView = deleteView
             return this

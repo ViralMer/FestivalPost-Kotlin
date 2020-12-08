@@ -10,11 +10,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.R
-import com.app.festivalpost.RegisterVerificationActivity
+import com.app.festivalpost.activity.RegisterVerificationActivity
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.globals.Global
+import kotlinx.android.synthetic.main.activity_register.*
 
-class RegisterActivity : AppCompatActivity(), View.OnClickListener {
+class RegisterActivity : AppCompatActivity() {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -23,14 +24,19 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         setActionbar()
-        findViewById<View>(R.id.btnsubmit).setOnClickListener(this)
+
+        val signup=getString(R.string.txt_sign_up)
+        signup.replace("Signup","<font color='#EE0000'>S</font>ignup")
+        tvsign_up.text=signup
+
+
         tvsignin = findViewById<View>(R.id.tvsignin) as TextView
-        if (Global.getPreference("pref_name", "") != "") {
+        /*if (Global.getPreference("pref_name", "") != "") {
             edname.setText(Global.getPreference("pref_name", ""))
             edemail.setText(Global.getPreference("pref_email", ""))
             edmobile.setText(Global.getPreference("pref_mobile", ""))
             edreferal.setText(Global.getPreference("pref_referal", ""))
-        }
+        }*/
         tvsignin!!.setOnClickListener { onBackPressed() }
     }
 
@@ -60,7 +66,7 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         return super.onOptionsItemSelected(item)
     }
 
-    private val edemail: EditText
+   /* private val edemail: EditText
         private get() = findViewById<View>(R.id.edemail) as EditText
     private val edname: EditText
         private get() = findViewById<View>(R.id.edname) as EditText
@@ -69,13 +75,14 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     private val edreferal: EditText
         private get() = findViewById<View>(R.id.edreferal) as EditText
 
-    override fun onClick(view: View) {
+   */
+   /*override fun onClick(view: View) {
         when (view.id) {
             R.id.btnsubmit -> performRegister()
         }
-    }
+    }*/
 
-    fun performRegister() {
+   /* fun performRegister() {
         if (edname.text.toString() == "") {
             Global.getAlertDialog(this, "Opps..!", "Please Enter Name")
         } else if (edemail.text.toString() != "" && !validEmail(edemail.text.toString())) {
@@ -94,7 +101,7 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
             finish()
             //apiManager.register(ApiEndpoints.register, getEdname().getText().toString().trim(), getEdemail().getText().toString().trim(), getEdmobile().getText().toString().trim(), getEdreferal().getText().toString().trim());
         }
-    }
+    }*/
 
     private fun validEmail(email: String): Boolean {
         val pattern = Patterns.EMAIL_ADDRESS

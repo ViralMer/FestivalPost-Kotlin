@@ -2,14 +2,10 @@ package com.emegamart.lelys.utils.extensions
 
 import android.content.Context
 import android.view.View
-import com.emegamart.lelys.R
-import com.emegamart.lelys.activity.SubCategoryActivity
-import com.emegamart.lelys.base.BaseRecyclerAdapter
-import com.emegamart.lelys.databinding.ItemCategory2Binding
-import com.emegamart.lelys.databinding.ItemCategoryBinding
-import com.emegamart.lelys.models.CategoryData
+import com.app.festivalpost.R
 import com.emegamart.lelys.utils.Constants
 
+/*
 private var mColorArray = intArrayOf(R.color.cat_1, R.color.cat_2, R.color.cat_3, R.color.cat_4, R.color.cat_5)
 
 fun Context.getCategoryAdapter(): BaseRecyclerAdapter<CategoryData, ItemCategoryBinding> {
@@ -44,15 +40,19 @@ fun Context.getCategory2Adapter(): BaseRecyclerAdapter<CategoryData, ItemCategor
         override val layoutResId: Int = R.layout.item_category_2
 
         override fun onBindData(model: CategoryData, position: Int, dataBinding: ItemCategory2Binding) {
-       /*     dataBinding.ivCategory.changeBackgroundTint(
+       */
+/*     dataBinding.ivCategory.changeBackgroundTint(
                 color(mColorArray[position % mColorArray.size])
-            )*/
+            )*//*
+
             if (model.image !=null ){
                 dataBinding.ivCategory.loadImageFromUrl(model.image,aPlaceHolderImage = R.drawable.cat_placeholder)
             }
-        /*    dataBinding.ivCategory.setStrokedBackground(color(mColorArray[position % mColorArray.size]),alpha=50f)
+        */
+/*    dataBinding.ivCategory.setStrokedBackground(color(mColorArray[position % mColorArray.size]),alpha=50f)
             dataBinding.tvCatName.setTextColor(color(mColorArray[position % mColorArray.size]))
-        */    dataBinding.tvCatName.text = model.name.getHtmlString()
+        *//*
+    dataBinding.tvCatName.text = model.name.getHtmlString()
         }
 
         override fun onItemClick(view: View, model: CategoryData, position: Int, dataBinding: ItemCategory2Binding) {
@@ -63,4 +63,5 @@ fun Context.getCategory2Adapter(): BaseRecyclerAdapter<CategoryData, ItemCategor
 
         }
     }
-}
+*/
+/*}*/

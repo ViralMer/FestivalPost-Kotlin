@@ -28,7 +28,7 @@ import com.google.gson.Gson
 import org.json.JSONObject
 import java.util.*
 
-class ManageBusinessActivity : AppCompatActivity(), ApiResponseListener {
+class ManageBusinessActivity : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -255,7 +255,7 @@ class ManageBusinessActivity : AppCompatActivity(), ApiResponseListener {
 
     }*/
 
-    override fun onItemClicked(`object`: Any, index: Int) {
+    override fun onItemClicked(`object`: Any?, index: Int) {
         val b = `object` as BusinessItem
         currentBusinessID = "" + b.busiId
         Global.showProgressDialog(this@ManageBusinessActivity)
