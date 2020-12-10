@@ -1,4 +1,4 @@
-package com.app.festivalpost.photoeditor
+package com.app.photoeditor
 
 import android.graphics.Rect
 import android.view.GestureDetector
@@ -7,8 +7,9 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
-import androidx.lifecycle.MutableLiveData
-import com.app.festivalpost.photoeditor.Vector2D.Companion.getAngle
+import com.app.festivalpost.photoeditor.OnPhotoEditorListener
+import com.app.festivalpost.photoeditor.Vector2D
+import com.app.festivalpost.photoeditor.ViewType
 import java.util.*
 
 /**
@@ -75,7 +76,7 @@ class MultiTouchListener : View.OnTouchListener {
         mGestureListener = GestureDetector(GestureListener())
         this.deleteView = deleteView
         this.parentView = parentView
-        this.views = views!!
+        this.views = views
         this.photoEditImageView = photoEditImageView
         mOnPhotoEditorListener = onPhotoEditorListener
         outRect = if (deleteView != null) {
@@ -173,11 +174,10 @@ class MultiTouchListener : View.OnTouchListener {
         this.onMultiTouchListener = onMultiTouchListener
     }
 
-
-    inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener(com.app.festivalpost.utility.Vector2D(),Vector2D()) {
+    inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         private var mPivotX = 0f
         private var mPivotY = 0f
-        private val mPrevSpanVector = Vector2D()
+        private val mPrevSpanVector: Vector2D = Vector2D()
         override fun onScaleBegin(view: View?, detector: ScaleGestureDetector?): Boolean {
             mPivotX = detector!!.getFocusX()
             mPivotY = detector.getFocusY()
@@ -188,7 +188,7 @@ class MultiTouchListener : View.OnTouchListener {
         override fun onScale(view: View?, detector: ScaleGestureDetector?): Boolean {
             val info: TransformInfo = TransformInfo()
             info.deltaScale = if (isScaleEnabled) detector!!.getScaleFactor() else 1.0f
-            info.deltaAngle = if (isRotateEnabled) getAngle(
+            info.deltaAngle = if (isRotateEnabled) Vector2D.getAngle(
                 mPrevSpanVector,
                 detector!!.getCurrentSpanVector()
             ) else 0.0f

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.app.festivalpost.photoeditor
+package com.app.photoeditor
 
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import com.app.festivalpost.photoeditor.ScaleGestureDetector.OnScaleGestureListener
+import com.app.festivalpost.photoeditor.Vector2D
+import com.app.photoeditor.ScaleGestureDetector.OnScaleGestureListener
 
 /**
  * Detects transformation gestures involving more than one pointer ("multitouch")
@@ -89,7 +90,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
      * A convenience class to extend when you only want to listen for a subset
      * of scaling-related events. This implements all methods in
      */
-    open class SimpleOnScaleGestureListener(mPrevSpanVector: com.app.festivalpost.utility.Vector2D, CurrentSpanVector: Vector2D) : OnScaleGestureListener {
+    open class SimpleOnScaleGestureListener : OnScaleGestureListener {
         override fun onScale(view: View?, detector: ScaleGestureDetector?): Boolean {
             return false
         }
@@ -111,7 +112,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
         private set
     private var mPrevEvent: MotionEvent? = null
     private var mCurrEvent: MotionEvent? = null
-    private val mCurrSpanVector: Vector2D = Vector2D()
+    private val mCurrSpanVector: Vector2D
     private var mFocusX = 0f
     private var mFocusY = 0f
     private var mPrevFingerDiffX = 0f
@@ -290,7 +291,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
         mCurrLen = -1f
         mPrevLen = -1f
         mScaleFactor = -1f
-        mCurrSpanVector[0.0f] = 0.0f
+        mCurrSpanVector.set(0.0f, 0.0f)
         val prev = mPrevEvent
         val prevIndex0 = prev!!.findPointerIndex(mActiveId0)
         val prevIndex1 = prev.findPointerIndex(mActiveId1)
@@ -316,7 +317,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
         val pvy = py1 - py0
         val cvx = cx1 - cx0
         val cvy = cy1 - cy0
-        mCurrSpanVector[cvx] = cvy
+        mCurrSpanVector.set(cvx, cvy)
         mPrevFingerDiffX = pvx
         mPrevFingerDiffY = pvy
         mCurrFingerDiffX = cvx
@@ -496,4 +497,7 @@ class ScaleGestureDetector(private val mListener: OnScaleGestureListener) {
         private const val PRESSURE_THRESHOLD = 0.67f
     }
 
+    init {
+        mCurrSpanVector = Vector2D()
+    }
 }

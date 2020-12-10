@@ -76,6 +76,7 @@ public class MultiTouchListener implements OnTouchListener {
                     this.mActivePointerId = event.getPointerId(0);
                     break;
                 case 1:
+                case 3:
                     this.mActivePointerId = -1;
                     break;
                 case 2:
@@ -88,8 +89,6 @@ public class MultiTouchListener implements OnTouchListener {
                         }
                     }
                     break;
-                case 3:
-                    this.mActivePointerId = -1;
                 case 4:
                 case 5:
                 default:

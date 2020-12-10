@@ -15,7 +15,7 @@
     <string name="url_name">http://festivalpost.in/admin/api/</string>
     <string name="txt_resend_otp">Resend OTP</string>
     <string name="txt_email">Enter your email</string>
-    <string name="txt_mobile_number">Enter your mobile number</string>
+    <string name="txt_mobile_number" translatable="false">Enter your mobile number</string>
     <string name="txt_otp">Enter your OTP</string>
     <string name="txt_name">Enter your name</string>
     <string name="txt_referal">Enter your referal code (If you have)</string>
@@ -41,77 +41,6 @@
     <string name="txt_save">Save</string>
     <string name="txt_share_on_social">Share on social media</string>
     <string name="txt_custom">Custom</string>
-
-    <string name="txt_business_name">Enter your business name</string>
-    <string name="txt_business_email">Enter your business email</string>
-    <string name="txt_business_phone">Enter your business phone number</string>
-    <string name="txt_business_website">Enter your business website</string>
-    <string name="txt_business_address">Enter your business address</string>
-    <string name="txt_finish">Finish</string>
-    <string name="txt_add_business">Add Business</string>
-    <string name="txt_save_and_share">Save and Share</string>
-    <string name="txt_choose_photo_post">Choose Photo Post</string>
-    <string name="txt_photo">Photo</string>
-    <string name="txt_done">Done</string>
-    <string name="txt_choose_photo_frame">Choose Photo Frame</string>
-    <string name="txt_add_text">Add Text</string>
-    <string name="txt_text_color">Text Color</string>
-    <string name="txt_font_type">Font Type</string>
-    <string name="txt_change_background_color">Change Background Color</string>
-    <string name="txt_choose_photo">Choose Photo</string>
-    <string name="txt_custom_photo">Custom Photo</string>
-    <string name="txt_custom_video">Video Greetings</string>
-    <string name="txt_frame">Frame</string>
-    <string name="txtbusiness">Business</string>
-    <string name="txt_add">Add</string>
-    <string name="txt_upgrade">Upgrade</string>
-    <string name="txt_buy_now">Buy Now</string>
-    <string name="txt_premium">Premium</string>
-    <string name="txt_no_internet_connection">No internet connection.</string>
-    <string name="txt_please_wait">Please wait...</string>
-    <string name="txt_some_thing_wrong">Something went wrong. Please try again later.</string>
-    <string name="txt_unable_to_connect">Sorry, we are unable to connect with server. Please try again later.</string>
-    <string name="txt_fill_all_details">Please fill details.</string>
-    <string name="txt_logout_title">Logout</string>
-    <string name="txt_logout_message">Are you sure want to logout ?</string>
-    <string name="txt_yes">Yes</string>
-    <string name="txt_no">No</string>
-    <string name="txt_edit_business">Edit Business</string>
-    <string name="txt_delete">Delete</string>
-    <string name="txt_delete_title">Delete Business</string>
-    <string name="txt_delete_message">Are you sure want to delete this business ?</string>
-    <string name="txt_edit_profile">Edit Profile</string>
-    <string name="txt_buy_title">"Buy "</string>
-    <string name="txt_buy_message">Are you sure want to buy premium package ?</string>
-    <string name="txt_credit">Credit</string>
-    <string name="txt_mark_as_current_business">Mark as current business</string>
-    <string name="txt_edit_details">Edit Details</string>
-    <string name="water_mark_text">Created From</string>
-    <string name="txt_cancel">Cancel</string>
-    <string name="txt_help_email">info.festivalpost@gmail.com</string>
-    <string name="txt_help_call">+917686894444</string>
-    <string name="txt_help_website">Website</string>
-    <string name="txt_use_this_frame">Use this Frame</string>
-    <string name="default_notification_channel_id">my_channel_01</string>
-    <string name="txt_close">Close</string>
-    <string name="txt_add_image">Add Image</string>
-    <string name="txt_search">Search</string>
-    <string name="txt_choose_date">Choose Date</string>
-    <string name="txt_activate_title">Activate</string>
-    <string name="txt_activate_message">Are you sure want to activate free plan.</string>
-    <string name="txt_active">Active</string>
-    <string name="txt_already_active">Already Actived</string>
-    <string name="txt_already_purchase">You have already purchased</string>
-    <string name="txt_activate">Activate</string>
-    <string name="txt_generating_image">Generating Image...</string>
-    <string name="txt_next_festival">Next Festivals</string>
-    <string name="under_approval">Under Approval</string>
-    <string name="festival" translatable="false">FESTIVAL</string>
-    <string name="post">POST</string>
-    <string name="view_all">View All</string>
-    <string name="lbl_no_post_found">No post available</string>
-    <string name="txt_my_posts">My Posts</string>
-
     <string-array name="photo_editor_emoji">
 
         <!-- Smiles -->
@@ -519,6 +448,78 @@
         <item>u+1f6a9</item>
     </string-array>
 
+    <string name="txt_business_name">Enter your business name</string>
+    <string name="txt_business_email">Enter your business email</string>
+    <string name="txt_business_phone">Enter your business phone number</string>
+    <string name="txt_business_website">Enter your business website</string>
+    <string name="txt_business_address">Enter your business address</string>
+    <string name="txt_finish">Finish</string>
+    <string name="txt_add_business">Add Business</string>
+    <string name="txt_save_and_share">Save and Share</string>
+    <string name="txt_choose_photo_post">Choose Photo Post</string>
+    <string name="txt_photo">Photo</string>
+    <string name="txt_done">Done</string>
+    <string name="txt_choose_photo_frame">Choose Photo Frame</string>
+    <string name="txt_add_text">Add Text</string>
+    <string name="txt_text_color">Text Color</string>
+    <string name="txt_font_type">Font Type</string>
+    <string name="txt_change_background_color">Change Background Color</string>
+    <string name="txt_choose_photo">Choose Photo</string>
+    <string name="txt_custom_photo">Custom Photo</string>
+    <string name="txt_custom_video">Video Greetings</string>
+    <string name="txt_frame">Frame</string>
+    <string name="txtbusiness">Business</string>
+    <string name="txt_add">Add</string>
+    <string name="txt_upgrade">Upgrade</string>
+    <string name="txt_buy_now">Buy Now</string>
+    <string name="txt_premium">Premium</string>
+    <string name="txt_no_internet_connection">No internet connection.</string>
+    <string name="txt_please_wait">Please wait...</string>
+    <string name="txt_some_thing_wrong">Something went wrong. Please try again later.</string>
+    <string name="txt_unable_to_connect">Sorry, we are unable to connect with server. Please try again later.</string>
+    <string name="txt_fill_all_details">Please fill details.</string>
+    <string name="txt_logout_title">Logout</string>
+    <string name="txt_logout_message">Are you sure want to logout ?</string>
+    <string name="txt_yes">Yes</string>
+    <string name="txt_no">No</string>
+    <string name="txt_edit_business">Edit Business</string>
+    <string name="txt_delete">Delete</string>
+    <string name="txt_delete_title">Delete Business</string>
+    <string name="txt_delete_message">Are you sure want to delete this business ?</string>
+    <string name="txt_edit_profile">Edit Profile</string>
+    <string name="txt_buy_title">"Buy "</string>
+    <string name="txt_buy_message">Are you sure want to buy premium package ?</string>
+    <string name="txt_credit">Credit</string>
+    <string name="txt_mark_as_current_business">Mark as current business</string>
+    <string name="txt_edit_details">Edit Details</string>
+    <string name="water_mark_text">Created From</string>
+    <string name="txt_cancel">Cancel</string>
+    <string name="txt_help_email">info.festivalpost@gmail.com</string>
+    <string name="txt_help_call">+917686894444</string>
+    <string name="txt_help_website">Website</string>
+    <string name="txt_use_this_frame">Use this Frame</string>
+    <string name="default_notification_channel_id">my_channel_01</string>
+    <string name="txt_close">Close</string>
+    <string name="txt_add_image">Add Image</string>
+    <string name="txt_search">Search</string>
+    <string name="txt_choose_date">Choose Date</string>
+    <string name="txt_activate_title">Activate</string>
+    <string name="txt_activate_message">Are you sure want to activate free plan.</string>
+    <string name="txt_active">Active</string>
+    <string name="txt_already_active">Already Actived</string>
+    <string name="txt_already_purchase">You have already purchased</string>
+    <string name="txt_activate">Activate</string>
+    <string name="txt_generating_image">Generating Image...</string>
+    <string name="txt_next_festival">Next Festivals</string>
+    <string name="under_approval">Under Approval</string>
+    <string name="festival">FESTIVAL</string>
+    <string name="post">POST</string>
+    <string name="view_all">View All</string>
+    <string name="lbl_no_post_found">No post available</string>
+    <string name="txt_my_posts">My Posts</string>
+
+
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txt_contact_settings">Contact Settings</string>
     <string name="email">Email</string>
@@ -533,5 +534,17 @@
     <string name="hint_name">Enter your name</string>
     <string name="hint_number">Enter your number</string>
     <string name="tv_sign_in"><font color='#48A8BC'>S</font>ignin</string>
+
+
+    <!-- font path-->
+
+    <string name="font_medium" translatable="false">fonts/Montserrat-Medium.ttf</string>
+    <string name="font_semibold" translatable="false">fonts/sf_ui_medium.otf</string>
+    <string name="font_bold" translatable="false">fonts/Montserrat-Bold.ttf</string>
+    <string name="font_regular" translatable="false">fonts/Montserrat-Regular.ttf</string>
+    <string name="head_festivals">Festivals</string>
+    <string name="head_categories">Categories</string>
+    <string name="lbl_new">New</string>
+    <string name="txt_video">Video</string>
 
 </resources>

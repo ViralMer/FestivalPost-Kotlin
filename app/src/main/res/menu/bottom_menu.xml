@@ -3,6 +3,9 @@
     <item android:id="@+id/action_home"
         android:title="@string/txt_home"
         android:icon="@drawable/ic_home" />
+    <item android:id="@+id/action_video"
+        android:title="@string/txt_video"
+        android:icon="@drawable/ic_profile" />
     <item android:id="@+id/action_days"
         android:title="@string/txt_festival"
         android:icon="@drawable/ic_day" />

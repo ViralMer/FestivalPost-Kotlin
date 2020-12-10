@@ -7,9 +7,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-import com.app.festivalpost.photoeditor.ScaleGestureDetector;
 
-import org.jetbrains.annotations.NotNull;
+import com.app.festivalpost.photoeditor.Vector2D;
+import com.app.photoeditor.MultiTouchListener;
+
+import com.app.photoeditor.ScaleGestureDetector;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -41,8 +45,8 @@ public class MultiTouchListenerNew implements OnTouchListener {
 
     public MultiTouchListenerNew() {
 
+        mScaleGestureDetector = new ScaleGestureDetector(new ScaleGestureListener());
         mGestureListener = new GestureDetector(new GestureListener());
-        //mScaleGestureDetector = new ScaleGestureDetector();
     }
 
 
@@ -132,12 +136,10 @@ public class MultiTouchListenerNew implements OnTouchListener {
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
-                mActivePointerId = INVALID_POINTER_ID;
-                break;
             case MotionEvent.ACTION_UP:
                 mActivePointerId = INVALID_POINTER_ID;
-
                 break;
+
             case MotionEvent.ACTION_POINTER_UP:
                 int pointerIndexPointerUp = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 int pointerId = event.getPointerId(pointerIndexPointerUp);
@@ -165,19 +167,14 @@ public class MultiTouchListenerNew implements OnTouchListener {
         this.onMultiTouchListener = onMultiTouchListener;
     }
 
-    private class ScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener implements com.app.festivalpost.utility.ScaleGestureListener {
+    private class ScaleGestureListener extends com.app.photoeditor.ScaleGestureDetector.SimpleOnScaleGestureListener {
 
         private float mPivotX;
         private float mPivotY;
-
         private Vector2D mPrevSpanVector = new Vector2D();
 
-        public ScaleGestureListener(@NotNull Vector2D mPrevSpanVector, @NotNull com.app.festivalpost.photoeditor.Vector2D CurrentSpanVector) {
-            super(mPrevSpanVector, CurrentSpanVector);
-        }
-
         @Override
-        public boolean onScaleBegin(View view, ScaleGestureDetector detector) {
+        public boolean onScaleBegin(View view, com.app.photoeditor.ScaleGestureDetector detector) {
             mPivotX = detector.getFocusX();
             mPivotY = detector.getFocusY();
             mPrevSpanVector.set(detector.getCurrentSpanVector());
@@ -188,7 +185,7 @@ public class MultiTouchListenerNew implements OnTouchListener {
         public boolean onScale(View view, ScaleGestureDetector detector) {
             TransformInfo info = new TransformInfo();
             info.deltaScale = isScaleEnabled ? detector.getScaleFactor() : 1.0f;
-            //info.deltaAngle = isRotateEnabled ? Vector2D.getAngle(mPrevSpanVector,detector.getCurrentSpanVector()) : 0.0f;
+            info.deltaAngle = isRotateEnabled ? Vector2D.Companion.getAngle(mPrevSpanVector, detector.getCurrentSpanVector()) : 0.0f;
             info.deltaX = isTranslateEnabled ? detector.getFocusX() - mPivotX : 0.0f;
             info.deltaY = isTranslateEnabled ? detector.getFocusY() - mPivotY : 0.0f;
             info.pivotX = mPivotX;
@@ -244,7 +241,7 @@ public class MultiTouchListenerNew implements OnTouchListener {
             super.onLongPress(e);
             if (mOnGestureControl != null) {
                 mOnGestureControl.onLongClick();
-                Log.d("OnLoginCliked",""+e.getAction());
+
             }
         }
 

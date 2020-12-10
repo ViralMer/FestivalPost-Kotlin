@@ -18,7 +18,7 @@
     <color name="colorWatermark">#70FFFFFF</color>
     <color name="addTextBackgroundColor">#FFFFFF</color>
     <color name="frame_border">#9A5E5E5E</color>
-    <color name="teal_500">#009688</color>
+    <color name="teal_500">#A4009688</color>
     <color name="teal_600">#00897B</color>
     <color name="teal_700">#00796B</color>
 
@@ -28,4 +28,5 @@
     <color name="ucrop_color_toolbar_widget">#fff</color>
     <color name="blue">#013D6C</color>
     <color name="colorBlue">#48A8BC</color>
+    <color name="colorCategoryNew">#DBEDDC</color>
 </resources>

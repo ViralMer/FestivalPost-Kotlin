@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.os.Build
 import android.util.Log
@@ -15,6 +17,10 @@ import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.io.IOException
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -38,10 +44,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (map.containsKey("message")) {
             message = map["message"]
         }
-        sendNotification("Hello")
+        var img_url: String? = ""
+        if (map.containsKey("image")) {
+            img_url = map["image"]
+        }
+        sendNotification(message!!,img_url!!)
     }
 
-    private fun sendNotification(message: String) {
+    private fun sendNotification(message: String, imgUrl: String) {
         mNotificationManager = this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         var homeIntent: Intent? = null
         homeIntent = Intent(this, SplashActivity::class.java)
@@ -79,6 +89,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             //            mBuilder.setSound(sound);
         }
         mBuilder.setStyle(NotificationCompat.BigTextStyle().bigText(message))
+        mBuilder.setStyle(
+            NotificationCompat.BigPictureStyle()
+                .bigPicture(getBitmapFromURL(imgUrl))
+        )
         mBuilder.setContentText(message)
         mBuilder.setContentIntent(contentIntent)
         mNotificationManager!!.notify(Random().nextInt(), mBuilder.build())
@@ -100,6 +114,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             ActivityManager.getMyMemoryState(appProcessInfo)
             return (appProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
                     || appProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE)
+        }
+    }
+
+    private fun getBitmapFromURL(strURL: String?): Bitmap? {
+        return try {
+            val url = URL(strURL)
+            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+            connection.setDoInput(true)
+            connection.connect()
+            val input: InputStream = connection.getInputStream()
+            BitmapFactory.decodeStream(input)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
         }
     }
 }

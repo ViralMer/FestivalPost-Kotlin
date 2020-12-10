@@ -22,6 +22,7 @@ import androidx.annotation.RequiresPermission
 import androidx.annotation.UiThread
 import com.app.festivalpost.R
 import com.app.festivalpost.photoeditor.PhotoEditor.Builder
+import com.app.photoeditor.MultiTouchListener
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*

@@ -6,6 +6,9 @@ import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import com.emegamart.lelys.utils.SharedPrefUtils
 import com.google.firebase.FirebaseApp
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor
+import io.github.inflationx.viewpump.ViewPump
 import okhttp3.OkHttpClient
 
 
@@ -16,6 +19,18 @@ class FestivalPost : MultiDexApplication() {
         appInstance = this
         FirebaseApp.initializeApp(this)
 
+        ViewPump.init(
+             ViewPump.builder()
+                 .addInterceptor(
+                     CalligraphyInterceptor(
+                         CalligraphyConfig.Builder()
+                             .setDefaultFontPath(resources!!.getString(R.string.font_regular))
+                             .setFontAttrId(R.attr.fontPath)
+                             .build()
+                     )
+                 )
+                 .build()
+         )
 
     }
 

@@ -111,14 +111,7 @@ class HomeFragment : Fragment(), ApiResponseListener {
         })
         openAddImageDialog()
 
-        /*try{
-            NetworkStateChecker networkStateChecker=new NetworkStateChecker();
-            getActivity().registerReceiver(networkStateChecker,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        }
-        catch (Exception e)
-        {
-
-        }*/tvnext!!.setOnClickListener(View.OnClickListener {
+       tvnext!!.setOnClickListener(View.OnClickListener {
             current_incident_index = current_incident_index + 1
             if (current_incident_index <= incidentItemArrayList!!.size - 1) {
                 val ff = incidentItemArrayList!![current_incident_index]
@@ -152,68 +145,7 @@ class HomeFragment : Fragment(), ApiResponseListener {
         Log.d("PREF_TOKEN", "" + Global.getPreference(Constant.PREF_TOKEN, ""))
     }
 
-    private fun dpToPx(dp: Int): Int {
-        val r = resources
-        return Math.round(
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp.toFloat(),
-                r.displayMetrics
-            )
-        )
-    }
 
-    internal inner class PagerAdapter : androidx.viewpager.widget.PagerAdapter() {
-        override fun getCount(): Int {
-            return todayFestivalItemArrayList!!.size
-        }
-
-        override fun isViewFromObject(view: View, `object`: Any): Boolean {
-            return view === `object`
-        }
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val view = LayoutInflater.from(activity)
-                .inflate(R.layout.custom_today_festival_item, container, false)
-            val festivalItem = todayFestivalItemArrayList!![position]
-            val ivphoto = view.findViewById<ImageView>(R.id.ivphoto)
-            val tvheading = view.findViewById<TextView>(R.id.tvheading)
-            val tvdescription = view.findViewById<TextView>(R.id.tvdescription)
-            val tvname = view.findViewById<TextView>(R.id.tvname)
-            if (festivalItem.festImage != null && !festivalItem.festImage.equals(
-                    "",
-                    ignoreCase = true
-                )
-            ) {
-                Glide.with(activity!!).load(festivalItem.festImage).into(ivphoto)
-            }
-            tvheading.text = festivalItem.festName
-            tvdescription.text = "" + festivalItem.festDay
-            tvname.text = festivalItem.festDate
-            val lay_main = view.findViewById<FrameLayout>(R.id.lay_main)
-            lay_main.tag = position
-            lay_main.setOnClickListener { view ->
-                val date = Global.getPreference(Constant.PREF_CURRRENT_DATE, "")
-                val day = getCountOfDays(date, festivalItem.festDate)
-
-//                    if (day <= 1 && day >= 0) {
-                val index = view.tag as Int
-                val f = todayFestivalItemArrayList!![index]
-                val detailact = Intent(activity, ChoosePhotoActivity::class.java)
-                detailact.putExtra("object", f)
-                activity!!.startActivity(detailact)
-                /*                  } else {
-                                Global.getAlertDialog(getActivity(), "Sorry!!", "This Festival is locked today.This festival photos will open before 24 hours of festival.");
-                            }*/
-            }
-            container.addView(view)
-            return view
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            container.removeView(`object` as View)
-        }
-    }
 
     internal inner class PagerAdapterNew : RecyclerView.Adapter<PageViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder {
