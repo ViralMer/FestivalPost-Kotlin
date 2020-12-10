@@ -558,7 +558,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
             if (ivlogoselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
-                ivlogoselect!!.setImageResource(R.drawable.logo_light)
+                ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
                 setPrefernces("false", "1")
                 linearLogo!!.setBackgroundResource(0)
                 linearLogo!!.visibility = View.GONE
@@ -587,7 +587,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
         })
         ivemailselect!!.setOnClickListener(View.OnClickListener {
             if (ivemailselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.email_select).constantState) {
-                ivemailselect!!.setImageResource(R.drawable.email_light)
+                ivemailselect!!.setImageResource(R.drawable.email_deselect)
                 setPrefernces("false", "3")
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.GONE
@@ -618,7 +618,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
         })
         ivphoneselect!!.setOnClickListener(View.OnClickListener {
             if (ivphoneselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
-                ivphoneselect!!.setImageResource(R.drawable.mobile_light)
+                ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
                 phoneLine!!.visibility = View.GONE
                 setPrefernces("false", "2")
                 linearPhone!!.visibility = View.GONE
@@ -651,7 +651,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
         })
         ivwebsiteselect!!.setOnClickListener(View.OnClickListener {
             if (ivwebsiteselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.website_select).constantState) {
-                ivwebsiteselect!!.setImageResource(R.drawable.website_light)
+                ivwebsiteselect!!.setImageResource(R.drawable.website_deselect)
                 websiteLine!!.visibility = View.GONE
                 setPrefernces("false", "5")
                 linearWebsite!!.visibility = View.GONE
@@ -683,8 +683,8 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
             }
         })
         ivaddressselect!!.setOnClickListener(View.OnClickListener {
-            if (ivaddressselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.address_select).constantState) {
-                ivaddressselect!!.setImageResource(R.drawable.address_light)
+            if (ivaddressselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.location_select).constantState) {
+                ivaddressselect!!.setImageResource(R.drawable.location_deselect)
                 setPrefernces("false", "4")
                 linearAddress!!.visibility = View.GONE
                 linearAddress!!.setBackgroundResource(0)
@@ -698,7 +698,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                 ivemailclose!!.visibility = View.GONE
                 ivnameClose!!.visibility = View.GONE
             } else {
-                ivaddressselect!!.setImageResource(R.drawable.address_select)
+                ivaddressselect!!.setImageResource(R.drawable.location_select)
                 setPrefernces("true", "4")
                 linearAddress!!.setBackgroundResource(0)
                 linearAddress!!.visibility = View.VISIBLE
@@ -714,8 +714,8 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
             }
         })
         ivnameSelect!!.setOnClickListener(View.OnClickListener {
-            if (ivnameSelect!!.getDrawable().constantState === resources.getDrawable(R.drawable.businessname_select).constantState) {
-                ivnameSelect!!.setImageResource(R.drawable.businessname_light)
+            if (ivnameSelect!!.getDrawable().constantState === resources.getDrawable(R.drawable.name_select).constantState) {
+                ivnameSelect!!.setImageResource(R.drawable.name_deselect)
                 setPrefernces("false", "6")
                 frameName!!.visibility = View.GONE
                 linearName!!.visibility = View.GONE
@@ -728,7 +728,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                 ivemailclose!!.visibility = View.GONE
                 ivnameClose!!.visibility = View.GONE
             } else {
-                ivnameSelect!!.setImageResource(R.drawable.businessname_select)
+                ivnameSelect!!.setImageResource(R.drawable.name_select)
                 setPrefernces("true", "6")
                 linearName!!.visibility = View.VISIBLE
                 tvframename!!.visibility = View.VISIBLE

@@ -546,5 +546,8 @@
     <string name="head_categories">Categories</string>
     <string name="lbl_new">New</string>
     <string name="txt_video">Video</string>
+    <string name="txt_buy_premium">Buy Premium</string>
+    <string name="txt_digitalcard">Digital Card</string>
+    <string name="txt_background_color">Background Color</string>
 
 </resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_home"
+        android:title="@string/txt_home"
+        android:icon="@drawable/home_select" />
+    <item android:id="@+id/nav_video"
+        android:title="@string/txt_video"
+        android:icon="@drawable/video_deselect" />
+    <item android:id="@+id/nav_digitalcard"
+        android:title="@string/txt_digitalcard"
+        android:icon="@drawable/digitalcard_deselect" />
+    <item android:id="@+id/nav_post"
+        android:title="@string/txt_my_posts"
+        android:icon="@drawable/post_deselect" />
+    <item android:id="@+id/nav_profile"
+        android:title="@string/txt_account"
+        android:icon="@drawable/user_deselect" />
+</menu>
