@@ -136,8 +136,10 @@ class HomeFragment : Fragment(), ApiResponseListener {
         })
     }
 
+
     private fun loadDetails() {
         Global.showProgressDialog(activity)
+        Global.storePreference(Constant.PREF_TOKEN,"$2y$12$Hjq0ejUIq8TkEA9QTpIrH.v1aP1dOrsFcuDW4hEzrIySkdTFeu/VO")
         apiManager!!.gethomepage(
             ApiEndpoints.gethomepage,
             Global.getPreference(Constant.PREF_TOKEN, "")
