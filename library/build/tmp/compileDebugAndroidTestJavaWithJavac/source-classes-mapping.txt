@@ -1,0 +1,12 @@
+com/anjlab/android/iab/v3/BillingHistoryRecordTest.java
+ com.anjlab.android.iab.v3.BillingHistoryRecordTest
+com/anjlab/android/iab/v3/TransactionDetailsParcelableTest.java
+ com.anjlab.android.iab.v3.TransactionDetailsParcelableTest
+com/anjlab/android/iab/v3/test/BuildConfig.java
+ com.anjlab.android.iab.v3.test.BuildConfig
+com/anjlab/android/iab/v3/util/ResourcesUtil.java
+ com.anjlab.android.iab.v3.util.ResourcesUtil
+com/anjlab/android/iab/v3/PurchaseInfoParcelableTest.java
+ com.anjlab.android.iab.v3.PurchaseInfoParcelableTest
+com/anjlab/android/iab/v3/SkuDetailsParcelableTest.java
+ com.anjlab.android.iab.v3.SkuDetailsParcelableTest
