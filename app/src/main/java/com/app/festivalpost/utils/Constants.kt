@@ -16,14 +16,7 @@ object Constants {
     const val myPreferences = "MyPreferences"
 
     object Config {
-         const  val DEFAULT_URL = "https://lelys.in/wp-json/"
-         const  val BASE_URL= DEFAULT_URL+"wp-json/"
-     /*    const val consumerKey = "ZH0mxMZ63h22"
-         const val consumerSecret = "z5RTcjT0NseqCYbfTQXaSwSNC054HLp0SGGhqbMKlpWWtOTH"
-         const val token = "gN3kZdeh2Yyh6Ntdvip4Mokf"
-         const val tokenSecret = "EhhwL3Ta6GSevnG6aKd4pCdp2X3rosIivzubXmZxSLkByi31"
-*/
-
+         const  val DEFAULT_URL = "http://festivalpost.in/admin/api/"
 
         const val consumerKey = "Qsk7UvpblBVV"
         const val consumerSecret = "UvmxJR63NFlDQsRK92s0vPED0IB8uhQdEmMoCFaymYpoOamn"
@@ -118,6 +111,12 @@ object Constants {
         const val POSTCODE = "postcode"
         const val EMAIL = "email"
         const val ORDER_ID = "order_id"
+        const val LOG_OUT = "logout"
+        const val IS_PREMIUM = "is_premium"
+        const val CURRENT_DATE = "current_date"
+        const val FRAME_LIST = "frame_list"
+        const val CURRENT_BUSINESS = "current_business"
+        const val CURRENT_BUSINESS_NEW = "current_business_new"
     }
 
     object OrderStatus {

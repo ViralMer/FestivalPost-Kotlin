@@ -271,7 +271,7 @@ class ApiManager {
                 .add("email", email)
                 .add("mobile", mobile)
                 .add("ref_code", referral_code)
-                .add("device_id", MyApplication.deviceInfo!!.deviceUDID)
+                .add("device_id", "MyApplication.deviceInfo!!.deviceUDID")
                 .add("device_token", deviceToken)
                 .build()
             val request =
@@ -293,7 +293,7 @@ class ApiManager {
             val formBody = FormEncodingBuilder()
                 .add("mobile", mobile)
                 .add("device_token", deviceToken)
-                .add("device_id", MyApplication.deviceInfo!!.deviceUDID)
+                .add("device_id", "MyApplication.deviceInfo!!.deviceUDID")
                 .build()
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
@@ -320,7 +320,7 @@ class ApiManager {
                 .add("plan_id", plan_id)
                 .add("order_id", order_id)
                 .add("remainingcredit", amount)
-                .add("device_id", MyApplication.deviceInfo!!.deviceUDID)
+                .add("device_id", "MyApplication.deviceInfo!!.deviceUDID")
                 .build()
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)

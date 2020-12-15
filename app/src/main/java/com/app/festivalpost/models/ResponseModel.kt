@@ -1,62 +1,23 @@
-package com.emegamart.lelys.models
+package com.app.festivalpost.models
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import android.provider.Settings.Secure
-import com.app.festivalpost.R
-import com.app.festivalpost.models.BusinessItem
+import android.os.Parcel
+import android.os.Parcelable
 import java.io.Serializable
 
-@SuppressLint("HardwareIds")
-class DeviceInfo(_context: Context) : Serializable {
-    var deviceUDID = ""
-    var deviceToken = ""
-    var appName = ""
-    var appVersion = ""
-    var deviceSystemVersion = ""
-    var deviceModel = ""
-    var deviceName = ""
-    var development = ""
-    var PlatformType = ""
-    var deviceType = ""
 
-    init {
-        deviceUDID = Secure.getString(
-            _context.contentResolver,
-            Secure.ANDROID_ID
-        )
-        try {
-            appName = _context
-                .getString(
-                    _context.packageManager.getPackageInfo(
-                        _context.packageName, 0
-                    ).applicationInfo.labelRes
-                )
-        } catch (e: PackageManager.NameNotFoundException) {
-            appName = _context.getString(R.string.app_name)
-            e.printStackTrace()
-        }
-        try {
-            appVersion = _context.packageManager.getPackageInfo(
-                _context.packageName, 0
-            ).versionName
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        }
-        deviceSystemVersion = Build.VERSION.RELEASE
-        deviceModel = Build.MODEL
-        deviceName = Build.MANUFACTURER
-        development = "production"
-        PlatformType = "Android"
-    }
-
-    data class HomePageResponse(
-        val slider:ArrayList<HomePageItem>,
-        val festival:ArrayList<HomePageItem>,
-        val cateogry:ArrayList<HomePageItem>,
-        val current_business:CurrentBusinessItem
+data class HomePageResponse(
+    val slider:ArrayList<HomePageItem?>,
+    val festival:ArrayList<HomePageItem?>,
+    val cateogry:ArrayList<HomePageItem?>,
+    val frameList:ArrayList<FrameListItem>,
+    val current_business: CurrentBusinessItem,
+    val current_business_new: CurrentBusinessItem,
+    val premium:Boolean?=false,
+    val logout:Boolean?=false,
+    val current_date:String?=null,
+    val share_message:String?=null,
+    val status:Boolean?=null,
+    val message:String?=null,
     )
 
     data class HomePageItem(
@@ -85,6 +46,28 @@ class DeviceInfo(_context: Context) : Serializable {
         val busi_delete:Int?=0
     )
 
+data class FrameListItem1(
+        val user_frames_id:Int?=0,
+        val user_id:Int?=0,
+        val business_id:Int?=0,
+        val frame_url:String?=null,
+        val is_deleted:Int?=0,
+        val date_added:String?=null
+    )
+
+    data class CategoryImagesResponse(
+        val data: ArrayList<CategoryItem?>,
+        val status:Boolean?=false,
+        val message: String?=null
+    )
+
+data class CategoryItem(
+    val post_id:Int?=0,
+    val post_category_id:Int?=0,
+    val post_is_deleted:Int?=0,
+    val post_content:String?=null,
+    var is_selected:Boolean?=false,
+
+    )
 
 
-}

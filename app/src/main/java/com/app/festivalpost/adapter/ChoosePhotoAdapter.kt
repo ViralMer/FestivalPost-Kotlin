@@ -9,24 +9,27 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.OnItemClickListener
 
 import com.app.festivalpost.R
-import com.app.festivalpost.models.PhotoItem
+import com.app.festivalpost.models.CategoryItem
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
-import java.util.*
+import kotlin.collections.ArrayList
 
-class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<PhotoItem>) :
+class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<CategoryItem?>) :
     RecyclerView.Adapter<ChoosePhotoAdapter.ViewHolder>() {
     var searchCount = 0
-    var onItemClickListener: OnItemClickListener
+    var onItemClickListener: OnItemClickListener = context as OnItemClickListener
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view: View? = null
-        view = LayoutInflater.from(parent.context).inflate(R.layout.custom_choose_photo_item, null)
-        return ViewHolder(view)
+        val view: View? =
+            LayoutInflater.from(parent.context).inflate(R.layout.custom_choose_photo_item, null)
+        return ViewHolder(view!!)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photoItem = originaldata[position]
-        if (!photoItem.post_content.equals(
+
+
+
+        if (!photoItem!!.post_content.equals(
                 "",
                 ignoreCase = true
             )
@@ -36,11 +39,13 @@ class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<Photo
         }
 
 
-        if (photoItem.isIs_selected) {
+        if (photoItem.is_selected!!) {
             holder.viewselected.visibility = View.VISIBLE
         } else {
             holder.viewselected.visibility = View.GONE
         }
+
+
         holder.layMain.tag = position
         holder.layMain.setOnClickListener { view ->
             val index = view.tag as Int
@@ -48,11 +53,7 @@ class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<Photo
             onItemClickListener.onItemClicked(p, 0)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
-                if (i != index) {
-                    pp.setIs_selected(false)
-                } else {
-                    pp.setIs_selected(true)
-                }
+                pp!!.is_selected = i == index
                 originaldata[i] = pp
             }
             notifyDataSetChanged()
@@ -64,18 +65,10 @@ class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<Photo
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val layMain: LinearLayout
-        val ivphoto: RoundedImageView
-        val viewselected: View
+        val layMain: LinearLayout = itemView.findViewById<View>(R.id.lay_main) as LinearLayout
+        val ivphoto: RoundedImageView = itemView.findViewById<View>(R.id.ivphoto) as RoundedImageView
+        val viewselected: View = itemView.findViewById(R.id.viewselected) as View
 
-        init {
-            layMain = itemView.findViewById<View>(R.id.lay_main) as LinearLayout
-            ivphoto = itemView.findViewById<View>(R.id.ivphoto) as RoundedImageView
-            viewselected = itemView.findViewById(R.id.viewselected) as View
-        }
     }
 
-    init {
-        onItemClickListener = context as OnItemClickListener
-    }
 }

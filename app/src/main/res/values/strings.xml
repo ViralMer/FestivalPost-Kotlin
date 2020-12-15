@@ -549,5 +549,9 @@
     <string name="txt_buy_premium">Buy Premium</string>
     <string name="txt_digitalcard">Digital Card</string>
     <string name="txt_background_color">Background Color</string>
+    <string name="error_no_internet">No Internet</string>
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="lbl_tap_to_retry">Tap to Retry</string>
+    <string name="token">$2y$12$m0CtxvTSN0iRmOFAKlfxkOz2O70XVioaz.a2wGp4TimPnFYz5FbFC</string>
 
 </resources>

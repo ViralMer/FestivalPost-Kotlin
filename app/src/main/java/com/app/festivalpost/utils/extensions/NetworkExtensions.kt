@@ -1,7 +1,13 @@
-/*
-package com.emegamart.lelys.utils.extensions
+package com.app.festivalpost.utils.extensions
 
 import android.util.Log
+import com.app.festivalpost.BuildConfig
+import com.app.festivalpost.FestivalPost.Companion.getAppInstance
+import com.app.festivalpost.R
+import com.emegamart.lelys.network.RestApis
+import com.emegamart.lelys.network.RetrofitClientFactory
+import com.emegamart.lelys.utils.extensions.getHtmlString
+import com.emegamart.lelys.utils.extensions.isNetworkAvailable
 import com.google.gson.Gson
 
 import okhttp3.Request
@@ -9,10 +15,13 @@ import okhttp3.ResponseBody
 import okio.Buffer
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
-fun getRestApis(useSignature: Boolean = true): RestApis {
-    return RetrofitClientFactory().getRetroFitClient(useSignature).create(RestApis::class.java)
+fun getRestApis(): RestApis {
+    return RetrofitClientFactory().getRetroFitClient().create(RestApis::class.java)
 }
 
 fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aError: String) -> Unit = {}, onNetworkError: () -> Unit = {}) {
@@ -50,7 +59,8 @@ fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aErr
                     onApiError(t.message!!)}
                 }
                 if (t.message!=null){
-                logData(call.request(), t.message!!, isError = true)}
+                logData(call.request(), t.message!!, isError = true)
+                }
             }
         }
     })
@@ -119,4 +129,3 @@ fun getErrorMessageByHttpCode(aHttpCode: Int): String {
         else -> "Something went wrong"
     }
 }
-*/

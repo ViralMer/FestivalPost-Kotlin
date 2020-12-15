@@ -9,7 +9,7 @@ import android.util.Log
 import androidx.multidex.MultiDex
 import com.app.festivalpost.activity.MyApplication
 import com.google.firebase.FirebaseApp
-import com.emegamart.lelys.models.DeviceInfo
+
 import java.lang.Exception
 import kotlin.jvm.Synchronized
 
@@ -25,7 +25,7 @@ class MyApplication : Application() {
         FirebaseApp.initializeApp(this)
         appContext = applicationContext
         init()
-        deviceInfo = DeviceInfo(this)
+        //deviceInfo = DeviceInfo(this)
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
@@ -62,7 +62,7 @@ class MyApplication : Application() {
     companion object {
         @JvmField
 		var sharedPref: SharedPreferences? = null
-        var deviceInfo: DeviceInfo? = null
+        //var deviceInfo: DeviceInfo? = null
         var appContext: Context? = null
             private set
         val TAG = MyApplication::class.java

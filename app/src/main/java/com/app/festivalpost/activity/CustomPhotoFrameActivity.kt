@@ -1252,13 +1252,13 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                         frameName!!.setVisibility(View.VISIBLE)
                         tvframename!!.setVisibility(View.VISIBLE)
                         tvframename!!.setText(businessItem.busiName)
-                        ivnameSelect!!.setImageResource(R.drawable.businessname_select)
+                        ivnameSelect!!.setImageResource(R.drawable.name_deselect)
                     }
                     if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
                         linearLogo!!.setVisibility(View.VISIBLE)
                         ivframelogo!!.setVisibility(View.VISIBLE)
                         frameLogo!!.setVisibility(View.VISIBLE)
-                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
+                        ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
                         Glide.with(this@CustomPhotoFrameActivity).load(businessItem.busiLogo)
                             .into(ivframelogo!!)
                     }
@@ -1268,7 +1268,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                         ivcall!!.setVisibility(View.VISIBLE)
                         tvframephone!!.setVisibility(View.VISIBLE)
                         tvframephone!!.setText(businessItem.busiMobile)
-                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
                     }
                 } else if (index1 == 2) {
                     if (businessItem.busiName != "" && businessItem.busiName != null) {
@@ -1276,7 +1276,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                         frameName!!.setVisibility(View.VISIBLE)
                         tvframename!!.setVisibility(View.VISIBLE)
                         tvframename!!.setText(businessItem.busiName)
-                        ivnameSelect!!.setImageResource(R.drawable.businessname_select)
+                        ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
                     if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
                         linearLogo!!.setVisibility(View.VISIBLE)
@@ -1300,7 +1300,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                         tvframelocation!!.setVisibility(View.VISIBLE)
                         frameAddress!!.setVisibility(View.VISIBLE)
                         tvframelocation!!.setText(businessItem.busiAddress)
-                        ivaddressselect!!.setImageResource(R.drawable.address_select)
+                        ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
                     if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
                         linearEmail!!.setVisibility(View.VISIBLE)
@@ -1349,7 +1349,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                         frameName!!.setVisibility(View.VISIBLE)
                         tvframename!!.setVisibility(View.VISIBLE)
                         tvframename!!.setText(businessItem.busiName)
-                        ivnameSelect!!.setImageResource(R.drawable.businessname_select)
+                        ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
                     if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
                         linearLogo!!.setVisibility(View.VISIBLE)
@@ -1704,7 +1704,7 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
                         tvframelocation!!.setVisibility(View.VISIBLE)
                         frameAddress!!.setVisibility(View.VISIBLE)
                         tvframelocation!!.setText(businessItem.busiAddress)
-                        ivaddressselect!!.setImageResource(R.drawable.address_select)
+                        ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
                     if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
                         linearEmail!!.setVisibility(View.VISIBLE)
@@ -1728,32 +1728,32 @@ class CustomPhotoFrameActivity : AppCompatActivity(), ApiResponseListener,OnItem
             ivphoneclose!!.setOnClickListener(View.OnClickListener {
                 framePhone!!.setVisibility(View.GONE)
                 ivphotoclose!!.setVisibility(View.GONE)
-                ivphoneselect!!.setImageResource(R.drawable.mobile_light)
+                ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
             })
             ivphotoclose!!.setOnClickListener(View.OnClickListener {
                 frameLogo!!.setVisibility(View.GONE)
                 ivphotoclose!!.setVisibility(View.GONE)
-                ivlogoselect!!.setImageResource(R.drawable.logo_light)
+                ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
             })
             ivemailclose!!.setOnClickListener(View.OnClickListener {
                 frameEmail!!.setVisibility(View.GONE)
                 ivemailclose!!.setVisibility(View.GONE)
-                ivemailselect!!.setImageResource(R.drawable.email_light)
+                ivemailselect!!.setImageResource(R.drawable.email_deselect)
             })
             ivwebsiteclose!!.setOnClickListener(View.OnClickListener {
                 frameWebsite!!.setVisibility(View.GONE)
                 ivwebsiteclose!!.setVisibility(View.GONE)
-                ivwebsiteselect!!.setImageResource(R.drawable.website_light)
+                ivwebsiteselect!!.setImageResource(R.drawable.website_deselect)
             })
             ivaddressclose!!.setOnClickListener(View.OnClickListener {
                 frameAddress!!.setVisibility(View.GONE)
                 ivaddressclose!!.setVisibility(View.GONE)
-                ivaddressselect!!.setImageResource(R.drawable.address_light)
+                ivaddressselect!!.setImageResource(R.drawable.location_deselect)
             })
             ivnameClose!!.setOnClickListener(View.OnClickListener {
                 frameName!!.setVisibility(View.GONE)
                 ivnameClose!!.setVisibility(View.GONE)
-                ivnameSelect!!.setImageResource(R.drawable.businessname_light)
+                ivnameSelect!!.setImageResource(R.drawable.name_deselect)
             })
         }
         llframe!!.addView(frame_view)

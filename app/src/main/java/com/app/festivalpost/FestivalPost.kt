@@ -14,6 +14,8 @@ import okhttp3.OkHttpClient
 
 class FestivalPost : MultiDexApplication() {
 
+    private var progressDialog: Dialog? = null
+
     override fun onCreate() {
         super.onCreate()
         appInstance = this
@@ -33,6 +35,8 @@ class FestivalPost : MultiDexApplication() {
          )
 
     }
+
+
 
 
     override fun attachBaseContext(base: Context) {

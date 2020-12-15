@@ -28,7 +28,7 @@
 
 
     <application
-        android:name=".activity.MyApplication"
+        android:name=".FestivalPost"
         android:allowBackup="true"
         android:extractNativeLibs="true"
         android:hardwareAccelerated="false"
@@ -60,7 +60,7 @@
         <activity android:name=".activity.MyPostActivity" />
         <activity android:name=".activity.SampleActivity" />
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".activity.HomeActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -90,7 +90,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.HomeActivity"
+            android:name=".activity.SplashActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity

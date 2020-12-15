@@ -25,9 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.app.festivalpost.GridSpacingItemDecoration
-import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.SaveAndShareActivity
 import com.app.festivalpost.adapter.ChoosePhotoAdapter
 import com.app.festivalpost.adapter.LocalFrameAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
@@ -35,6 +33,7 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.BusinessItem
+import com.app.festivalpost.models.CategoryItem
 import com.app.festivalpost.models.FestivalItem
 import com.app.festivalpost.models.PhotoItem
 import com.app.festivalpost.photoeditor.PhotoEditor
@@ -89,14 +88,14 @@ class ChoosePhotoBkpActivity : AppCompatActivity(), ApiResponseListener,OnItemCl
         apiManager!!.getfestivalimages(ApiEndpoints.getfestivalimages, festivalItem!!.festId)
     }
 
-    var photoItemArrayList = ArrayList<PhotoItem>()
+    var photoItemArrayList = ArrayList<CategoryItem?>()
     fun fillData() {
-        if (photoItemArrayList.size > 0) {
-            val adapter = ChoosePhotoAdapter(this@ChoosePhotoBkpActivity, photoItemArrayList)
+        /*if (photoItemArrayList.size > 0) {
+            val adapter = ChoosePhotoAdapter(this@ChoosePhotoBkpActivity, photoItemArrayList!!)
             rvdata!!.adapter = adapter
         } else {
             Global.showFailDialog(this@ChoosePhotoBkpActivity, message)
-        }
+        }*/
 
 //        apiManager.getmycurrentbusiness(ApiEndpoints.getmycurrentbusiness, Global.getPreference(Constant.PREF_TOKEN, ""));
     }
@@ -348,7 +347,7 @@ class ChoosePhotoBkpActivity : AppCompatActivity(), ApiResponseListener,OnItemCl
                     for (i in 0 until jsonArray.length()) {
                         val j = jsonArray.getJSONObject(i)
                         val f = Gson().fromJson(j.toString(), PhotoItem::class.java)
-                        photoItemArrayList.add(f)
+                        //photoItemArrayList.add(f)
                     }
                 }
             }

@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.fragment.AccountFragment
 import com.app.festivalpost.fragment.CustomFragment
@@ -15,7 +16,7 @@ import com.app.festivalpost.fragment.HomeFragment
 import com.app.festivalpost.utility.NetworkStateChecker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppBaseActivity() {
     var tvaction: TextView? = null
     var tvtitle: TextView? = null
     var mBottomNavigationView: BottomNavigationView? = null
@@ -24,6 +25,8 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setActionbar()
+        val toolbar=findViewById<View>(R.id.toolbar) as Toolbar
+         tvaction=toolbar.findViewById<View>(R.id.tvaction) as TextView
         tvaction!!.setOnClickListener {
             try {
                 val detailact = Intent(this@HomeActivity, ChooseFrameActivityNew::class.java)
@@ -116,7 +119,7 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        tvtitle!!.text = resources.getString(R.string.txt_home)
+        //tvtitle!!.text = resources.getString(R.string.txt_home)
     }
 
     fun loadHomeFragment1() {
@@ -125,7 +128,7 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        tvtitle!!.text = resources.getString(R.string.txt_home)
+        //tvtitle!!.text = resources.getString(R.string.txt_home)
     }
 
     private fun loadDaysFragment() {
@@ -134,7 +137,7 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        tvtitle!!.text = resources.getString(R.string.txt_festival)
+        //tvtitle!!.text = resources.getString(R.string.txt_festival)
     }
 
 
@@ -145,7 +148,7 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        tvtitle!!.text = resources.getString(R.string.txt_custom)
+        //tvtitle!!.text = resources.getString(R.string.txt_custom)
     }
 
     private fun loadAccountFragment() {
@@ -154,7 +157,7 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        tvtitle!!.text = resources.getString(R.string.txt_account)
+        //tvtitle!!.text = resources.getString(R.string.txt_account)
     }
 
     fun setActionbar() {
@@ -162,9 +165,8 @@ class HomeActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
-        tvtitle!!.text = resources.getString(R.string.txt_home)
+
     }
 
     override fun onBackPressed() {

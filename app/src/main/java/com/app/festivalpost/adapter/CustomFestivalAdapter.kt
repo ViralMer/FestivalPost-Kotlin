@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.festivalpost.ChoosePhotoActivity
+import com.app.festivalpost.activity.ChoosePhotoActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global

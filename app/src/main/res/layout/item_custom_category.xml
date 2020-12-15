@@ -26,10 +26,10 @@
             app:riv_corner_radius="8dp" />
 
         <TextView
-            android:id="@+id/tvnew"
+            android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_gravity="start"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_5sdp"
@@ -47,8 +47,8 @@
     </FrameLayout>
 
     <TextView
-
-        android:layout_width="wrap_content"
+        android:id="@+id/tvTitle"
+        android:layout_width="@dimen/_80sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/_2sdp"
