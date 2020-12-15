@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
+import com.emegamart.lelys.network.RestApis
 import com.emegamart.lelys.utils.SharedPrefUtils
 import com.google.firebase.FirebaseApp
 import io.github.inflationx.calligraphy3.CalligraphyConfig
@@ -46,7 +47,7 @@ class FestivalPost : MultiDexApplication() {
 
     companion object {
         private lateinit var appInstance: FestivalPost
-        //var restApis: RestApis? = null
+        var restApis: RestApis? = null
         var okHttpClient: OkHttpClient? = null
         var sharedPrefUtils: SharedPrefUtils? = null
         var noInternetDialog: Dialog? = null

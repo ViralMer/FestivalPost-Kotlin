@@ -552,6 +552,19 @@
     <string name="error_no_internet">No Internet</string>
     <string name="error_something_went_wrong">Something went wrong</string>
     <string name="lbl_tap_to_retry">Tap to Retry</string>
-    <string name="token">$2y$12$m0CtxvTSN0iRmOFAKlfxkOz2O70XVioaz.a2wGp4TimPnFYz5FbFC</string>
+    <string name="token">$2y$12$mECpzfmQ7yYSQd6IwEITyeUJ81uNUSSwpl6Y03pJ2QbBWckraDK0K</string>
+    <string name="lbl_add_business"><font color='#48A8BC'>A</font>dd Business</string>
+    <string name="lbl_tap_choose"><![CDATA[Tap & Choose]]></string>
+    <string name="hint_business_name">Enter your business name</string>
+    <string name="hint_mobile_one">Enter your business mobile 1</string>
+    <string name="hint_mobile_two">Mobile 2 (Optional)</string>
+    <string name="hint_business_email">Enter your business email</string>
+    <string name="hint_business_website">Enter your business website</string>
+    <string name="hint_business_address">Enter your business address</string>
+    <string name="hint_business_category">Business Category</string>
+    <string name="txt_upgrade_now">Upgrade Now</string>
+    <string name="lbl_my_business">My Business</string>
+    <string name="txt_add_new_business">Add new Business</string>
+    <string name="lbl_help_support"><![CDATA[Help & Support]]></string>
 
 </resources>

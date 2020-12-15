@@ -110,7 +110,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChoosePhotoActivity"
+            android:name=".activity.ChoosePhotoActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity

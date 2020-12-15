@@ -100,6 +100,7 @@ class HomeFragment : BaseFragment() {
             ) {
                 Glide.with(activity!!).load(festivalItem.fest_image).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(ivphoto)
             }
+
             container.addView(view)
             return view
         }
@@ -221,12 +222,12 @@ class HomeFragment : BaseFragment() {
 
 
 
-                    if (!res.logout!!) {
-                        Global.storePreference(Constant.PREF_TOKEN, "")
+                    if (res.logout!!) {
+                       /* Global.storePreference(Constant.PREF_TOKEN, "")
                         Global.storePreference(Constant.PREF_LOGIN, false)
                         Global.storePreference(Constant.PREF_CURRENT_BUSINESS, "")
                         Global.storePreference(Constant.PREF_SCORE, "")
-                        Global.storePreference(Constant.PREF_LOGOUT, false)
+                        Global.storePreference(Constant.PREF_LOGOUT, false)*/
                         val detailAct = Intent(
                             activity, LoginActivity::class.java
                         )
@@ -244,7 +245,7 @@ class HomeFragment : BaseFragment() {
                             startActivity(intent)
                             activity!!.finish()
                         } else {
-                            if (Global.getPreference(Constant.PREF_CURRENT_BUSINESS, "") == "") {
+                            /*if (Global.getPreference(Constant.PREF_CURRENT_BUSINESS, "") == "") {
                                 val intent = Intent(
                                     activity, AddFirstBusinessActivity::class.java
                                 )
@@ -252,7 +253,7 @@ class HomeFragment : BaseFragment() {
                                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
                                 activity!!.finish()
-                            }
+                            }*/
                         }
                     }
 

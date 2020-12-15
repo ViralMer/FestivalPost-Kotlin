@@ -6,17 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/colorWhite"
-
-    tools:context=".LoginActivity">
+    >
 
     <androidx.appcompat.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,46 +22,100 @@
             android:orientation="horizontal"
             android:padding="14dp">
 
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:src="@drawable/ic_baseline_keyboard_backspace_24"
+
+                />
 
 
             <TextView
                 android:id="@+id/tvtitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:fontFamily="@font/antipastopro_medium_trial"
                 android:textColor="@color/colorBlack"
-                android:text="@string/txt_signup"
-                android:textStyle="bold"
+                android:text="@string/lbl_my_business"
                 android:textSize="@dimen/_16ssp"/>
 
             <TextView
                 android:id="@+id/tvaction"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:background="@drawable/small_button_bg"
-                android:text="@string/txt_custom"
-                android:textStyle="bold"
+                android:paddingLeft="@dimen/_7sdp"
+                android:paddingRight="@dimen/_7sdp"
+                android:text="@string/txt_add_new_business"
+                android:visibility="visible"
+
+                android:drawableRight="@drawable/ic_baseline_add_24"
                 android:textColor="@color/colorBlack"
-                android:textSize="14dp" />
+                android:textSize="@dimen/_11ssp" />
         </LinearLayout>
+
+
 
 
 
     </androidx.appcompat.widget.Toolbar>
 
-  <ListView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="10"
+        android:background="@color/colorWhite"
+        >
+
+  <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/lvdata"
       android:dividerHeight="1dp"
       android:divider="@color/colorDivider"
       android:layout_marginTop="16dp"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
-  </ListView>
+      android:layout_height="wrap_content">
+  </androidx.recyclerview.widget.RecyclerView>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:orientation="vertical"
+        android:gravity="right|bottom"
+        android:padding="@dimen/_10sdp"
+        >
+
+        <ImageView
+            android:id="@+id/ivWhatsapp"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:src="@drawable/whatsapp"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:fontFamily="@font/antipastopro_medium_trial"
+
+            android:text="@string/lbl_help_support"
+            android:textSize="@dimen/_12ssp"/>
+
+
+
+    </LinearLayout>
+
 
 </LinearLayout>

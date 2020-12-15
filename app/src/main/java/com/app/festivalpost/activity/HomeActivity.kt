@@ -92,19 +92,23 @@ class HomeActivity : AppBaseActivity() {
         mBottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
         mBottomNavigationView!!.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.action_home -> {
+                R.id.nav_home -> {
                     loadHomeFragment()
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.action_days -> {
-                    loadDaysFragment()
+                R.id.nav_video -> {
+                    //loadDaysFragment()
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.action_post -> {
-                    loadCustomFragment()
+                R.id.nav_digitalcard -> {
+                    //loadCustomFragment()
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.action_account -> {
+                R.id.nav_post -> {
+                    //loadAccountFragment()
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.nav_profile -> {
                     loadAccountFragment()
                     return@OnNavigationItemSelectedListener true
                 }

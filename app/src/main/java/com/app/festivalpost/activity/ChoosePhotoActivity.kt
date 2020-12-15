@@ -76,15 +76,15 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
         } else {
             tvtitle.text = intent.getStringExtra("category_name")
         }
-        tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
+        tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
         animateButton()
         tvaction!!.setOnClickListener {
             if (day in 0..1) {
-                val detailact =
+                /*val detailact =
                     Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)
                 detailact.putExtra("photo_path", photo_path)
-                startActivity(detailact)
+                startActivity(detailact)*/
             } else {
                 Global.getAlertDialog(
                     this@ChoosePhotoActivity,
@@ -183,10 +183,10 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
 
     private fun loadCategoryImages() {
         showProgress(true)
-        val token = getString(R.string.token)
+
 
         callApi(
-            getRestApis().getCategoryImages(token),
+            getRestApis().getCategoryImages(intent.getStringExtra("category_id")!!),
             onApiSuccess = { res ->
                 showProgress(false)
                 if (res.status!!) {
