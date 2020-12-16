@@ -13,10 +13,8 @@ import com.emegamart.lelys.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
-class RegisterActivity : AppBaseActivity(), View.OnFocusChangeListener {
-    var apiManager: ApiManager? = null
-    var status = false
-    var message = ""
+class RegisterActivity : AppBaseActivity() {
+
     private var tvsignin: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

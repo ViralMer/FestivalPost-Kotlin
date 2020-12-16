@@ -20,72 +20,14 @@ class HomeActivity : AppBaseActivity() {
     var tvaction: TextView? = null
     var tvtitle: TextView? = null
     var mBottomNavigationView: BottomNavigationView? = null
-    var networkStateChecker: NetworkStateChecker? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        setActionbar()
-        val toolbar=findViewById<View>(R.id.toolbar) as Toolbar
-         tvaction=toolbar.findViewById<View>(R.id.tvaction) as TextView
-        tvaction!!.setOnClickListener {
-            try {
-                val detailact = Intent(this@HomeActivity, ChooseFrameActivityNew::class.java)
-                startActivity(detailact)
-            } catch (e: Exception) {
-            }
-        }
         instance = this
         setupBottomNavigation()
-        if (savedInstanceState == null) {
-            loadHomeFragment()
-        }
+        loadHomeFragment()
 
-        /*final FirebaseRemoteConfig remoteConfig=FirebaseRemoteConfig.getInstance();
-
-        Map<String,Object> defaultValue=new HashMap<>();
-        defaultValue.put(UpdateHelper.KEY_UPDATE_ENABLE,true);
-        defaultValue.put(UpdateHelper.KEY_UPDATE_VERSION,"6.9");
-        defaultValue.put(UpdateHelper.KEY_UPDATE_URL,"https://play.google.com/store/apps/details?id=com.app.festivalpost");
-
-        //remoteConfig.setDefaults(defaultValue);
-
-        FirebaseRemoteConfigSettings remoteConfigSettings=new FirebaseRemoteConfigSettings.Builder().setFetchTimeoutInSeconds(5).build();
-        remoteConfig.setConfigSettingsAsync(remoteConfigSettings);
-        remoteConfig.setDefaultsAsync(defaultValue);
-
-        remoteConfig.fetchAndActivate().addOnCompleteListener(new OnCompleteListener<Boolean>() {
-            @Override
-            public void onComplete(@NonNull Task<Boolean> task) {
-                if (task.isSuccessful())
-                {
-
-                    AlertDialog builder=new AlertDialog.Builder(HomeActivity.this).setTitle("Need To Upgrade").setMessage("Please Update to new version to continue use").setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.app.festivalpost")));
-                            }
-                             catch (ActivityNotFoundException e)
-                             {
-                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.app.festivalpost")));
-                             }
-                            dialog.dismiss();
-
-                        }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).create();
-                    builder.show();
-                }
-            }
-        });*/
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     private fun setupBottomNavigation() {
@@ -118,7 +60,6 @@ class HomeActivity : AppBaseActivity() {
     }
 
     fun loadHomeFragment() {
-        tvaction!!.visibility = View.VISIBLE
         val fragment = HomeFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
@@ -127,7 +68,6 @@ class HomeActivity : AppBaseActivity() {
     }
 
     fun loadHomeFragment1() {
-        tvaction!!.visibility = View.VISIBLE
         val fragment = HomeFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
@@ -135,19 +75,9 @@ class HomeActivity : AppBaseActivity() {
         //tvtitle!!.text = resources.getString(R.string.txt_home)
     }
 
-    private fun loadDaysFragment() {
-        tvaction!!.visibility = View.INVISIBLE
-        val fragment = DaysFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
-        //tvtitle!!.text = resources.getString(R.string.txt_festival)
-    }
-
 
 
     private fun loadCustomFragment() {
-        tvaction!!.visibility = View.INVISIBLE
         val fragment = CustomFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
@@ -156,7 +86,6 @@ class HomeActivity : AppBaseActivity() {
     }
 
     private fun loadAccountFragment() {
-        tvaction!!.visibility = View.INVISIBLE
         val fragment = AccountFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
@@ -164,14 +93,7 @@ class HomeActivity : AppBaseActivity() {
         //tvtitle!!.text = resources.getString(R.string.txt_account)
     }
 
-    fun setActionbar() {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-        tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
 
-    }
 
     override fun onBackPressed() {
         super.onBackPressed()

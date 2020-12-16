@@ -5,7 +5,7 @@ import android.text.Html
 import android.text.Spanned
 import android.text.TextUtils
 import android.util.Base64
-import com.emegamart.lelys.utils.Constants
+import com.app.festivalpost.utils.Constants
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject

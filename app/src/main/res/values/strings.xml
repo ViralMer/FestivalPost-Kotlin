@@ -552,7 +552,7 @@
     <string name="error_no_internet">No Internet</string>
     <string name="error_something_went_wrong">Something went wrong</string>
     <string name="lbl_tap_to_retry">Tap to Retry</string>
-    <string name="token">$2y$12$mECpzfmQ7yYSQd6IwEITyeUJ81uNUSSwpl6Y03pJ2QbBWckraDK0K</string>
+    <string name="token">$2y$12$Z96yBa38IA4pepghLGb3auzTKw/hzOFo3UEwd0OKzw.TY/InyyEOe</string>
     <string name="lbl_add_business"><font color='#48A8BC'>A</font>dd Business</string>
     <string name="lbl_tap_choose"><![CDATA[Tap & Choose]]></string>
     <string name="hint_business_name">Enter your business name</string>
@@ -563,8 +563,19 @@
     <string name="hint_business_address">Enter your business address</string>
     <string name="hint_business_category">Business Category</string>
     <string name="txt_upgrade_now">Upgrade Now</string>
-    <string name="lbl_my_business">My Business</string>
+    <string name="lbl_my_business"><b>My</b> Business</string>
     <string name="txt_add_new_business">Add new Business</string>
     <string name="lbl_help_support"><![CDATA[Help & Support]]></string>
+    <string name="lbl_profile">Profile</string>
+    <string name="lbl_my_post"><b>My</b> Post</string>
+    <string name="lbl_share_us"><b>Share</b> Us</string>
+    <string name="lbl_rate_us"><b>Rate</b> Us</string>
+    <string name="lbl_logout">Logout</string>
+    <string name="lbl_privacy_policy"><u>Privacy Policy</u></string>
+    <string name="lbl_terms_services"><u>Terms &amp; Services</u></string>
+    <string name="lbl_click_message">Click to send message</string>
+    <string name="lbl_email_us">Email Us</string>
+    <string name="lbl_call_us">Call Us : +918070794444</string>
+    <string name="lbl_loading">Loading</string>
 
 </resources>

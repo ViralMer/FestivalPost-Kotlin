@@ -1,10 +1,5 @@
 package com.emegamart.lelys.utils.extensions
 
-import android.content.Context
-import android.view.View
-import com.app.festivalpost.R
-import com.emegamart.lelys.utils.Constants
-
 /*
 private var mColorArray = intArrayOf(R.color.cat_1, R.color.cat_2, R.color.cat_3, R.color.cat_4, R.color.cat_5)
 

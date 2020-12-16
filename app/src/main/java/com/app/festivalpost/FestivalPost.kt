@@ -4,8 +4,10 @@ import android.app.Dialog
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
+import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TYPE
 import com.emegamart.lelys.network.RestApis
 import com.emegamart.lelys.utils.SharedPrefUtils
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.google.firebase.FirebaseApp
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -15,12 +17,14 @@ import okhttp3.OkHttpClient
 
 class FestivalPost : MultiDexApplication() {
 
-    private var progressDialog: Dialog? = null
+
 
     override fun onCreate() {
         super.onCreate()
         appInstance = this
         FirebaseApp.initializeApp(this)
+
+        getSharedPrefInstance().setValue(DEVICE_TYPE,"Android")
 
         ViewPump.init(
              ViewPump.builder()
@@ -47,12 +51,10 @@ class FestivalPost : MultiDexApplication() {
 
     companion object {
         private lateinit var appInstance: FestivalPost
-        var restApis: RestApis? = null
         var okHttpClient: OkHttpClient? = null
         var sharedPrefUtils: SharedPrefUtils? = null
         var noInternetDialog: Dialog? = null
         lateinit var language: String
-        var appTheme: Int = 0
 
         fun getAppInstance(): FestivalPost {
             return appInstance

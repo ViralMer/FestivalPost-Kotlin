@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.apifunctions.ApiEndpoints
@@ -39,7 +40,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import org.json.JSONObject
 
-class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiResponseListener {
+class AddFirstBusinessActivity : AppBaseActivity(), ApiResponseListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -50,7 +51,7 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
         setContentView(R.layout.activity_add_business)
         apiManager = ApiManager(this@AddFirstBusinessActivity)
         setActionbar()
-        findViewById<View>(R.id.btnsubmit).setOnClickListener(this)
+        findViewById<View>(R.id.btnsubmit)
         ivlogo = findViewById(R.id.ivlogo)
         ivlogo!!.setOnClickListener { openAddImageDialog() }
     }
@@ -152,24 +153,9 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
         tvaction.visibility = View.INVISIBLE
     }
 
-    private val edname: EditText
-         get() = findViewById<View>(R.id.edname) as EditText
-    private val edemail: EditText
-         get() = findViewById<View>(R.id.edemail) as EditText
-    private val edphone: EditText
-         get() = findViewById<View>(R.id.edphone) as EditText
-    private val edwebsite: EditText
-         get() = findViewById<View>(R.id.edwebsite) as EditText
-    private val edaddress: EditText
-         get() = findViewById<View>(R.id.edaddress) as EditText
 
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.btnsubmit -> submitDetails()
-        }
-    }
 
-    private fun submitDetails() {
+    /*private fun submitDetails() {
         if (edname.text.toString() == "") {
             Global.getAlertDialog(this, "Opps..!", "Please Enter Name")
         } else if (edemail.text.toString() != "" && !validEmail(edemail.text.toString())) {
@@ -178,11 +164,11 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
             Global.getAlertDialog(this, "Opps..!", "Please Enter 10 Digit Mobile Number")
         } else if (edwebsite.text.toString() != "" && !validWebsite(edwebsite.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
-        } /*else if (getEdaddress().getText().toString().equals("")) {
+        } *//*else if (getEdaddress().getText().toString().equals("")) {
             //Toast.makeText(AddFirstBusinessActivity.this, "Enter valid Address!", Toast.LENGTH_LONG).show();
             Global.getAlertDialog(this, "Opps..!", "Enter valid Address!");
 
-        }*/ else {
+        }*//* else {
             AddBusinessAsync(
                 edname.text.toString(),
                 edemail.text.toString(),
@@ -192,7 +178,7 @@ class AddFirstBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiR
                 profilePath!!
             )
         }
-    }
+    }*/
 
     private fun validEmail(email: String): Boolean {
         val pattern = Patterns.EMAIL_ADDRESS

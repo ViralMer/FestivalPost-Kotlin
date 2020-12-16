@@ -16,21 +16,21 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.AddFirstBusinessActivity
 import com.app.festivalpost.activity.LoginActivity
 import com.app.festivalpost.adapter.CategoryItemAdapter
 import com.app.festivalpost.adapter.CustomFestivalItemAdapter
-import com.app.festivalpost.globals.Constant
-import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.emegamart.lelys.utils.Constants.KeyIntent.CURRENT_DATE
-import com.emegamart.lelys.utils.Constants.KeyIntent.IS_PREMIUM
-import com.emegamart.lelys.utils.Constants.KeyIntent.LOG_OUT
+import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
+import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
+import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
 import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.show
@@ -70,7 +70,7 @@ class HomeFragment : BaseFragment() {
         rcvCustomFestival = view.findViewById(R.id.customFestival)
         mSwipeRefreshLayout = view.findViewById(R.id.swipeToRefresh)
         loadHomePageData()
-        mSwipeRefreshLayout!!.setOnRefreshListener{
+        mSwipeRefreshLayout!!.setOnRefreshListener {
             loadHomePageData()
             mSwipeRefreshLayout!!.isRefreshing = false
         }
@@ -98,7 +98,9 @@ class HomeFragment : BaseFragment() {
                     ignoreCase = true
                 )
             ) {
-                Glide.with(activity!!).load(festivalItem.fest_image).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(ivphoto)
+                Glide.with(activity!!).load(festivalItem.fest_image)
+                    .placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img)
+                    .into(ivphoto)
             }
 
             container.addView(view)
@@ -132,13 +134,12 @@ class HomeFragment : BaseFragment() {
     }
 
 
-
     private fun loadHomePageData() {
         showProgress()
         val token = getString(R.string.token)
-
+        getSharedPrefInstance().setValue(USER_TOKEN, token)
         callApi(
-            getRestApis().getHomePageData(token),
+            getRestApis().getHomePageData(),
             onApiSuccess = { res ->
                 hideProgress()
                 if (res.status!!) {
@@ -147,9 +148,9 @@ class HomeFragment : BaseFragment() {
                     getSharedPrefInstance().setValue(LOG_OUT, res.logout)
                     getSharedPrefInstance().setValue(IS_PREMIUM, res.premium)
                     getSharedPrefInstance().setValue(CURRENT_DATE, res.current_date)
-                    //getSharedPrefInstance().setValue(FRAME_LIST, res.frameList)
-                    //getSharedPrefInstance().setValue(CURRENT_BUSINESS, res.current_business)
-                    //getSharedPrefInstance().setValue(CURRENT_BUSINESS_NEW, res.current_business_new)
+                    getSharedPrefInstance().setValue(KEY_FRAME_LIST, res.frameList)
+                    getSharedPrefInstance().setValue(KEY_CURRENT_BUSINESS, res.current_business)
+
 
                     sliderArrayList = res.slider
                     festivalArrayList = res.festival
@@ -173,20 +174,16 @@ class HomeFragment : BaseFragment() {
                         viewPager!!.adapter = PagerAdapter()
                     }
 
-                    if (festivalArrayList.size > 0)
-                    {
+                    if (festivalArrayList.size > 0) {
                         linearFestival.show()
-                    }
-                    else{
+                    } else {
                         linearFestival.hide()
 
                     }
 
-                    if (categoryArrayList.size > 0)
-                    {
+                    if (categoryArrayList.size > 0) {
                         linearCategory.show()
-                    }
-                    else{
+                    } else {
                         linearCategory.hide()
                     }
 
@@ -223,11 +220,6 @@ class HomeFragment : BaseFragment() {
 
 
                     if (res.logout!!) {
-                       /* Global.storePreference(Constant.PREF_TOKEN, "")
-                        Global.storePreference(Constant.PREF_LOGIN, false)
-                        Global.storePreference(Constant.PREF_CURRENT_BUSINESS, "")
-                        Global.storePreference(Constant.PREF_SCORE, "")
-                        Global.storePreference(Constant.PREF_LOGOUT, false)*/
                         val detailAct = Intent(
                             activity, LoginActivity::class.java
                         )
@@ -244,22 +236,11 @@ class HomeFragment : BaseFragment() {
                                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             activity!!.finish()
-                        } else {
-                            /*if (Global.getPreference(Constant.PREF_CURRENT_BUSINESS, "") == "") {
-                                val intent = Intent(
-                                    activity, AddFirstBusinessActivity::class.java
-                                )
-                                intent.flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
-                                activity!!.finish()
-                            }*/
                         }
                     }
 
 
-                }
-                else{
+                } else {
                     linearFestival.hide()
                     linearCategory.hide()
                 }

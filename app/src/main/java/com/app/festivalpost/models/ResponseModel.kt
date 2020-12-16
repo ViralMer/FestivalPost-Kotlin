@@ -61,6 +61,40 @@ data class FrameListItem1(
         val message: String?=null
     )
 
+data class ProfileResponse(
+    val data: UserDataItem,
+    val status:Boolean?=false,
+    val message: String?=null
+)
+
+data class AddBussiensResponse(
+    val status:Boolean?=false,
+    val message: String?=null
+)
+
+data class UpdateBussiensResponse(
+    val status:Boolean?=false,
+    val message: String?=null
+)
+
+data class UserDataItem(
+    val id:Int?=0,
+    val user_credit:Int?=0,
+    val default_business_id:Int?=0,
+    val name:String?=null,
+    val ref_users:String?=null,
+    val email:String?=null,
+    val mobile:String?=null,
+    val email_verified_at:String?=null,
+    val status:Int?=0,
+    val created_at:String?=null,
+    val updated_at:String?=null,
+    val ref_code:String?=null,
+    val device_id:String?=null,
+    val device:String?=null,
+    val device_token:String?=null,
+)
+
 data class CategoryItem(
     val post_id:Int?=0,
     val post_category_id:Int?=0,
@@ -69,5 +103,19 @@ data class CategoryItem(
     var is_selected:Boolean?=false,
 
     )
+
+data class RegisterResponse(
+    val data: UserDataItem,
+    val status:Boolean?=false,
+    val message: String?=null,
+    val token: String?=null
+)
+
+data class LoginResponse(
+    val data: UserDataItem,
+    val status:Boolean?=false,
+    val message: String?=null,
+    val token: String?=null
+)
 
 

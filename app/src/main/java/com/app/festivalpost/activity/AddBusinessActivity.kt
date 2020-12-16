@@ -60,11 +60,11 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         ivlogo!!.setOnClickListener({ openAddImageDialog() })
         if (businessItem != null) {
             edname.setText(businessItem!!.busiName)
-            edaddress.setText(businessItem!!.busiAddress)
+            /*edaddress.setText(businessItem!!.busiAddress)
             if (!businessItem!!.busiWebsite.equals("")) {
                 edwebsite.setText(businessItem!!.busiWebsite)
             }
-            edphone.setText(businessItem!!.busiMobile)
+            edphone.setText(businessItem!!.busiMobile)*/
             edemail.setText(businessItem!!.busiEmail)
             if (!businessItem!!.busiLogo.equals("")) {
                 Glide.with(this@AddBusinessActivity).load(businessItem!!.busiLogo)
@@ -199,12 +199,6 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         get() = findViewById<View>(R.id.edname) as EditText
     private val edemail: EditText
         get() = findViewById<View>(R.id.edemail) as EditText
-    private val edphone: EditText
-        get() = findViewById<View>(R.id.edphone) as EditText
-    private val edwebsite: EditText
-        get() = findViewById<View>(R.id.edwebsite) as EditText
-    private val edaddress: EditText
-        get() = findViewById<View>(R.id.edaddress) as EditText
 
     override fun onClick(view: View) {
         when (view.id) {
@@ -217,30 +211,30 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
             Global.getAlertDialog(this, "Opps..!", "Please Enter Name")
         } else if (edemail.text.toString() != "" && !validEmail(edemail.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Enter valid e-mail!")
-        } else if (edphone.text.toString().length != 10) {
+        } /*else if (edphone.text.toString().length != 10) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter 10 Digit Mobile Number")
         } else if (edwebsite.text.toString() != "" && !validWebsite(edwebsite.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
-        } else {
+        }*/ else {
             if (businessItem == null) {
-                AddBusinessAsync(
+               /* AddBusinessAsync(
                     edname.text.toString(),
                     edemail.text.toString(),
-                    edphone.text.toString(),
+                    *//*edphone.text.toString(),
                     edwebsite.text.toString(),
-                    edaddress.text.toString(),
+                    edaddress.text.toString(),*//*
                     profilePath
-                )
+                )*/
             } else {
-                UpdateBusinessAsync(
+                /*UpdateBusinessAsync(
                     businessItem!!.busiId.toString() + "",
                     edname.text.toString(),
                     edemail.text.toString(),
-                    edphone.text.toString(),
+                    *//*edphone.text.toString(),
                     edwebsite.text.toString(),
-                    edaddress.text.toString(),
+                    edaddress.text.toString(),*//*
                     profilePath
-                )
+                )*/
             }
         }
     }

@@ -1,7 +1,8 @@
 package com.emegamart.lelys.network
 
 import com.app.festivalpost.FestivalPost.Companion.okHttpClient
-import com.emegamart.lelys.utils.Constants.Config.DEFAULT_URL
+import com.app.festivalpost.utils.Constants.Config.DEFAULT_URL
+import com.app.festivalpost.utils.Constants.Config.VERSION
 import com.google.gson.GsonBuilder
 import okhttp3.*
 import retrofit2.Retrofit
@@ -20,7 +21,7 @@ class RetrofitClientFactory {
 
         val gson = GsonBuilder().setLenient().disableHtmlEscaping().create()
 
-        return Retrofit.Builder().baseUrl(DEFAULT_URL).client(okHttpClient!!).addConverterFactory(GsonConverterFactory.create(gson)).build()
+        return Retrofit.Builder().baseUrl(DEFAULT_URL+ VERSION).client(okHttpClient!!).addConverterFactory(GsonConverterFactory.create(gson)).build()
     }
 }
 

@@ -3,7 +3,7 @@ package com.emegamart.lelys.utils
 import android.content.Context
 import android.content.SharedPreferences
 import com.app.festivalpost.FestivalPost.Companion.getAppInstance
-import com.emegamart.lelys.utils.Constants.myPreferences
+import com.app.festivalpost.utils.Constants.myPreferences
 
 class SharedPrefUtils {
     private val mSharedPreferences: SharedPreferences = getAppInstance().getSharedPreferences(myPreferences, Context.MODE_PRIVATE)

@@ -101,7 +101,7 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_15sdp"
-                android:background="@drawable/button_background"
+                android:background="@drawable/bg_gradient"
                 android:orientation="horizontal"
                 android:weightSum="2">
 

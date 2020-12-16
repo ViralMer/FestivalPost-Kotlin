@@ -38,19 +38,22 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvaction"
+                android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginRight="@dimen/_5sdp"
-                android:background="@drawable/large_blue_button_bg"
                 android:gravity="center"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="@string/txt_done"
-                android:textColor="@color/colorWhite"
-                android:textSize="14dp"
-                android:textStyle="bold" />
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:background="@drawable/bg_gradient"
+                android:text="@string/txt_next"
+                android:fontFamily="@font/sf_ui_medium"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp" />
+
 
         </LinearLayout>
 

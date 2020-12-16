@@ -6,34 +6,20 @@ import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.FestivalPost.Companion.noInternetDialog
-import com.google.android.gms.ads.*
-import com.emegamart.lelys.utils.Constants.SharedPref.LANGUAGE
-import com.emegamart.lelys.utils.Constants.THEME.DARK
 import com.emegamart.lelys.utils.extensions.color
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
-import com.emegamart.lelys.utils.extensions.launchActivityWithNewTask
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.util.*
 
 
 open class AppBaseActivity : AppCompatActivity(),View.OnFocusChangeListener {
     private var progressDialog: Dialog? = null
-    var language: Locale? = null
-    private var themeApp: Int = 0
-    var isAdShown=false
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FCDF6D</color>
-    <color name="colorPrimaryDark">#FCDF6D</color>
+    <color name="colorPrimary">#A4009688</color>
+    <color name="colorPrimaryDark">#00897B</color>
     <color name="colorAccent">#30BA9E</color>
-    <color name="colorBorder">#FCDF6D</color>
+    <color name="colorBorder">#00796B</color>
     <color name="colorhightlight">#ECE1B9</color>
 
     <color name="colorWhite">#FFFFFF</color>
@@ -29,4 +29,5 @@
     <color name="blue">#013D6C</color>
     <color name="colorBlue">#48A8BC</color>
     <color name="colorCategoryNew">#DBEDDC</color>
+    <color name="pink">#e33863</color>
 </resources>
