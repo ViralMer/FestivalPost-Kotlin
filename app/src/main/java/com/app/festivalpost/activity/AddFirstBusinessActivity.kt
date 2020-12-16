@@ -202,8 +202,10 @@ class AddFirstBusinessActivity : AppBaseActivity(), ApiResponseListener {
         private var name = ""
         private var email = ""
         private var mobile = ""
+        private var mobile2 = ""
         private var website = ""
         private var address = ""
+        private var category = ""
         private var profilePath = ""
         override fun onPreExecute() {
             super.onPreExecute()
@@ -212,7 +214,8 @@ class AddFirstBusinessActivity : AppBaseActivity(), ApiResponseListener {
 
         override fun doInBackground(vararg po: Void?): Void? {
             apiManager!!.addbusiness(
-                ApiEndpoints.addbusiness, name, email, mobile, website, address, profilePath
+                ApiEndpoints.addbusiness, name, email, mobile,mobile2, website, address,"", profilePath
+
             )
             return null
         }
@@ -221,8 +224,10 @@ class AddFirstBusinessActivity : AppBaseActivity(), ApiResponseListener {
             this.name = name
             this.email = email
             this.mobile = mobile
+            this.mobile2 = mobile
             this.website = website
             this.address = address
+            this.category = category
             this.profilePath = profilePath
         }
     }

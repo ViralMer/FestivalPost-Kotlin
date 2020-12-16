@@ -1,19 +1,16 @@
 package com.app.festivalpost.activity
 
-import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.fragment.AccountFragment
 import com.app.festivalpost.fragment.CustomFragment
-import com.app.festivalpost.fragment.DaysFragment
 import com.app.festivalpost.fragment.HomeFragment
-import com.app.festivalpost.utility.NetworkStateChecker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeActivity : AppBaseActivity() {
@@ -25,8 +22,18 @@ class HomeActivity : AppBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         instance = this
+
+        val mainHandler = Handler(Looper.getMainLooper())
+        var runnable: Runnable = object : Runnable {
+            override fun run() {
+                loadHomeFragment()
+            }
+
+        }
+
+        mainHandler.postDelayed(runnable, 0)
         setupBottomNavigation()
-        loadHomeFragment()
+
 
     }
 

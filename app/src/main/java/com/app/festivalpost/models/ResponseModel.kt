@@ -43,7 +43,13 @@ data class HomePageResponse(
         val busi_address:String?=null,
         val busi_logo:String?=null,
         val busi_is_approved:Int?=0,
-        val busi_delete:Int?=0
+        val busi_delete:Int?=0,
+        val plan_name:String?=null,
+        val purc_start_date:String?=null,
+        val purc_end_date:String?=null,
+        val need_to_upgrade:String?=null,
+        val plan_id:String?=null,
+        var is_current_business :Int?=0
     )
 
 data class FrameListItem1(
@@ -111,11 +117,25 @@ data class RegisterResponse(
     val token: String?=null
 )
 
+data class BusinessItemResponse(
+    val data: ArrayList<CurrentBusinessItem?>,
+    val status:Boolean?=false,
+    val message: String?=null,
+
+)
+
 data class LoginResponse(
     val data: UserDataItem,
     val status:Boolean?=false,
     val message: String?=null,
     val token: String?=null
+)
+
+
+
+data class BusinessCategory(
+    val name: String?=null,
+    var is_selected: Boolean?=false
 )
 
 

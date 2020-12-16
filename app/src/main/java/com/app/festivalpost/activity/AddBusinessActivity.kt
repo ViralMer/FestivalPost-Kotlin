@@ -20,6 +20,8 @@ import android.widget.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.R
 import com.app.festivalpost.apifunctions.ApiEndpoints
@@ -30,6 +32,12 @@ import com.app.festivalpost.models.BusinessItem
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
 import com.app.festivalpost.activity.OnItemClickListener
+import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
+import com.app.festivalpost.models.BusinessCategory
+import com.app.festivalpost.models.PhotoItem
+import com.emegamart.lelys.utils.extensions.onClick
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.android.material.textfield.TextInputEditText
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -37,13 +45,26 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import org.json.JSONObject
 
 
-class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiResponseListener {
+class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
     var businessItem: BusinessItem? = null
     var ivlogo: ImageView? = null
     var profilePath = ""
+    var edName:AppCompatEditText?=null
+    var edEmail:AppCompatEditText?=null
+    var edPhone:AppCompatEditText?=null
+    var edAddress:AppCompatEditText?=null
+    var edWebsite:AppCompatEditText?=null
+    var edPhone2:AppCompatEditText?=null
+    var edCategory:TextInputEditText?=null
+    var frameChosse:FrameLayout?=null
+    var category_value:String?=null
+    var btn_next:TextView?=null
+    var businessCategoryItemAdapter:BusinessCategoryItemAdapter?=null
+    var businessCategoryList= arrayListOf<BusinessCategory?>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_business)
@@ -55,22 +76,47 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         }
         apiManager = ApiManager(this@AddBusinessActivity)
         setActionbar()
-        findViewById<View>(R.id.btnsubmit).setOnClickListener(this)
+        findViewById<View>(R.id.btn_next).setOnClickListener(this)
         ivlogo = findViewById(R.id.ivlogo)
-        ivlogo!!.setOnClickListener({ openAddImageDialog() })
+
+
+        edName=findViewById(R.id.et_business_name)
+        edEmail=findViewById(R.id.et_business_email)
+        edPhone=findViewById(R.id.et_number_one)
+        edPhone2=findViewById(R.id.et_number_two)
+        edAddress=findViewById(R.id.et_business_address)
+        edWebsite=findViewById(R.id.et_business_website)
+        edCategory=findViewById(R.id.etCategory)
+        frameChosse=findViewById(R.id.framePhoto)
+        btn_next=findViewById(R.id.btn_next)
+
+        frameChosse!!.setOnClickListener({ openAddImageDialog() })
         if (businessItem != null) {
-            edname.setText(businessItem!!.busiName)
-            /*edaddress.setText(businessItem!!.busiAddress)
+            edName!!.setText(businessItem!!.busiName)
+            edAddress!!.setText(businessItem!!.busiAddress)
             if (!businessItem!!.busiWebsite.equals("")) {
-                edwebsite.setText(businessItem!!.busiWebsite)
+                edWebsite!!.setText(businessItem!!.busiWebsite)
             }
-            edphone.setText(businessItem!!.busiMobile)*/
-            edemail.setText(businessItem!!.busiEmail)
+            edPhone!!.setText(businessItem!!.busiMobile)
+            edEmail!!.setText(businessItem!!.busiEmail)
             if (!businessItem!!.busiLogo.equals("")) {
                 Glide.with(this@AddBusinessActivity).load(businessItem!!.busiLogo)
                     .into(ivlogo!!)
             }
         }
+
+        btn_next!!.onClick {
+            submitDetails()
+        }
+        businessCategoryList.add(BusinessCategory("IT"))
+        businessCategoryList.add(BusinessCategory("IT"))
+        businessCategoryList.add(BusinessCategory("IT"))
+        businessCategoryList.add(BusinessCategory("IT"))
+        businessCategoryList.add(BusinessCategory("IT"))
+        businessCategoryList.add(BusinessCategory("IT"))
+        businessCategoryList.add(BusinessCategory("IT"))
+        category_value= businessCategoryList[0]!!.name
+        businessCategoryItemAdapter= BusinessCategoryItemAdapter(this,businessCategoryList)
     }
 
     fun openAddImageDialog() {
@@ -79,23 +125,12 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        val builder = AlertDialog.Builder(this@AddBusinessActivity)
-                        builder.setTitle("Choose")
-                        val animals = arrayOf("Camera", "Gallery")
-                        builder.setItems(animals) { dialog, which ->
-                            when (which) {
-                                0 -> ImagePicker.Companion.with(this@AddBusinessActivity)
-                                    .cameraOnly()
-                                    .crop()
-                                    .start()
-                                1 -> ImagePicker.Companion.with(this@AddBusinessActivity)
+                        ImagePicker.Companion.with(this@AddBusinessActivity)
                                     .galleryOnly()
                                     .crop()
                                     .start()
-                            }
-                        }
-                        val dialog = builder.create()
-                        dialog.show()
+
+
                     } else {
                         showSettingsDialog()
                     }
@@ -169,6 +204,7 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
+        val ivBack = toolbar.findViewById<View>(R.id.ivBack) as AppCompatImageView
         val tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
         if (businessItem == null) {
             tvtitle.text = resources.getString(R.string.txt_add_business)
@@ -177,6 +213,10 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
             tvtitle.text = resources.getString(R.string.txt_edit_business)
             tvaction.visibility = View.VISIBLE
             tvaction.text = resources.getString(R.string.txt_delete)
+        }
+
+        ivBack.onClick {
+            onBackPressed()
         }
         tvaction.setOnClickListener {
             val builder: AlertDialog.Builder
@@ -195,46 +235,50 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         }
     }
 
-    private val edname: EditText
-        get() = findViewById<View>(R.id.edname) as EditText
-    private val edemail: EditText
-        get() = findViewById<View>(R.id.edemail) as EditText
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btnsubmit -> submitDetails()
+            R.id.btn_next -> submitDetails()
         }
     }
 
-    fun submitDetails() {
-        if (edname.text.toString() == "") {
+    private fun submitDetails() {
+        if (edName!!.text.toString() == "") {
             Global.getAlertDialog(this, "Opps..!", "Please Enter Name")
-        } else if (edemail.text.toString() != "" && !validEmail(edemail.text.toString())) {
+        } else if (edEmail!!.text.toString() != "" && !validEmail(edEmail!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Enter valid e-mail!")
-        } /*else if (edphone.text.toString().length != 10) {
+        } else if (edPhone!!.text.toString().length != 10) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter 10 Digit Mobile Number")
-        } else if (edwebsite.text.toString() != "" && !validWebsite(edwebsite.text.toString())) {
+        }
+        else if (edPhone2!!.text.toString().length != 10) {
+            Global.getAlertDialog(this, "Opps..!", "Please Enter 10 Digit Mobile Number")
+        }
+        else if (edWebsite!!.text.toString() != "" && !validWebsite(edWebsite!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
-        }*/ else {
+        } else {
             if (businessItem == null) {
-               /* AddBusinessAsync(
-                    edname.text.toString(),
-                    edemail.text.toString(),
-                    *//*edphone.text.toString(),
-                    edwebsite.text.toString(),
-                    edaddress.text.toString(),*//*
+                AddBusinessAsync(
+                    edName!!.text.toString(),
+                    edEmail!!.text.toString(),
+                    edPhone!!.text.toString(),
+                    edPhone2!!.text.toString(),
+                    edWebsite!!.text.toString(),
+                    edAddress!!.text.toString(),
+                    category_value!!,
                     profilePath
-                )*/
+                )
             } else {
-                /*UpdateBusinessAsync(
+                UpdateBusinessAsync(
                     businessItem!!.busiId.toString() + "",
-                    edname.text.toString(),
-                    edemail.text.toString(),
-                    *//*edphone.text.toString(),
-                    edwebsite.text.toString(),
-                    edaddress.text.toString(),*//*
+                    edName!!.text.toString(),
+                    edEmail!!.text.toString(),
+                    edPhone!!.text.toString(),
+                    edPhone2!!.text.toString(),
+                    edWebsite!!.text.toString(),
+                    edAddress!!.text.toString(),
+                    category_value!!,
                     profilePath
-                )*/
+                )
             }
         }
     }
@@ -262,15 +306,19 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         name: String,
         email: String,
         mobile: String,
+        mobile2: String,
         website: String,
         address: String,
+        category: String,
         profilePath: String
     ) : AsyncTask<Void?, Void?, Void?>() {
         private var name = ""
         private var email = ""
         private var mobile = ""
+        private var mobile2 = ""
         private var website = ""
         private var address = ""
+        private var category = ""
         private var profilePath = ""
         override fun onPreExecute() {
             super.onPreExecute()
@@ -279,7 +327,7 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
 
         override fun doInBackground(vararg p0: Void?): Void? {
             apiManager!!.addbusiness(
-                ApiEndpoints.addbusiness, name, email, mobile, website, address, profilePath
+                ApiEndpoints.addbusiness, name, email, mobile,mobile2,website, address,category ,profilePath
             )
             return null
         }
@@ -288,8 +336,10 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
             this.name = name
             this.email = email
             this.mobile = mobile
+            this.mobile2 = mobile2
             this.website = website
             this.address = address
+            this.category = category
             this.profilePath = profilePath
         }
     }
@@ -300,16 +350,20 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         name: String,
         email: String,
         mobile: String,
+        mobile2: String,
         website: String,
         address: String,
+        category: String,
         profilePath: String
     ) : AsyncTask<Void?, Void?, Void?>() {
         private var id = ""
         private var name = ""
         private var email = ""
         private var mobile = ""
+        private var mobile2 = ""
         private var website = ""
         private var address = ""
+        private var category = ""
         private var profilePath = ""
         override fun onPreExecute() {
             super.onPreExecute()
@@ -318,7 +372,7 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
 
         override fun doInBackground(vararg p0: Void?): Void? {
             apiManager!!.updatebusiness(
-                ApiEndpoints.updatebusiness, id, name, email, mobile, website, address, profilePath
+                ApiEndpoints.updatebusiness, id, name, email, mobile,mobile2, website, address,category, profilePath
             )
             return null
         }
@@ -328,8 +382,10 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
             this.name = name
             this.email = email
             this.mobile = mobile
+            this.mobile2 = mobile2
             this.website = website
             this.address = address
+            this.category = category
             this.profilePath = profilePath
         }
     }
@@ -448,5 +504,11 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun onItemClicked(`object`: Any?, index: Int) {
+        val photoItem = `object` as BusinessCategory
+        category_value = photoItem.name
+
     }
 }

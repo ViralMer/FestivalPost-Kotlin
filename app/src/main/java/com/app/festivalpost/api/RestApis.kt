@@ -38,6 +38,10 @@ interface RestApis {
     @POST("login")
     fun login(@Field("mobile")mobile:String, @Field("device_id")device_id:String= getDeviceID(), @Field("device")device:String= getDeviceType(),@Field("device_token")device_token:String= getDeviceToken()):Call<LoginResponse>
 
+    @FormUrlEncoded
+    @POST("getmyallbusiness")
+    fun getAllMyBusiness(@Field("token")token:String= getApiToken()):Call<BusinessItemResponse>
+
 
 
 }

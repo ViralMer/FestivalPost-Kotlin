@@ -11,10 +11,7 @@ import com.app.festivalpost.activity.ChoosePhotoActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.models.HomePageItem
 import com.bumptech.glide.Glide
-import com.emegamart.lelys.utils.extensions.hide
-import com.emegamart.lelys.utils.extensions.launchActivity
-import com.emegamart.lelys.utils.extensions.onClick
-import com.emegamart.lelys.utils.extensions.show
+import com.emegamart.lelys.utils.extensions.*
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlin.collections.ArrayList
 
@@ -30,7 +27,8 @@ class CustomFestivalItemAdapter(var context: Context, var originaldata: ArrayLis
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val homePageItem = originaldata!![position]
 
-        Glide.with(context).load(homePageItem!!.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(holder.imageView)
+        //Glide.with(context).load(homePageItem!!.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(holder.imageView)
+        holder.imageView.loadImageFromUrl(homePageItem!!.fest_image!!)
         holder.tvTitle.text=homePageItem.fest_name;
 
         holder.tvNew.show()

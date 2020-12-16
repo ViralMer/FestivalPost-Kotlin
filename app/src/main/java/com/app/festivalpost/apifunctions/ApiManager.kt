@@ -10,6 +10,7 @@ import com.app.festivalpost.globals.BuildConfig
 import com.app.festivalpost.globals.BuildConfig.URL_NAME
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.emegamart.lelys.utils.extensions.getApiToken
 import com.squareup.okhttp.*
 import java.io.File
 import java.io.IOException
@@ -459,8 +460,10 @@ class ApiManager {
         name: String?,
         email: String?,
         mobile: String?,
+        mobile2: String?,
         website: String?,
         address: String?,
+        category: String?,
         profilePath: String
     ) {
         if (ConnectivityReceiver.isConnected) {
@@ -472,9 +475,11 @@ class ApiManager {
                 multipart.addFormField("name", name)
                 multipart.addFormField("email", email)
                 multipart.addFormField("mobile", mobile)
+                multipart.addFormField("mobile_second", mobile2)
                 multipart.addFormField("website", website)
                 multipart.addFormField("address", address)
-                multipart.addFormField("token", Global.getPreference(Constant.PREF_TOKEN, ""))
+                multipart.addFormField("business_category", category)
+                multipart.addFormField("token", getApiToken())
                 if (profilePath != "") {
                     multipart.addFilePart("logo", File(profilePath))
                 }
@@ -495,8 +500,10 @@ class ApiManager {
         name: String?,
         email: String?,
         mobile: String?,
+        mobile2: String?,
         website: String?,
         address: String?,
+        category: String?,
         profilePath: String
     ) {
         if (ConnectivityReceiver.isConnected) {
@@ -509,10 +516,11 @@ class ApiManager {
                 multipart.addFormField("name", name)
                 multipart.addFormField("email", email)
                 multipart.addFormField("mobile", mobile)
+                multipart.addFormField("mobile_second", mobile2)
                 multipart.addFormField("website", website)
                 multipart.addFormField("address", address)
-                val token = Global.getPreference(Constant.PREF_TOKEN, "")
-                multipart.addFormField("token", token)
+                multipart.addFormField("business_category", category)
+                multipart.addFormField("token", getApiToken())
                 if (profilePath != "") {
                     multipart.addFilePart("logo", File(profilePath))
                 }

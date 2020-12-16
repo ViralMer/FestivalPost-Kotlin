@@ -6,6 +6,9 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper.getMainLooper
+import android.os.StrictMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +36,7 @@ import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
 import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
 import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.loadImageFromUrl
 import com.emegamart.lelys.utils.extensions.show
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -69,12 +73,22 @@ class HomeFragment : BaseFragment() {
         rcvCustomCategory = view.findViewById(R.id.customCategory)
         rcvCustomFestival = view.findViewById(R.id.customFestival)
         mSwipeRefreshLayout = view.findViewById(R.id.swipeToRefresh)
-        loadHomePageData()
+        viewPager = view.findViewById(R.id.sliderviewPager)
+        //loadHomePageData()
         mSwipeRefreshLayout!!.setOnRefreshListener {
             loadHomePageData()
             mSwipeRefreshLayout!!.isRefreshing = false
         }
-        viewPager = view.findViewById(R.id.sliderviewPager)
+
+        val mainHandler = Handler(getMainLooper())
+        var runnable: Runnable = object : Runnable {
+            override fun run() {
+                loadHomePageData()
+            }
+
+        }
+
+        mainHandler.postDelayed(runnable, 0)
 
 
     }
@@ -98,9 +112,7 @@ class HomeFragment : BaseFragment() {
                     ignoreCase = true
                 )
             ) {
-                Glide.with(activity!!).load(festivalItem.fest_image)
-                    .placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img)
-                    .into(ivphoto)
+                ivphoto.loadImageFromUrl(festivalItem.fest_image!!)
             }
 
             container.addView(view)

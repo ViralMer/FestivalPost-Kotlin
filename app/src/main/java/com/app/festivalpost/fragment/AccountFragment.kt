@@ -16,10 +16,7 @@ import com.app.festivalpost.activity.*
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.clearLoginPref
-import com.emegamart.lelys.utils.extensions.getMobileNumber
-import com.emegamart.lelys.utils.extensions.getUserName
-import com.emegamart.lelys.utils.extensions.onClick
+import com.emegamart.lelys.utils.extensions.*
 import kotlinx.android.synthetic.main.fragment_account.*
 
 class AccountFragment : BaseFragment() {
@@ -30,6 +27,7 @@ class AccountFragment : BaseFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, null)
         val linearHelp=view.findViewById<View>(R.id.linearHelpSupport) as LinearLayout
+        val linearMyBusiness=view.findViewById<View>(R.id.linearMyBusiness) as LinearLayout
         val tvlogout=view.findViewById<View>(R.id.tvLogout) as TextView
         val tvusername=view.findViewById<View>(R.id.tvUserName) as TextView
         val tvusernaumber=view.findViewById<View>(R.id.tvUserNumber) as TextView
@@ -39,6 +37,16 @@ class AccountFragment : BaseFragment() {
         linearHelp.onClick {
             showPopupDialog(activity!!)
         }
+
+        linearMyBusiness.onClick {
+            activity!!.launchActivity<ManageBusinessActivity> {
+
+            }
+        }
+
+
+
+
 
         tvlogout.onClick {
             performLogout()

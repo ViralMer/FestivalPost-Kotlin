@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/colorWhite"
-    >
+    android:background="@color/colorWhite">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -75,9 +74,7 @@
 
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/lvdata"
-      android:dividerHeight="1dp"
-      android:divider="@color/colorDivider"
-      android:layout_marginTop="16dp"
+      app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
   </androidx.recyclerview.widget.RecyclerView>
@@ -89,9 +86,9 @@
         android:id="@+id/linearHelpSupport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
+        android:layout_gravity="right|bottom|center"
         android:orientation="vertical"
-        android:gravity="right|bottom"
+        android:gravity="right|bottom|center"
         android:padding="@dimen/_10sdp"
         >
 
@@ -108,7 +105,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_10sdp"
             android:fontFamily="@font/antipastopro_medium_trial"
             android:text="@string/lbl_help_support"
             android:textSize="@dimen/_13ssp"/>
@@ -117,5 +113,7 @@
 
     </LinearLayout>
 
-
 </LinearLayout>
+
+
+
