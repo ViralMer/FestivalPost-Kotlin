@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import com.app.festivalpost.FestivalPost.Companion.noInternetDialog
 import com.emegamart.lelys.utils.extensions.color
 import io.github.inflationx.calligraphy3.CalligraphyConfig
@@ -103,10 +104,10 @@ open class AppBaseActivity : AppCompatActivity(),View.OnFocusChangeListener {
     override fun onFocusChange(v: View?, hasFocus: Boolean) {
 
         if (hasFocus) {
-            (v as EditText).setTextColor(this.color(R.color.colorPrimary))
+            (v as AppCompatEditText).setTextColor(this.color(R.color.colorPrimary))
             v.background = resources.getDrawable(R.drawable.edit_text_border_selected)
         } else {
-            (v as EditText).setTextColor(this.color(R.color.colorBackground))
+            (v as AppCompatEditText).setTextColor(this.color(R.color.black))
             v.background = resources.getDrawable(R.drawable.edit_text_border)
         }
     }

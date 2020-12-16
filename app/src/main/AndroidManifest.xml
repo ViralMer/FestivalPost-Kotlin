@@ -60,7 +60,7 @@
         <activity android:name=".activity.MyPostActivity" />
         <activity android:name=".activity.SampleActivity" />
         <activity
-            android:name=".activity.HomeActivity"
+            android:name=".activity.RegisterActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -102,7 +102,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.RegisterActivity"
+            android:name=".activity.HomeActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity

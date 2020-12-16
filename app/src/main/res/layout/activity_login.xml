@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_weight="10"
     android:orientation="vertical"
     android:background="#f3f5f9">
 
@@ -32,11 +33,13 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="10"
         >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:orientation="vertical">
 
             <TextView
@@ -66,6 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_50sdp"
+
                 android:orientation="horizontal"
                 android:weightSum="2">
 
@@ -96,6 +100,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearLogin"
                 android:layout_width="@dimen/_90sdp"
                 android:layout_height="@dimen/_45sdp"
                 android:layout_gravity="end"
@@ -148,20 +153,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/txt_already_account"
+            android:text="@string/txt_dont_account"
             android:textColor="@color/colorBlack"
             android:textSize="16dp" />
 
         <TextView
-            android:id="@+id/tvsignin"
+            android:id="@+id/tvsignup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:gravity="center"
-            android:text="@string/txt_sign_in"
+            android:text="@string/txt_sign_up"
             android:textColor="@color/colorBlack"
             android:textSize="16dp"
             android:textStyle="bold" />
+
 
     </LinearLayout>
 </LinearLayout>

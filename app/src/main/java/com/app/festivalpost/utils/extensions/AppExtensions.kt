@@ -17,6 +17,8 @@ import com.app.festivalpost.FestivalPost
 import com.app.festivalpost.FestivalPost.Companion.getAppInstance
 import com.app.festivalpost.FestivalPost.Companion.noInternetDialog
 import com.app.festivalpost.R
+import com.app.festivalpost.activity.AddBusinessActivity
+import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.FrameListItem1
 import com.app.festivalpost.models.UserDataItem
 import com.bumptech.glide.Glide
@@ -56,6 +58,7 @@ fun getApiToken(): String = getSharedPrefInstance().getStringValue(USER_TOKEN)
 fun clearLoginPref() {
     getSharedPrefInstance().removeKey(IS_LOGGED_IN)
     getSharedPrefInstance().removeKey(USER_ID)
+    getSharedPrefInstance().removeKey(KEY_USER_DATA)
     getSharedPrefInstance().removeKey(USER_EMAIL)
     getSharedPrefInstance().removeKey(USER_TOKEN)
 
@@ -163,16 +166,24 @@ fun getCustomFrameList(): ArrayList<FrameListItem1> {
     )
 }
 
-fun getUserData(): UserDataItem {
+fun getUserData(): ArrayList<UserDataItem> {
     if (getSharedPrefInstance().getStringValue(KEY_USER_DATA) == "") {
-        return UserDataItem()
+        return ArrayList()
     }
-    return Gson().fromJson<UserDataItem>(
+    return Gson().fromJson<ArrayList<UserDataItem>>(
         getSharedPrefInstance().getStringValue(
             KEY_USER_DATA
-        ), object : TypeToken<UserDataItem>() {}.type
+        ), object : TypeToken<ArrayList<UserDataItem>>() {}.type
     )
 }
+
+fun Activity.showCurrentBusiness(model: CurrentBusinessItem) {
+    launchActivity<AddBusinessActivity> {
+        putExtra(KEY_USER_DATA, model)
+    }
+
+}
+
 
 
 

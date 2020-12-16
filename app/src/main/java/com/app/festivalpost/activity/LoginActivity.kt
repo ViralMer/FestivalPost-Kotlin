@@ -1,5 +1,6 @@
 package com.app.festivalpost.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,222 +11,118 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.Toolbar
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
-import com.emegamart.lelys.utils.extensions.color
+import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.extensions.callApi
+import com.app.festivalpost.utils.extensions.getRestApis
+import com.emegamart.lelys.utils.extensions.*
+import com.google.android.gms.tasks.TaskExecutors
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.et_name
+import kotlinx.android.synthetic.main.activity_login.et_number
+import kotlinx.android.synthetic.main.activity_login.spinner
+import kotlinx.android.synthetic.main.activity_register.*
 import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 
-class LoginActivity : AppCompatActivity(), /*View.OnClickListener,*/View.OnFocusChangeListener/*, ApiResponseListener */{
-    var apiManager: ApiManager? = null
-    var status = false
-    var btnsubmit: Button? = null
-    var message = ""
-    private var tvsignup: TextView? = null
-    private var tvError: TextView? = null
+class LoginActivity : AppBaseActivity(),View.OnFocusChangeListener{
+
+    var ivBack:ImageView?=null
+    private var verificationId: String? = null
+    private var etOtp: AppCompatEditText? = null
+    private var mAuth: FirebaseAuth? = null
+    var token: PhoneAuthProvider.ForceResendingToken? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
+        FirebaseApp.initializeApp(this)
         et_number.onFocusChangeListener=this
-        /*apiManager = ApiManager(this@LoginActivity)*/
-       /*
-        btnsubmit = findViewById(R.id.btnsubmit)
-        tvsignup = findViewById<View>(R.id.tvsignup) as TextView
-        tvError = findViewById<View>(R.id.tvError) as TextView
-        tvsignup!!.setOnClickListener {
-            val detailact = Intent(this@LoginActivity, RegisterActivity::class.java)
-            startActivity(detailact)
+
+        val toolbar=findViewById<View>(R.id.toolbar) as Toolbar
+        ivBack=toolbar.findViewById(R.id.ivBack)
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
+            val token = instanceIdResult.token
+            getSharedPrefInstance().setValue(Constants.KeyIntent.DEVICE_TOKEN,token)
+            // send it to server
         }
-        edmobile.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (edmobile.text.length == 10) {
-                    btnsubmit!!.setClickable(true)
-                    btnsubmit!!.setBackgroundResource(R.drawable.large_button_bg)
-                } else {
-                    btnsubmit!!.setClickable(false)
-                    //tvError.setVisibility(View.GONE);
-                    btnsubmit!!.setBackgroundResource(R.drawable.large_button_bg_light)
+        linearLogin.onClick {
+            performLogin()
+        }
+
+        tvsignup.onClick {
+            launchActivity<RegisterActivity> {  }
+        }
+
+        ivBack!!.onClick {
+            onBackPressed()
+        }
+
+
+
+
+
+    }
+
+private fun performLogin() {
+    if (et_number.text.toString().equals("", ignoreCase = true)) {
+        Global.getAlertDialog(
+            this@LoginActivity,
+            "Opps..!",
+            resources.getString(R.string.txt_fill_all_details)
+        )
+    } else {
+        Log.d("spinner","+" + spinner.selectedCountryCode + et_number.text.toString())
+        sendVerificationCode("+" + spinner.selectedCountryCode + et_number.text.toString())
+    }
+}
+
+
+    private fun login() {
+        showProgress(true)
+        callApi(
+
+            getRestApis().login(et_number.text.toString()),
+            onApiSuccess = {
+                showProgress(false)
+                launchActivity<HomeActivity> {
+                    getSharedPrefInstance().setValue(Constants.SharedPref.IS_LOGGED_IN, true)
+                    getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA, it.data)
+                    getSharedPrefInstance().setValue(Constants.SharedPref.USER_TOKEN, it.token)
                 }
-            }
 
-            override fun afterTextChanged(s: Editable) {
-                if (edmobile.text.length == 10) {
-                    btnsubmit!!.setClickable(true)
-                    btnsubmit!!.setBackgroundResource(R.drawable.large_button_bg)
-                } else {
-                    btnsubmit!!.setClickable(false)
-                    //tvError.setVisibility(View.GONE);
-                    btnsubmit!!.setBackgroundResource(R.drawable.large_button_bg_light)
-                }
-            }
-        })
-*/
-    }
 
-/*
-    fun setActionbar() {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
-        val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
-        tvtitle.text = resources.getString(R.string.txt_sign_in)
-    }
-*/
+            },
+            onApiError = {
+                showProgress(false)
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+            },
+            onNetworkError = {
+                showProgress(false)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            android.R.id.home -> onBackPressed()
-            else -> {
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-/*
-    private val edmobile: EditText
-        private get() = findViewById<View>(R.id.edmobile) as EditText
-
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.btnsubmit -> performLogin()
-        }
-    }
-
-    fun performLogin() {
-        if (edmobile.text.toString().equals("", ignoreCase = true)) {
-            Global.getAlertDialog(
-                this@LoginActivity,
-                "Opps..!",
-                resources.getString(R.string.txt_fill_all_details)
-            )
-        } else {
-            Global.showProgressDialog(this@LoginActivity)
-            apiManager!!.login(ApiEndpoints.login, edmobile.text.toString().trim { it <= ' ' })
-        }
-    }
-
-    override fun isConnected(requestService: String?, isConnected: Boolean) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@LoginActivity)
-            if (!isConnected) {
-                Global.noInternetConnectionDialog(this@LoginActivity)
-            }
-        }
-    }
-
-    override fun onSuccessResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@LoginActivity)
-            if (requestService.equals(ApiEndpoints.login, ignoreCase = true)) {
-                try {
-                    Log.d("response", responseString!!)
-                    processResponse(responseString)
-                    if (status) {
-                        val detailAct = Intent(this@LoginActivity, VerificationActivity::class.java)
-                        detailAct.putExtra("phonenumber", "+91" + edmobile.text.toString())
-                        detailAct.putExtra("isbusiness", isbusiness)
-                        startActivity(detailAct)
-                        //tvError.setVisibility(View.GONE);
-                    } else {
-                        //tvError.setVisibility(View.VISIBLE);
-                        //tvError.setText(message);
-                        if (message == "Mobile number not registered. Please register first") {
-                            val materialAlertDialogBuilder = AlertDialog.Builder(this@LoginActivity)
-                            val inflater = this@LoginActivity.getSystemService(
-                                LAYOUT_INFLATER_SERVICE
-                            ) as LayoutInflater
-                            val view = inflater.inflate(R.layout.custom_error_dialog, null)
-                            val tvTitle: TextView
-                            val tvMessage: TextView
-                            val btnOk: Button
-                            tvTitle = view.findViewById(R.id.tvTitle)
-                            tvMessage = view.findViewById(R.id.tvMessage)
-                            btnOk = view.findViewById(R.id.btnOk)
-                            tvTitle.text = "Opps..!"
-                            tvMessage.text = message
-                            materialAlertDialogBuilder.setView(view).setCancelable(true)
-                            val b = materialAlertDialogBuilder.create()
-                            btnOk.setOnClickListener {
-                                b.dismiss()
-                                val intent =
-                                    Intent(this@LoginActivity, RegisterActivity::class.java)
-                                intent.putExtra("number", "" + edmobile.text.toString())
-                                startActivity(intent)
-                            }
-                            b.show()
-                        } else {
-                            Global.getAlertDialog(this@LoginActivity, "Opps..!", message)
-                        }
-                    }
-                } catch (e: Exception) {
-                }
-            }
-        }
-    }
-
-    override fun onErrorResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@LoginActivity)
-            Global.showFailDialog(this@LoginActivity, responseString)
-        }
+            })
     }
 
 
-    var isbusiness = false
-    fun processResponse(responseString: String?) {
-        status = false
-        message = ""
-        try {
-            val jsonObject = JSONObject(responseString)
-            if (jsonObject.has("status")) {
-                status = jsonObject.getBoolean("status")
-            }
-            if (jsonObject.has("isbusiness")) {
-                isbusiness = jsonObject.getBoolean("isbusiness")
-            }
-            if (jsonObject.has("message")) {
-                message = jsonObject.getString("message")
-            }
-            if (status) {
-                if (jsonObject.has("token")) {
-                    val token = jsonObject.getString("token")
-                    Global.storePreference(Constant.PREF_TOKEN, token)
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-*/
 
     override fun onFocusChange(v: View?, hasFocus: Boolean) {
 
@@ -233,8 +130,138 @@ class LoginActivity : AppCompatActivity(), /*View.OnClickListener,*/View.OnFocus
             (v as EditText).setTextColor(this.color(R.color.colorPrimary))
             v.background = resources.getDrawable(R.drawable.edit_text_border_selected)
         } else {
-            (v as EditText).setTextColor(this.color(R.color.colorBackground))
+            (v as EditText).setTextColor(this.color(R.color.black))
             v.background = resources.getDrawable(R.drawable.edit_text_border)
         }
     }
-}
+
+    private fun performSubmit() {
+        val code = etOtp!!.text.toString().trim()
+        if (code.isEmpty() || code.length < 6) {
+            Toast.makeText(
+                this,
+                "Please enter OTP",
+                Toast.LENGTH_SHORT
+            ).show()
+            etOtp!!.requestFocus()
+            return
+        }
+        verifyCode(code)
+    }
+
+    private fun verifyCode(code: String) {
+        try {
+            showProgress(true)
+            val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
+            signInWithCredential(credential)
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun signInWithCredential(credential: PhoneAuthCredential) {
+        mAuth!!.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                showProgress(false)
+                if (task.isSuccessful) {
+                    login()
+                } else {
+                    Toast.makeText(
+                        this,
+                        task.exception!!.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+    }
+
+
+
+    private fun sendVerificationCode(number: String?) {
+        try {
+            showProgress(true)
+            PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                number!!,
+                60,
+                TimeUnit.SECONDS,
+                TaskExecutors.MAIN_THREAD,
+                mCallBack
+            )
+        } catch (e: Exception) {
+        }
+    }
+
+    private val mCallBack: PhoneAuthProvider.OnVerificationStateChangedCallbacks =
+        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            override fun onCodeSent(
+                s: String,
+                forceResendingToken: PhoneAuthProvider.ForceResendingToken
+            ) {
+                super.onCodeSent(s, forceResendingToken)
+                showProgress(false)
+                verificationId = s
+                token=forceResendingToken
+                Toast.makeText(
+                    this@LoginActivity,
+                    "OTP sent to your mobile number.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                showPopupDialog(this@LoginActivity)
+            }
+
+            override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
+                val code = phoneAuthCredential.smsCode
+                if (code != null) {
+                    etOtp!!.setText(code)
+                    verifyCode(code)
+                }
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+                Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
+    private fun resendVerificationCode(phoneNumber: String?, token: PhoneAuthProvider.ForceResendingToken?) {
+        showProgress(true)
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+            phoneNumber!!,  // Phone number to verify
+            60,  // Timeout duration
+            TimeUnit.SECONDS,
+            this,
+            mCallBack,
+            token
+        ) // resending with token got at previous call's `callbacks` method `onCodeSent`
+    }
+
+    private fun showPopupDialog(context: Context) {
+        val layout = LayoutInflater.from(context).inflate(R.layout.layout_otp, null)
+
+        etOtp = layout.findViewById<View>(R.id.et_otp) as AppCompatEditText
+        val tvresendOtp = layout.findViewById<View>(R.id.tvresendOtp) as TextView
+        val btn_done = layout.findViewById<View>(R.id.btn_done) as TextView
+        val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as ImageView
+
+
+
+        val builder = AlertDialog.Builder(context)
+            .setView(layout)
+            .setCancelable(false)
+
+
+        val alertDialog = builder.create()
+
+        btn_done.onClick {
+            performSubmit()
+        }
+
+        tvresendOtp.onClick { resendVerificationCode(et_number.text.toString(),token!!) }
+
+
+        ib_cancel.onClick {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
+
+
+    }}

@@ -27,8 +27,8 @@ class CustomFestivalItemAdapter(var context: Context, var originaldata: ArrayLis
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val homePageItem = originaldata!![position]
 
-        //Glide.with(context).load(homePageItem!!.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(holder.imageView)
-        holder.imageView.loadImageFromUrl(homePageItem!!.fest_image!!)
+        Glide.with(context).load(homePageItem!!.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(holder.imageView)
+        //holder.imageView.loadImageFromUrl(homePageItem!!.fest_image!!)
         holder.tvTitle.text=homePageItem.fest_name;
 
         holder.tvNew.show()

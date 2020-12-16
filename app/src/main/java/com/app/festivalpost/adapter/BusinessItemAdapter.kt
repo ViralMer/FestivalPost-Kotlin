@@ -1,6 +1,8 @@
 package com.app.festivalpost.adapter
 
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.ChoosePhotoActivity
 import com.app.festivalpost.R
+import com.app.festivalpost.activity.AddBusinessActivity
 import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.models.BusinessCategory
 import com.app.festivalpost.models.CurrentBusinessItem
@@ -18,11 +21,12 @@ import com.app.festivalpost.models.HomePageItem
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
 import com.makeramen.roundedimageview.RoundedImageView
+import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
 
 class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<CurrentBusinessItem?>) : RecyclerView.Adapter<BusinessItemAdapter.BusinessItemAdapterViewHolder>() {
-    var searchCount = 0
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BusinessItemAdapter.BusinessItemAdapterViewHolder {
         val view: View? =
@@ -44,8 +48,15 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
             holder.ivcurrentbusiness.visibility = View.GONE
         }
 
+        holder.profileEdit.onClick {
+            context.launchActivity<AddBusinessActivity> {
+                putExtra("object",originaldata[position])
+            }
 
-        holder.laymain.tag = position
+        }
+
+
+        /*holder.laymain.tag = position
         holder.laymain.setOnClickListener { view ->
             val index = view.tag as Int
             val p = originaldata[index]
@@ -57,7 +68,7 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
             }
             notifyDataSetChanged()
         }
-
+*/
 
 
 
@@ -75,7 +86,7 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
 
         val profileEdit :AppCompatImageView = view.findViewById<View>(R.id.profileEdit) as AppCompatImageView
         val ivcurrentbusiness :AppCompatImageView = view.findViewById<View>(R.id.ivcurrentbusiness) as AppCompatImageView
-        val laymain :LinearLayout = view.findViewById<View>(R.id.laymain) as LinearLayout
+        //val laymain :LinearLayout = view.findViewById<View>(R.id.laymain) as LinearLayout
 
 
     }

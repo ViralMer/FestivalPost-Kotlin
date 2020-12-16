@@ -14,30 +14,26 @@ import android.provider.Settings
 import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import com.github.dhaval2404.imagepicker.ImagePicker
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
+import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Global
-import com.app.festivalpost.models.BusinessItem
-import com.bumptech.glide.Glide
-import com.karumi.dexter.Dexter
-import com.app.festivalpost.activity.OnItemClickListener
-import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
 import com.app.festivalpost.models.BusinessCategory
-import com.app.festivalpost.models.PhotoItem
+import com.app.festivalpost.models.CurrentBusinessItem
+import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.onClick
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.textfield.TextInputEditText
+import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -45,11 +41,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import org.json.JSONObject
 
 
-class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiResponseListener,OnItemClickListener {
+class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseListener {
     var apiManager: ApiManager? = null
-    var status = false
+    var status = true
     var message = ""
-    var businessItem: BusinessItem? = null
+    var businessItem: CurrentBusinessItem? = null
     var ivlogo: ImageView? = null
     var profilePath = ""
     var edName:AppCompatEditText?=null
@@ -71,12 +67,13 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey("object")) {
-                businessItem = bundle["object"] as BusinessItem?
+                businessItem = bundle["object"] as CurrentBusinessItem?
             }
         }
-        apiManager = ApiManager(this@AddBusinessActivity)
+
+
         setActionbar()
-        findViewById<View>(R.id.btn_next).setOnClickListener(this)
+        apiManager= ApiManager(this)
         ivlogo = findViewById(R.id.ivlogo)
 
 
@@ -92,21 +89,23 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
 
         frameChosse!!.setOnClickListener({ openAddImageDialog() })
         if (businessItem != null) {
-            edName!!.setText(businessItem!!.busiName)
-            edAddress!!.setText(businessItem!!.busiAddress)
-            if (!businessItem!!.busiWebsite.equals("")) {
-                edWebsite!!.setText(businessItem!!.busiWebsite)
+            edName!!.setText(businessItem!!.busi_name)
+            edAddress!!.setText(businessItem!!.busi_address)
+            if (!businessItem!!.busi_website.equals("")) {
+                edWebsite!!.setText(businessItem!!.busi_website)
             }
-            edPhone!!.setText(businessItem!!.busiMobile)
-            edEmail!!.setText(businessItem!!.busiEmail)
-            if (!businessItem!!.busiLogo.equals("")) {
-                Glide.with(this@AddBusinessActivity).load(businessItem!!.busiLogo)
+            edPhone!!.setText(businessItem!!.busi_mobile)
+            edPhone2!!.setText(businessItem!!.busi_mobile_second)
+            edEmail!!.setText(businessItem!!.busi_email)
+            if (!businessItem!!.busi_logo.equals("")) {
+                Glide.with(this@AddBusinessActivity).load(businessItem!!.busi_logo)
                     .into(ivlogo!!)
             }
         }
 
         btn_next!!.onClick {
             submitDetails()
+            Log.d("Clicked", "Cliked")
         }
         businessCategoryList.add(BusinessCategory("IT"))
         businessCategoryList.add(BusinessCategory("IT"))
@@ -116,7 +115,7 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         businessCategoryList.add(BusinessCategory("IT"))
         businessCategoryList.add(BusinessCategory("IT"))
         category_value= businessCategoryList[0]!!.name
-        businessCategoryItemAdapter= BusinessCategoryItemAdapter(this,businessCategoryList)
+        businessCategoryItemAdapter= BusinessCategoryItemAdapter(this, businessCategoryList)
     }
 
     fun openAddImageDialog() {
@@ -126,9 +125,9 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
                         ImagePicker.Companion.with(this@AddBusinessActivity)
-                                    .galleryOnly()
-                                    .crop()
-                                    .start()
+                            .galleryOnly()
+                            .crop()
+                            .start()
 
 
                     } else {
@@ -200,19 +199,16 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
     fun setActionbar() {
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
+
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         val ivBack = toolbar.findViewById<View>(R.id.ivBack) as AppCompatImageView
         val tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
         if (businessItem == null) {
             tvtitle.text = resources.getString(R.string.txt_add_business)
-            tvaction.visibility = View.INVISIBLE
         } else {
             tvtitle.text = resources.getString(R.string.txt_edit_business)
-            tvaction.visibility = View.VISIBLE
-            tvaction.text = resources.getString(R.string.txt_delete)
         }
 
         ivBack.onClick {
@@ -227,7 +223,7 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
                     Global.showProgressDialog(this@AddBusinessActivity)
                     apiManager!!.removemybusiness(
                         ApiEndpoints.removemybusiness,
-                        businessItem!!.busiId.toString() + ""
+                        businessItem!!.busi_id.toString() + ""
                     )
                 }
                 .setNegativeButton(resources.getString(R.string.txt_no)) { dialog, which -> dialog.dismiss() }
@@ -236,11 +232,6 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
     }
 
 
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.btn_next -> submitDetails()
-        }
-    }
 
     private fun submitDetails() {
         if (edName!!.text.toString() == "") {
@@ -250,13 +241,12 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         } else if (edPhone!!.text.toString().length != 10) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter 10 Digit Mobile Number")
         }
-        else if (edPhone2!!.text.toString().length != 10) {
-            Global.getAlertDialog(this, "Opps..!", "Please Enter 10 Digit Mobile Number")
-        }
         else if (edWebsite!!.text.toString() != "" && !validWebsite(edWebsite!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
         } else {
+            Log.d("Business0", "" + businessItem)
             if (businessItem == null) {
+                Log.d("Business01", "" + businessItem)
                 AddBusinessAsync(
                     edName!!.text.toString(),
                     edEmail!!.text.toString(),
@@ -266,10 +256,11 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
                     edAddress!!.text.toString(),
                     category_value!!,
                     profilePath
-                )
+                ).execute()
             } else {
+                Log.d("Business012", "" + businessItem)
                 UpdateBusinessAsync(
-                    businessItem!!.busiId.toString() + "",
+                    businessItem!!.busi_id.toString() + "",
                     edName!!.text.toString(),
                     edEmail!!.text.toString(),
                     edPhone!!.text.toString(),
@@ -278,7 +269,7 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
                     edAddress!!.text.toString(),
                     category_value!!,
                     profilePath
-                )
+                ).execute()
             }
         }
     }
@@ -322,15 +313,26 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         private var profilePath = ""
         override fun onPreExecute() {
             super.onPreExecute()
-            Global.showProgressDialog(this@AddBusinessActivity)
+            Log.d("Start", "Start Api")
+            showProgress(true)
         }
 
         override fun doInBackground(vararg p0: Void?): Void? {
+            Log.d("Start", "Start Api2")
             apiManager!!.addbusiness(
-                ApiEndpoints.addbusiness, name, email, mobile,mobile2,website, address,category ,profilePath
+                ApiEndpoints.addbusiness,
+                name,
+                email,
+                mobile,
+                mobile2,
+                website,
+                address,
+                category,
+                profilePath
             )
             return null
         }
+
 
         init {
             this.name = name
@@ -372,8 +374,19 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
 
         override fun doInBackground(vararg p0: Void?): Void? {
             apiManager!!.updatebusiness(
-                ApiEndpoints.updatebusiness, id, name, email, mobile,mobile2, website, address,category, profilePath
+                ApiEndpoints.updatebusiness,
+                id,
+                name,
+                email,
+                mobile,
+                mobile2,
+                website,
+                address,
+                category,
+                profilePath
             )
+            Log.d("mobile2",""+edPhone2!!.text.toString())
+
             return null
         }
 
@@ -394,28 +407,8 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         super.onBackPressed()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            android.R.id.home -> onBackPressed()
-            else -> {
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
-    override fun isConnected(requestService: String?, isConnected: Boolean) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@AddBusinessActivity)
-            if (!isConnected) {
-                Global.noInternetConnectionDialog(this@AddBusinessActivity)
-            }
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "ResourceAsColor")
     override fun onSuccessResponse(
         requestService: String?,
         responseString: String?,
@@ -428,7 +421,7 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
             ) {
                 try {
                     Log.d("response", responseString!!)
-                    processResponse(responseString)
+                    //processResponse(responseString)
                     if (status) {
                         Global.showSuccessDialog(this@AddBusinessActivity, message)
                         onBackPressed()
@@ -456,10 +449,13 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
                         btnOk.setTextColor(resources.getColor(R.color.colorBlack))
                         if (message == "Business Information Update") {
                             tvTitle.text = "Approval Done"
+                            tvTitle.setTextColor(R.color.black)
                             tvMessage.text = message
+                            tvTitle.setTextColor(R.color.black)
                         } else {
                             tvTitle.text = resources.getString(R.string.under_approval)
                             tvMessage.text = message
+                            tvTitle.setTextColor(R.color.black)
                         }
                         materialAlertDialogBuilder.setView(view).setCancelable(true)
                         val b = materialAlertDialogBuilder.create()
@@ -478,17 +474,26 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
         }
     }
 
+
+    override fun onItemClicked(`object`: Any?, index: Int) {
+        val photoItem = `object` as BusinessCategory
+        category_value = photoItem.name
+
+    }
+
+    override fun isConnected(requestService: String?, isConnected: Boolean) {
+
+        showProgress(false)
+    }
+
+
     override fun onErrorResponse(
         requestService: String?,
         responseString: String?,
         responseCode: Int
     ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@AddBusinessActivity)
-            Global.showFailDialog(this@AddBusinessActivity, responseString)
-        }
+        showProgress(false)
     }
-
 
     fun processResponse(responseString: String?) {
         status = false
@@ -501,14 +506,8 @@ class AddBusinessActivity : AppCompatActivity(), View.OnClickListener, ApiRespon
             if (jsonObject.has("message")) {
                 message = jsonObject.getString("message")
             }
-        } catch (e: Exception) {
+        } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
-    }
-
-    override fun onItemClicked(`object`: Any?, index: Int) {
-        val photoItem = `object` as BusinessCategory
-        category_value = photoItem.name
-
     }
 }

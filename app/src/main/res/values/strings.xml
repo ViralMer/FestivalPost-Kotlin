@@ -13,7 +13,7 @@
 
     <string name="txt_send_otp">Send OTP</string>
     <string name="url_name">http://festivalpost.in/admin/api/</string>
-    <string name="txt_resend_otp">Resend OTP</string>
+    <string name="txt_resend_otp"><u>Resend OTP</u></string>
     <string name="txt_email">Enter your email</string>
     <string name="txt_mobile_number" translatable="false">Enter your mobile number</string>
     <string name="txt_otp">Enter your OTP</string>
@@ -577,5 +577,6 @@
     <string name="lbl_email_us">Email Us</string>
     <string name="lbl_call_us">Call Us : +918070794444</string>
     <string name="lbl_loading">Loading</string>
+    <string name="lbl_enter_otp">Enter Otp</string>
 
 </resources>

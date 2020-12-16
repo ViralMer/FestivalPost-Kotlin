@@ -13,33 +13,32 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
-
-import com.app.festivalpost.apifunctions.ApiResponseListener
-import com.google.firebase.auth.FirebaseAuth
-import com.app.festivalpost.apifunctions.ApiManager
-import com.google.firebase.FirebaseApp
-import com.app.festivalpost.activity.RegisterActivity
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.AuthResult
 import com.app.festivalpost.apifunctions.ApiEndpoints
-import com.google.android.gms.tasks.TaskExecutors
-import com.google.firebase.auth.PhoneAuthProvider.OnVerificationStateChangedCallbacks
-import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
-import com.google.firebase.FirebaseException
-import com.app.festivalpost.activity.AddFirstBusinessActivity
+import com.app.festivalpost.apifunctions.ApiManager
+import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_USER_DATA
+import com.app.festivalpost.utils.extensions.callApi
+import com.app.festivalpost.utils.extensions.getRestApis
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.emegamart.lelys.utils.extensions.launchActivity
 import com.google.android.gms.tasks.TaskExecutors.MAIN_THREAD
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
+import com.google.firebase.auth.PhoneAuthProvider.OnVerificationStateChangedCallbacks
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
+class RegisterVerificationActivity : AppBaseActivity(),
     ApiResponseListener {
     private var verificationId: String? = null
     private var mAuth: FirebaseAuth? = null
@@ -48,16 +47,22 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
     var status = false
     var message = ""
     var progressDialog: ProgressDialog? = null
+
+    var number:String?=null
+    var name:String?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verification)
         FirebaseApp.initializeApp(this@RegisterVerificationActivity)
         setActionbar()
+        mAuth = FirebaseAuth.getInstance()
         apiManager = ApiManager(this@RegisterVerificationActivity)
         progressDialog = ProgressDialog(this@RegisterVerificationActivity)
         progressDialog!!.setMessage(resources.getString(R.string.txt_please_wait))
-        mAuth = FirebaseAuth.getInstance()
         val phonenumber = intent.getStringExtra("phonenumber")
+        number = intent.getStringExtra("number")
+        name = intent.getStringExtra("name")
         sendVerificationCode(phonenumber)
         edMobile.setText(Global.getPreference("pref_mobile", ""))
         gettvEdit().text = Html.fromHtml("<u><font color=blue>Edit</u>")
@@ -67,7 +72,7 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
             startActivity(intent)
             finish()
         }
-        findViewById<View>(R.id.btnsubmit).setOnClickListener(this)
+
         tvsignup = findViewById<View>(R.id.tvsignup) as TextView
         tvsignup!!.setOnClickListener { onBackPressed() }
     }
@@ -108,11 +113,6 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
     private val edMobile: EditText
         private get() = findViewById<View>(R.id.edtmobile) as EditText
 
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.btnsubmit -> performSubmit()
-        }
-    }
 
     private fun performSubmit() {
         val code = edotp.text.toString().trim { it <= ' ' }
@@ -130,9 +130,7 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
 
     private fun verifyCode(code: String) {
         try {
-            if (progressDialog != null && !progressDialog!!.isShowing) {
-                progressDialog!!.show()
-            }
+            showProgress(true)
             val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
             signInWithCredential(credential)
         } catch (e: Exception) {
@@ -142,17 +140,9 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
     private fun signInWithCredential(credential: PhoneAuthCredential) {
         mAuth!!.signInWithCredential(credential)
             .addOnCompleteListener { task ->
-                if (progressDialog != null && progressDialog!!.isShowing) {
-                    progressDialog!!.dismiss()
-                }
+                showProgress(false)
                 if (task.isSuccessful) {
-                    apiManager!!.register(
-                        ApiEndpoints.register,
-                        Global.getPreference("pref_name", ""),
-                        Global.getPreference("pref_email", ""),
-                        Global.getPreference("pref_mobile", ""),
-                        Global.getPreference("pref_referal", "")
-                    )
+                    loadRegisterData()
                 } else {
                     Toast.makeText(
                         this@RegisterVerificationActivity,
@@ -161,6 +151,29 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
                     ).show()
                 }
             }
+    }
+
+    private fun loadRegisterData() {
+        showProgress(true)
+        callApi(
+            getRestApis().register(name!!, number!!),
+            onApiSuccess = {
+                showProgress(false)
+                launchActivity<HomeActivity> {
+                    getSharedPrefInstance().setValue(IS_LOGGED_IN, true)
+                    getSharedPrefInstance().setValue(KEY_USER_DATA, it.data)
+
+
+                }
+            },
+            onApiError = {
+                showProgress(false)
+
+            },
+            onNetworkError = {
+                showProgress(false)
+
+            })
     }
 
     private fun sendVerificationCode(number: String?) {
@@ -284,4 +297,6 @@ class RegisterVerificationActivity : AppCompatActivity(), View.OnClickListener,
             e.printStackTrace()
         }
     }
+
+
 }

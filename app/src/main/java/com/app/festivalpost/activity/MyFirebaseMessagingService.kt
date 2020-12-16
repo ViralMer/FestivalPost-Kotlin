@@ -15,6 +15,8 @@ import androidx.core.app.NotificationCompat
 import com.app.festivalpost.R
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TOKEN
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.io.IOException
@@ -28,7 +30,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     var context: Context? = null
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
-        Global.storePreference(Constant.PREF_DEVICE_TOKEN, token)
+        getSharedPrefInstance().setValue(DEVICE_TOKEN,token)
         context = applicationContext
     }
 

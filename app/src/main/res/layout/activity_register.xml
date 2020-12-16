@@ -31,6 +31,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="10"
         >
 
         <LinearLayout
@@ -95,6 +96,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearRegister"
                 android:layout_width="@dimen/_90sdp"
                 android:layout_height="@dimen/_45sdp"
                 android:layout_gravity="end"
@@ -155,7 +157,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:gravity="center"
-            android:text="@string/txt_sign_in"
+            android:text="@string/tv_sign_in"
             android:textColor="@color/colorBlack"
             android:textSize="16dp"
             android:textStyle="bold" />

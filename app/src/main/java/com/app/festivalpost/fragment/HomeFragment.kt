@@ -88,7 +88,9 @@ class HomeFragment : BaseFragment() {
 
         }
 
-        mainHandler.postDelayed(runnable, 0)
+        if(savedInstanceState==null) mainHandler.postDelayed(runnable, 0)
+
+
 
 
     }
@@ -112,7 +114,8 @@ class HomeFragment : BaseFragment() {
                     ignoreCase = true
                 )
             ) {
-                ivphoto.loadImageFromUrl(festivalItem.fest_image!!)
+                Glide.with(activity!!).load(festivalItem.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(ivphoto)
+                //ivphoto.loadImageFromUrl(festivalItem.fest_image!!)
             }
 
             container.addView(view)
@@ -148,8 +151,6 @@ class HomeFragment : BaseFragment() {
 
     private fun loadHomePageData() {
         showProgress()
-        val token = getString(R.string.token)
-        getSharedPrefInstance().setValue(USER_TOKEN, token)
         callApi(
             getRestApis().getHomePageData(),
             onApiSuccess = { res ->

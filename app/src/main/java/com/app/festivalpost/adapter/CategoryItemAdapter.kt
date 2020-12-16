@@ -31,7 +31,7 @@ class CategoryItemAdapter(var context: Context, var originaldata: ArrayList<Home
         val homePageItem = originaldata[position]
 
 
-        holder.imageView.loadImageFromUrl(homePageItem!!.fest_image!!)
+        Glide.with(context).load(homePageItem!!.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(holder.imageView)
         holder.tvTitle.text=homePageItem.fest_name
 
         holder.tvNew.hide()
