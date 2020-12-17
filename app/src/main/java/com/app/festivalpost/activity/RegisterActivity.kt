@@ -53,6 +53,7 @@ class RegisterActivity : AppBaseActivity() {
         if (isLoggedIn())
         {
             launchActivity<HomeActivity> {  }
+            finish()
         }
 
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->

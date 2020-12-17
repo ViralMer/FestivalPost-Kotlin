@@ -22,6 +22,8 @@ import com.app.festivalpost.R
 import com.app.festivalpost.activity.LoginActivity
 import com.app.festivalpost.adapter.CategoryItemAdapter
 import com.app.festivalpost.adapter.CustomFestivalItemAdapter
+import com.app.festivalpost.adapter.CustomFestivalVideoItemAdapter
+import com.app.festivalpost.adapter.VideoCategoryItemAdapter
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
@@ -51,8 +53,8 @@ import java.io.FileOutputStream
 @Suppress("DEPRECATION")
 class VideoFragment : BaseFragment() {
 
-    private var festivalVideoArrayList = arrayListOf<HomePageItem?>()
-    private var categoryVideoArrayList = arrayListOf<HomePageItem?>()
+    private var festivalVideoArrayList = arrayListOf<VideoPageItem?>()
+    private var categoryVideoArrayList = arrayListOf<VideoPageItem?>()
     private var rcvCustomFestivalVideo: RecyclerView? = null
     private var rcvCustomCategoryVideo: RecyclerView? = null
 
@@ -61,7 +63,7 @@ class VideoFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_video, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -116,12 +118,12 @@ class VideoFragment : BaseFragment() {
                         true
                     )
                     val customFestivalAdapter =
-                        CustomFestivalItemAdapter(activity!!, festivalVideoArrayList)
+                        CustomFestivalVideoItemAdapter(activity!!, festivalVideoArrayList)
                     rcvCustomFestivalVideo!!.adapter = customFestivalAdapter
 
                     rcvCustomCategoryVideo!!.layoutManager = GridLayoutManager(activity, 3)
                     val customCategoryAdapter =
-                        CategoryItemAdapter(activity!!, categoryVideoArrayList)
+                        VideoCategoryItemAdapter(activity!!, categoryVideoArrayList)
                     rcvCustomCategoryVideo!!.adapter = customCategoryAdapter
 
                     if (festivalVideoArrayList.size > 0) {

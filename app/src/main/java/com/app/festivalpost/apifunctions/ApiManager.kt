@@ -517,7 +517,7 @@ class ApiManager {
                 multipart.addFormField("email", email)
                 multipart.addFormField("mobile_second", mobile2)
                 multipart.addFormField("mobile", mobile)
-                Log.d("IDNAME","ID :"+id + " NAme:"+mobile2)
+                Log.d("IDNAME", "ID :$id NAme:$mobile2")
                 multipart.addFormField("website", website)
                 multipart.addFormField("address", address)
                 multipart.addFormField("business_category", category)

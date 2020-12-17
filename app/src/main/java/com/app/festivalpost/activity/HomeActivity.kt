@@ -11,6 +11,7 @@ import com.app.festivalpost.R
 import com.app.festivalpost.fragment.AccountFragment
 import com.app.festivalpost.fragment.CustomFragment
 import com.app.festivalpost.fragment.HomeFragment
+import com.app.festivalpost.fragment.VideoFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeActivity : AppBaseActivity() {
@@ -24,12 +25,7 @@ class HomeActivity : AppBaseActivity() {
         instance = this
 
         val mainHandler = Handler(Looper.getMainLooper())
-        var runnable: Runnable = object : Runnable {
-            override fun run() {
-                loadHomeFragment()
-            }
-
-        }
+        var runnable: Runnable = Runnable { loadHomeFragment() }
 
         mainHandler.postDelayed(runnable, 0)
         setupBottomNavigation()
@@ -46,7 +42,7 @@ class HomeActivity : AppBaseActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_video -> {
-                    //loadDaysFragment()
+                    loadVideoFragment()
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_digitalcard -> {
@@ -94,6 +90,14 @@ class HomeActivity : AppBaseActivity() {
 
     private fun loadAccountFragment() {
         val fragment = AccountFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+        //tvtitle!!.text = resources.getString(R.string.txt_account)
+    }
+
+    private fun loadVideoFragment() {
+        val fragment = VideoFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()

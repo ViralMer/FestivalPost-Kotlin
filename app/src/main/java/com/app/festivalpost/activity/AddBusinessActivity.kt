@@ -248,7 +248,11 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
         }
         else if (edWebsite!!.text.toString() != "" && !validWebsite(edWebsite!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
-        } else {
+        }
+        else if (category_value!=null) {
+            Global.getAlertDialog(this, "Opps..!", "Please Select Category")
+        }
+        else {
             Log.d("Business0", "" + businessItem)
             if (businessItem == null) {
                 Log.d("Business01", "" + businessItem)

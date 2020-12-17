@@ -16,7 +16,7 @@ interface RestApis {
 
     @FormUrlEncoded
     @POST("getAllVideoPosts")
-    fun getVideoPageData(@Field("token")token:String= getApiToken()):Call<HomePageResponse>
+    fun getVideoPageData(@Field("token")token:String= getApiToken()):Call<VideoPageResponse>
 
     @FormUrlEncoded
     @POST("getfestivalimages")
