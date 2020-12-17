@@ -53,7 +53,6 @@ class HomeFragment : BaseFragment() {
     private var sliderArrayList = arrayListOf<HomePageItem?>()
     private var festivalArrayList = arrayListOf<HomePageItem?>()
     private var categoryArrayList = arrayListOf<HomePageItem?>()
-    private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     private var viewPager: ViewPager? = null
     private var rcvCustomFestival: RecyclerView? = null
     private var rcvCustomCategory: RecyclerView? = null
@@ -72,13 +71,10 @@ class HomeFragment : BaseFragment() {
 
         rcvCustomCategory = view.findViewById(R.id.customCategory)
         rcvCustomFestival = view.findViewById(R.id.customFestival)
-        mSwipeRefreshLayout = view.findViewById(R.id.swipeToRefresh)
+
         viewPager = view.findViewById(R.id.sliderviewPager)
         //loadHomePageData()
-        mSwipeRefreshLayout!!.setOnRefreshListener {
-            loadHomePageData()
-            mSwipeRefreshLayout!!.isRefreshing = false
-        }
+
 
         val mainHandler = Handler(getMainLooper())
         var runnable: Runnable = object : Runnable {

@@ -132,7 +132,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             "BusinessData",
             "Business Mobile" + businessItem.busiMobile + "Email" + businessItem.busiEmail + "Nane:" + businessItem.busiName + "Address:" + businessItem.busiAddress + "Website:" + businessItem.busiWebsite
         )
-        if (businessItem.busiName != "" && businessItem.busiName != null) {
+        if (businessItem.busiName != "") {
             //Log.d("StringColorCode",""+colorInt);
             tvframename!!.visibility = View.VISIBLE
             tvframename1!!.visibility = View.VISIBLE
@@ -141,7 +141,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             tvframename!!.setTextColor(Color.parseColor(videoData!!.color))
             tvframename1!!.setTextColor(Color.parseColor(videoData.color))
         }
-        if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
+        if (businessItem.busiLogo != "") {
             ivlogo!!.visibility = View.VISIBLE
             ivlogo1!!.visibility = View.VISIBLE
             //Glide.with(VideoDetailActivity.this).load(businessItem.getBusiLogo()).into(ivlogo);
@@ -152,8 +152,8 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
         }
 
 
-        //downloadFileImage(businessItem.getBusiLogo());
-        if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
+       
+        if (businessItem.busiMobile != "") {
             tvframephone!!.visibility = View.VISIBLE
             tvframephone1!!.visibility = View.VISIBLE
             tvframephone!!.text = businessItem.busiMobile
@@ -161,7 +161,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             tvframephone!!.setTextColor(Color.parseColor(videoData!!.color))
             tvframephone1!!.setTextColor(Color.parseColor(videoData.color))
         }
-        if (businessItem.busiAddress != null && businessItem.busiAddress != "") {
+        if (businessItem.busiAddress != "") {
             tvframelocation!!.visibility = View.VISIBLE
             tvframelocation1!!.visibility = View.VISIBLE
             tvframelocation!!.text = businessItem.busiAddress
@@ -169,7 +169,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             tvframelocation!!.setTextColor(Color.parseColor(videoData!!.color))
             tvframelocation1!!.setTextColor(Color.parseColor(videoData.color))
         }
-        if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
+        if (businessItem.busiEmail != "") {
             tvframeemail!!.visibility = View.VISIBLE
             tvframeemail1!!.visibility = View.VISIBLE
             tvframeemail!!.text = businessItem.busiEmail
@@ -181,7 +181,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             textEmail1!!.visibility = View.VISIBLE
             textEmail1!!.setTextColor(Color.parseColor(videoData.color))
         }
-        if (businessItem.busiWebsite != null && businessItem.busiWebsite != "") {
+        if (businessItem.busiWebsite != "") {
             tvframeweb!!.visibility = View.VISIBLE
             tvframeweb1!!.visibility = View.VISIBLE
             tvframeweb!!.text = businessItem.busiWebsite
@@ -194,16 +194,14 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             textWebsite1!!.setTextColor(Color.parseColor(videoData.color))
         }
         frameLayout!!.isDrawingCacheEnabled = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
-            frameLayout!!.buildDrawingCache(true)
-        }
+        frameLayout!!.buildDrawingCache(true)
         savedBmp = getBitmapFromView(frameLayout)
-        //SaveImagetostoreinternal(savedBmp);
-        SaveImage(savedBmp)
+
+        saveImage(savedBmp)
         frameLayout!!.isDrawingCacheEnabled = false
     }
 
-    fun getBitmapFromView(view: View?): Bitmap {
+    private fun getBitmapFromView(view: View?): Bitmap {
         view!!.measure(view.width, view.height)
         val bitmap = Bitmap.createBitmap(1080, 1080, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -521,7 +519,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
         }
     }
 
-    private fun SaveImage(finalBitmap: Bitmap?): String {
+    private fun saveImage(finalBitmap: Bitmap?): String {
         val root = Environment.getExternalStorageDirectory().absolutePath
         val myDir = File("$root/Imagename")
         myDir.mkdirs()
@@ -550,7 +548,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
     }
 
     fun openAddImageDialog() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
             .withPermissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE

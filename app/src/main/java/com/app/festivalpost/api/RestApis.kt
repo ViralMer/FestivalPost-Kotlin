@@ -13,6 +13,11 @@ interface RestApis {
     @POST("gethomepage")
     fun getHomePageData(@Field("token")token:String= getApiToken()):Call<HomePageResponse>
 
+
+    @FormUrlEncoded
+    @POST("getAllVideoPosts")
+    fun getVideoPageData(@Field("token")token:String= getApiToken()):Call<HomePageResponse>
+
     @FormUrlEncoded
     @POST("getfestivalimages")
     fun getCategoryImages(@Field("postcategoryid")postcategoryid:String):Call<CategoryImagesResponse>
@@ -41,6 +46,11 @@ interface RestApis {
     @FormUrlEncoded
     @POST("getmyallbusiness")
     fun getAllMyBusiness(@Field("token")token:String= getApiToken()):Call<BusinessItemResponse>
+
+
+    @FormUrlEncoded
+    @POST("getBusinessCategory")
+    fun getAllBusinessCategory(@Field("token")token:String= getApiToken()):Call<BusinessCategoryResponse>
 
 
 

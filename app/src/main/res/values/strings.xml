@@ -578,5 +578,12 @@
     <string name="lbl_call_us">Call Us : +918070794444</string>
     <string name="lbl_loading">Loading</string>
     <string name="lbl_enter_otp">Enter Otp</string>
+    <string name="lbl_basic_plan">Basic plan</string>
+    <string name="lbl_first_plan">$ 1199 / </string>
+    <string name="lbl_three_months">3 months</string>
+    <string name="lbl_use_all_videos">Use all videos</string>
+    <string name="lbl_use_all_images">Use all images</string>
+    <string name="txt_choose_plans"><font color='#48A8BC'>C</font>hoose Plans</string>
+    <string name="lbl_purchase">Purchase</string>
 
 </resources>

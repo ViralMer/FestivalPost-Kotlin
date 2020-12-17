@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.app.festivalpost.*
 import com.app.festivalpost.activity.*
 import com.app.festivalpost.globals.Constant
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
@@ -31,6 +32,14 @@ class AccountFragment : BaseFragment() {
         val tvlogout=view.findViewById<View>(R.id.tvLogout) as TextView
         val tvusername=view.findViewById<View>(R.id.tvUserName) as TextView
         val tvusernaumber=view.findViewById<View>(R.id.tvUserNumber) as TextView
+
+
+
+        for (i in 0 until getUserData().size )
+        {
+            getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME, getUserData()[i].name)
+            getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, getUserData()[i].mobile)
+        }
 
         tvusername.text = getUserName()
         tvusernaumber.text = getMobileNumber()
@@ -152,8 +161,7 @@ class AccountFragment : BaseFragment() {
 
             getRestApis().getProfile(), onApiSuccess = {
                 hideProgress()
-                tvUserName.text = it.data.name
-                tvUserNumber.text = it.data.mobile
+
             }, onApiError = {
                 hideProgress()
 

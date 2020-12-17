@@ -204,7 +204,7 @@
 
 
 
-                <com.google.android.material.textfield.TextInputEditText
+                <TextView
                     android:id="@+id/etCategory"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_50sdp"
@@ -212,6 +212,7 @@
                     android:fontFamily="@font/sf_ui_medium"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_gravity="center"
                     android:drawableRight="@drawable/ic_baseline_arrow_drop_down_24"
                     android:editable="false"
                     android:background="@drawable/edit_text_border"

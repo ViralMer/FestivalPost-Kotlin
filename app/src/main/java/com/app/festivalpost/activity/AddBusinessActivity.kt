@@ -4,6 +4,7 @@ package com.app.festivalpost.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
@@ -20,15 +21,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
+import com.app.festivalpost.adapter.BusinessItemAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.BusinessCategory
 import com.app.festivalpost.models.CurrentBusinessItem
+import com.app.festivalpost.utils.extensions.callApi
+import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.onClick
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -38,6 +43,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.fragment_account.*
 import org.json.JSONObject
 
 
@@ -54,12 +61,14 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
     var edAddress:AppCompatEditText?=null
     var edWebsite:AppCompatEditText?=null
     var edPhone2:AppCompatEditText?=null
-    var edCategory:TextInputEditText?=null
+    var edCategory:TextView?=null
     var frameChosse:FrameLayout?=null
     var category_value:String?=null
     var btn_next:TextView?=null
     var businessCategoryItemAdapter:BusinessCategoryItemAdapter?=null
     var businessCategoryList= arrayListOf<BusinessCategory?>()
+    var rcvCategory: RecyclerView?=null
+    var alertDialog: AlertDialog?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +96,10 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
         frameChosse=findViewById(R.id.framePhoto)
         btn_next=findViewById(R.id.btn_next)
 
+        edCategory!!.onClick {
+            loadBusinessCategoryData()
+        }
+
         frameChosse!!.setOnClickListener({ openAddImageDialog() })
         if (businessItem != null) {
             edName!!.setText(businessItem!!.busi_name)
@@ -107,15 +120,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             submitDetails()
             Log.d("Clicked", "Cliked")
         }
-        businessCategoryList.add(BusinessCategory("IT"))
-        businessCategoryList.add(BusinessCategory("IT"))
-        businessCategoryList.add(BusinessCategory("IT"))
-        businessCategoryList.add(BusinessCategory("IT"))
-        businessCategoryList.add(BusinessCategory("IT"))
-        businessCategoryList.add(BusinessCategory("IT"))
-        businessCategoryList.add(BusinessCategory("IT"))
-        category_value= businessCategoryList[0]!!.name
-        businessCategoryItemAdapter= BusinessCategoryItemAdapter(this, businessCategoryList)
+
     }
 
     fun openAddImageDialog() {
@@ -421,7 +426,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             ) {
                 try {
                     Log.d("response", responseString!!)
-                    //processResponse(responseString)
+                    processResponse(responseString)
                     if (status) {
                         Global.showSuccessDialog(this@AddBusinessActivity, message)
                         onBackPressed()
@@ -477,7 +482,10 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
 
     override fun onItemClicked(`object`: Any?, index: Int) {
         val photoItem = `object` as BusinessCategory
-        category_value = photoItem.name
+        category_value = photoItem.category_name
+        alertDialog!!.dismiss()
+        edCategory!!.text=category_value
+
 
     }
 
@@ -510,4 +518,36 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             e.printStackTrace()
         }
     }
+
+    private fun loadBusinessCategoryData()
+    {
+        showProgress(true)
+        callApi(
+            getRestApis().getAllBusinessCategory(), onApiSuccess = {
+                showProgress(false)
+                showPopupBusinessCategoryDialog(this)
+                businessCategoryList=it.cateogry
+                businessCategoryItemAdapter= BusinessCategoryItemAdapter(this,businessCategoryList)
+                rcvCategory!!.adapter=businessCategoryItemAdapter
+            }, onApiError = {
+                showProgress(false)
+
+            }, onNetworkError = {
+                showProgress(false)
+
+            })
+    }
+
+    private fun showPopupBusinessCategoryDialog(context: Context) {
+        val layout = LayoutInflater.from(context).inflate(R.layout.layout_business_category, null)
+        rcvCategory = layout.findViewById<View>(R.id.rcvBusinessCategory) as RecyclerView
+        val builder = AlertDialog.Builder(context)
+            .setView(layout)
+            .setCancelable(false)
+        alertDialog = builder.create()
+        alertDialog!!.show()
+
+
+    }
+
 }

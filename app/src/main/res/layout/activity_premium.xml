@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorWhite"
+    android:background="@color/colorBackground"
 
-    tools:context=".LoginActivity">
+    >
 
     <androidx.appcompat.widget.Toolbar
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,13 +25,12 @@
             android:padding="14dp">
 
             <ImageView
-                android:visibility="invisible"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:id="@+id/ib_cancel_premium"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:background="@drawable/small_button_bg"
-                />
+                android:background="@drawable/ic_baseline_close_24" />
 
             <TextView
                 android:id="@+id/tvtitle"
@@ -41,350 +40,37 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textColor="@color/colorBlack"
-                android:text="@string/txt_signup"
-                android:textStyle="bold"
-                android:textSize="@dimen/_16ssp"/>
+                android:text="@string/txt_choose_plans"
+                android:textSize="@dimen/_20ssp" />
 
-            <ImageView
-                android:id="@+id/ivaction"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:padding="10dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_cancel"
-               />
+
         </LinearLayout>
 
 
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true"
-        android:scrollbars="none">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="20dp">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/free_plan_bg"
                 android:orientation="vertical"
-                android:visibility="gone"
-                android:padding="20dp">
+                 >
 
-
-                <TextView
-                    android:id="@+id/tvtrialamount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="26dp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_marginTop="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tvtrialpackage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvtrialdays"
-                        android:layout_marginLeft="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvstatus"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="Activate"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:background="@drawable/edittext_bg"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="16dp"
-                    android:textStyle="bold" />
-
-
-                <LinearLayout
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/lay_free_advantage"
-                    android:orientation="vertical"
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/planviewPager"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </LinearLayout>
-
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_50sdp"
+                    />
 
             </LinearLayout>
 
 
-            <LinearLayout
-                android:layout_marginTop="20dp"
-                android:background="@drawable/premium_plan_bg"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvpremiumheadingnew"
-                    android:background="@drawable/premium_heading_bg"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:padding="3dp"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="14dp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:id="@+id/tvpremiumamountnew"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="26dp"
-                        android:textStyle="bold" />
-
-
-                    <FrameLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-                        <TextView
-                            android:id="@+id/tvpremiumoriginalamountnew"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:foreground="@drawable/strike_through_line"
-                            android:textColor="#F44336"
-                            android:textSize="22dp"
-                            android:textStyle="bold" />
-
-
-
-                    </FrameLayout>
-
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tvpremiumpackagenew"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="16dp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvpremiumdaysnew"
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="16dp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvpremiumbuynew"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="@string/txt_buy_now"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:background="@drawable/large_button_bg"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:id="@+id/lay_paid_advantagenew"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginTop="20dp"
-                android:background="@drawable/premium_plan_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvpremiumheading"
-                    android:background="@drawable/premium_heading_bg"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:padding="3dp"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="14dp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:id="@+id/tvpremiumamount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="26dp"
-                        android:textStyle="bold" />
-
-
-                    <FrameLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-                        <TextView
-                            android:id="@+id/tvpremiumoriginalamount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:foreground="@drawable/strike_through_line"
-                            android:textColor="#F44336"
-                            android:textSize="22dp"
-                            android:textStyle="bold" />
-
-
-
-                    </FrameLayout>
-
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tvpremiumpackage"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="16dp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvpremiumdays"
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="16dp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvpremiumbuy"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="@string/txt_buy_now"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:background="@drawable/large_button_bg"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:id="@+id/lay_paid_advantage"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
-            </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
 
 </LinearLayout>

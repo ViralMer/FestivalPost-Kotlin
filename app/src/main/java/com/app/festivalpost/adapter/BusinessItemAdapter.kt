@@ -10,11 +10,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.ChoosePhotoActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.AddBusinessActivity
 import com.app.festivalpost.activity.OnItemClickListener
+import com.app.festivalpost.activity.PremiumActivity
 import com.app.festivalpost.models.BusinessCategory
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.HomePageItem
@@ -42,6 +44,23 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
 
         holder.ivSelected.loadImageFromUrl(businessCategoryItem.busi_logo!!)
 
+        if (businessCategoryItem.plan_name=="Premium")
+        {
+            holder.tvupgrade.text=businessCategoryItem.plan_name
+            holder.tvupgrade.background=ContextCompat.getDrawable(context,R.drawable.premium_bg)
+        }
+        else{
+            holder.tvupgrade.text="Upgrade"
+            holder.tvupgrade.background=ContextCompat.getDrawable(context,R.drawable.bg_gradient)
+            holder.tvupgrade.onClick {
+                context.launchActivity<PremiumActivity> {
+
+                }
+
+            }
+        }
+
+
         if (businessCategoryItem.is_current_business==1) {
             holder.ivcurrentbusiness.visibility = View.VISIBLE
         } else {
@@ -54,6 +73,8 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
             }
 
         }
+
+
 
 
         /*holder.laymain.tag = position

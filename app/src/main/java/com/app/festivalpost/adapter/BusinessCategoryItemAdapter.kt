@@ -34,7 +34,7 @@ class BusinessCategoryItemAdapter(var context: Context, var originaldata: ArrayL
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val businessCategoryItem = originaldata[position]
 
-        holder.tvTitle.text=businessCategoryItem!!.name
+        holder.tvTitle.text=businessCategoryItem!!.category_name
 
 
         if (businessCategoryItem.is_selected!!) {

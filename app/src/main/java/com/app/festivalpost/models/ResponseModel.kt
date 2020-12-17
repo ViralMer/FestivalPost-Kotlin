@@ -25,6 +25,13 @@ data class HomePageResponse(
     val message: String? = null,
 )
 
+data class VideoPageResponse(
+    val festival: ArrayList<VideoPageItem?>,
+    val cateogry: ArrayList<VideoPageItem?>,
+    val status: Boolean? = null,
+    val message: String? = null,
+)
+
     data class HomePageItem(
         val fest_id: String? = null,
         val fest_name: String? = null,
@@ -35,6 +42,14 @@ data class HomePageResponse(
         val current_date: String? = null,
         val fest_day: String? = null,
         val fest_is_delete: String? = null
+    )
+
+data class VideoPageItem(
+    val id: String? = null,
+    val video_name: String? = null,
+    val video_date: String? = null,
+    val video_image: String? = null,
+    val video_type: String? = null,
     )
 
     data class CurrentBusinessItem(
@@ -137,10 +152,26 @@ data class LoginResponse(
 )
 
 
+data class BusinessCategoryResponse(
+    val cateogry: ArrayList<BusinessCategory?>,
+    val status: Boolean? = false,
+    val message: String? = null,
+)
+
 
 data class BusinessCategory(
-    val name: String? = null,
+    val category_name: String? = null,
+    val id: String? = null,
     var is_selected: Boolean? = false
+)
+
+data class PlanItemDetails(
+    val id: String? = null,
+    val name: String? = null,
+    val price: String? = null,
+    val sku: String? = null,
+
+
 )
 
 class DeviceInfo1(_context: Context) : Serializable {

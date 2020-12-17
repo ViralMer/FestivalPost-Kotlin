@@ -11,10 +11,11 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/toolbar"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:background="@color/colorBackground"
+            android:background="@color/colorWhite"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
             <LinearLayout
@@ -77,40 +78,9 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:visibility="gone"
-                    android:padding="10dp"
-                    android:text="@string/txt_next_festival"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="16dp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorDivider" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_140sdp" android:orientation="vertical"
-
-                    >
-
-                    <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/sliderviewPager"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="@dimen/_5sdp"
-
-                        />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layincidents"
+                    android:id="@+id/layincidentsvideo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -181,7 +151,7 @@
 
 
                 <LinearLayout
-                    android:id="@+id/linearFestival"
+                    android:id="@+id/linearFestivalVideo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -199,7 +169,7 @@
                         android:text="@string/head_festivals" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/customFestival"
+                        android:id="@+id/customFestivalVideo"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -209,7 +179,7 @@
 
 
                 <LinearLayout
-                    android:id="@+id/linearCategory"
+                    android:id="@+id/linearCategoryVideo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -226,7 +196,7 @@
                         android:text="@string/head_categories" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/customCategory"
+                        android:id="@+id/customCategoryVideo"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

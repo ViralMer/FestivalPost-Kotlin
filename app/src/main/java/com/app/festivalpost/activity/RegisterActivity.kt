@@ -169,6 +169,12 @@ class RegisterActivity : AppBaseActivity() {
                     getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA, it.data)
                     getSharedPrefInstance().setValue(Constants.SharedPref.USER_TOKEN, it.token)
 
+                    for (i in 0 until it.data.size )
+                    {
+                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME,it.data[i]!!.name)
+                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, it.data[i]!!.mobile)
+                    }
+
 
                 }
             },
@@ -189,7 +195,7 @@ class RegisterActivity : AppBaseActivity() {
                 number!!,
                 60,
                 TimeUnit.SECONDS,
-                TaskExecutors.MAIN_THREAD,
+                this,
                 mCallBack
             )
         } catch (e: Exception) {
