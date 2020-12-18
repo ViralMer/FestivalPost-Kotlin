@@ -179,6 +179,12 @@ data class BusinessCategory(
     var is_selected: Boolean? = false
 )
 
+
+data class FontTypeList(
+    val name: String? = null,
+    var is_selected: Boolean? = false
+)
+
 data class PlanItemDetails(
     val id: String? = null,
     val name: String? = null,

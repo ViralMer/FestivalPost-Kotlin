@@ -130,43 +130,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                style="@style/Heading"
-                android:text="@string/txt_choose_photo_frame"
-                 />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorDivider" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvdata"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-
-    <!--        <HorizontalScrollView
-                android:id="@+id/horizontal"
-                android:scrollbars="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:id="@+id/lay_frames"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                </LinearLayout>
-
-
-            </HorizontalScrollView>-->
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_30sdp"
@@ -222,7 +185,47 @@
 
 
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                style="@style/Heading"
+                android:text="@string/txt_choose_photo_frame"
+                 />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvdata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+    <!--        <HorizontalScrollView
+                android:id="@+id/horizontal"
+                android:scrollbars="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/lay_frames"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                </LinearLayout>
+
+
+            </HorizontalScrollView>-->
+
+
             <LinearLayout
+                android:id="@+id/linearAddText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -258,38 +261,12 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    >
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:src="@drawable/ic_add_text"
-                        />
 
-                    <TextView
-                        android:id="@+id/tvaddimage"
-                        android:layout_height="30dp"
-                        android:layout_width="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/txt_add_image"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="12dp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
 
 
 
                 <LinearLayout
+                    android:id="@+id/lineartextcolor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -319,6 +296,7 @@
                         android:textStyle="bold" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/linearFonttype"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -346,6 +324,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linearbackgroundcolor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

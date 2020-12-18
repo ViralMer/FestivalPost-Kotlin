@@ -9,6 +9,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper.getMainLooper
 import android.os.StrictMode
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,10 +35,7 @@ import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
 import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
-import com.emegamart.lelys.utils.extensions.hide
-import com.emegamart.lelys.utils.extensions.loadImageFromUrl
-import com.emegamart.lelys.utils.extensions.show
+import com.emegamart.lelys.utils.extensions.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -158,7 +156,8 @@ class HomeFragment : BaseFragment() {
                     getSharedPrefInstance().setValue(IS_PREMIUM, res.premium)
                     getSharedPrefInstance().setValue(CURRENT_DATE, res.current_date)
                     getSharedPrefInstance().setValue(KEY_FRAME_LIST, res.frameList)
-                    getSharedPrefInstance().setValue(KEY_CURRENT_BUSINESS, res.current_business)
+                    put(res.current_business,KEY_CURRENT_BUSINESS)
+                    val businessItem1 =get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
 
 
                     sliderArrayList = res.slider

@@ -3,6 +3,7 @@ package com.app.festivalpost.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -27,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.PickerBuilder.onImageReceivedListener
 import com.app.festivalpost.activity.PickerBuilder.onPermissionRefusedListener
@@ -36,19 +38,23 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
-import com.app.festivalpost.models.FrameListItem
-import com.app.festivalpost.models.FramePreview
-import com.app.festivalpost.models.LocalFrameItemNew
-import com.app.festivalpost.models.ViewData
 import com.app.festivalpost.photoeditor.OnPhotoEditorListener
 import com.app.festivalpost.photoeditor.PhotoEditor
 import com.app.festivalpost.activity.OnItemClickListener
+import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
+import com.app.festivalpost.adapter.FontTypeAdapter
+import com.app.festivalpost.models.*
 
 import com.app.festivalpost.photoeditor.PhotoEditorView
 import com.app.festivalpost.photoeditor.ViewType
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
+import com.app.festivalpost.utils.Constants
 import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.get
+import com.emegamart.lelys.utils.extensions.getCurrentBusinessData
+import com.emegamart.lelys.utils.extensions.getCustomFrameList
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.karumi.dexter.Dexter
@@ -61,18 +67,16 @@ import top.defaults.colorpicker.ColorPickerView
 import java.io.IOException
 import java.util.*
 
-class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,OnItemClickListener
-    {
-    var apiManager: ApiManager? = null
-    var status = false
-    var message = ""
+class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener {
     private var photoEditorView: PhotoEditorView? = null
-    private var tvaddtext: TextView? = null
-    private var tvaddimage: TextView? = null
-    private var tvtextcolor: TextView? = null
+    private var linearAddText: LinearLayout? = null
+    private var linearTextcolor: LinearLayout? = null
+    private var linearfonttype: LinearLayout? = null
+    private var linearbackgroundcolor: LinearLayout? = null
+
     var localFrameItemNew: LocalFrameItemNew? = null
     var framePreview: FramePreview? = null
-    private var tvfonttype: TextView? = null
+
     var layroot: LinearLayout? = null
     var views: MutableList<ViewData> = ArrayList()
     var mPhotoEditor: PhotoEditor? = null
@@ -86,7 +90,8 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
     var lay_frames: LinearLayout? = null
     var llwatermark: LinearLayout? = null
     var ivbackground: ImageView? = null
-    var photo_path: String? = ""
+    private var photo_path: String? = ""
+    private var storeValue: String? = ""
     var i = 0
     var backpressed = true
     var ivframelogo: ImageView? = null
@@ -115,7 +120,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
     var tvframename: TextView? = null
     var linearPhone: LinearLayout? = null
     var linearEmail: LinearLayout? = null
-    var     linearWebsite: LinearLayout? = null
+    var linearWebsite: LinearLayout? = null
     var linearAddress: LinearLayout? = null
     var linearLogo: LinearLayout? = null
     var linearSocialIcons: LinearLayout? = null
@@ -148,6 +153,12 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
     var namecolor = Color.BLACK
     var framePreviewArrayList = ArrayList<FramePreview>()
     var recyclerView: RecyclerView? = null
+    var fontTypeAdapter: FontTypeAdapter? = null
+    var fontTypeList = arrayListOf<FontTypeList?>()
+    var rcvFont: RecyclerView? = null
+    var alertDialog: AlertDialog? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -166,8 +177,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
             }
         }
 
-        apiManager =
-            ApiManager(this@ChooseFrameForPhotoActivityNew)
+
         setActionbar()
         selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
         phoneTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
@@ -193,12 +203,11 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
             .setPinchTextScalable(true)
             .build()
-        tvaddtext = findViewById<View>(R.id.tvaddtext) as TextView
-        tvaddimage = findViewById<View>(R.id.tvaddimage) as TextView
-        tvtextcolor = findViewById<View>(R.id.tvtextcolor) as TextView
-        tvfonttype = findViewById<View>(R.id.tvfonttype) as TextView
-        tvtextcolor!!.isEnabled = true
-        tvfonttype!!.isEnabled = true
+        linearAddText = findViewById<View>(R.id.linearAddText) as LinearLayout
+        linearTextcolor = findViewById<View>(R.id.lineartextcolor) as LinearLayout
+        linearfonttype = findViewById<View>(R.id.linearFonttype) as LinearLayout
+        linearbackgroundcolor = findViewById<View>(R.id.linearbackgroundcolor) as LinearLayout
+
         layroot!!.setOnClickListener {
             linearLogo!!.setBackgroundResource(0)
             linearEmail!!.setBackgroundResource(0)
@@ -230,16 +239,8 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         } catch (e: OutOfMemoryError) {
         } catch (e: Exception) {
         }
-        var frameListItems1 = ArrayList<FrameListItem>()
-        val gson = Gson()
-        val json = Global.getPreference(Constant.PREF_FRAME_LIST, "")
-        frameListItems1 = if (json!!.isEmpty()) {
-            ArrayList()
-        } else {
-            val type = object : TypeToken<ArrayList<FrameListItem?>?>() {}.type
-            gson.fromJson(json, type)
-        }
-        Log.d("FrameListSize1", "" + frameListItems1.size)
+        var frameListItems1 = arrayListOf<FrameListItem1>()
+        frameListItems1 = getCustomFrameList()
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
                 FramePreview(
@@ -248,151 +249,8 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                 )
             )
         }
-        /*
-        for (int i=0;i<frameListItems1.size();i++)
-        {
-            LayoutInflater mInflater1 = LayoutInflater.from(ChooseFrameForPhotoActivityNew.this);
-            View child1 = mInflater1.inflate(R.layout.custom_frame_dynamic, null);
-            FrameLayout frameLayout1 = child1.findViewById(R.id.frameLayout);
-            try {
-                FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(325, 325);
-                params1.width=dpToPx(130);
-                params1.height=dpToPx(130);
-                frameLayout1.setLayoutParams(params1);
-            }
-            catch (Exception e)
-            {
-
-            }
-            ImageView imageView1_1=child1.findViewById(R.id.ivselected);
-            ImageView imageView1_2=child1.findViewById(R.id.ivFrameDynamic);
-            imageView1_1.setImageResource(R.drawable.frame_selection_bg);
-            Glide.with(ChooseFrameForPhotoActivityNew.this).load(frameListItems1.get(i).getFrame_url()).into(imageView1_2);
 
 
-            LayoutInflater mInflater5 = LayoutInflater.from(ChooseFrameForPhotoActivityNew.this);
-            View layoutDynamic1 = mInflater5.inflate(R.layout.custom_frame_layout_dynamic, null);
-
-            ImageView ivframebg1 = layoutDynamic1.findViewById(R.id.ivframebg);
-            ImageView ivframelogo1 = layoutDynamic1.findViewById(R.id.ivframelogo);
-            Glide.with(ChooseFrameForPhotoActivityNew.this).load(frameListItems1.get(i).getFrame_url()).into(ivframebg1);
-            dynamicFrameArrayList.add(new LocalFrameItemNew(layoutDynamic1,child1));
-        }
-*/
-
-
-        /* if (((LinearLayout) lay_frames).getChildCount() > 0) {
-            ((LinearLayout) lay_frames).removeAllViews();
-        }
-        final ArrayList<ImageView> imageViewArrayList = new ArrayList<>();
-
-        */
-        /*if (localFrameItemArrayList.size() > 0) {
-            for (int i = 0; i < localFrameItemArrayList.size(); i++) {
-                LocalFrameItem localFrameItem = localFrameItemArrayList.get(i);
-
-                View frame_view = LayoutInflater.from(ChooseFrameForPhotoActivityNew.this).inflate(localFrameItem.getPreview_id(),
-                        lay_frames, false);
-                ImageView ivselected = frame_view.findViewById(R.id.ivselected);
-                imageViewArrayList.add(ivselected);
-
-                frame_view.setTag(i);
-                frame_view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int index = (int) view.getTag();
-                        LocalFrameItem lfi = localFrameItemArrayList.get(index);
-                        setFrame(lfi);
-                        for (int imagesIndex = 0; imagesIndex < imageViewArrayList.size(); imagesIndex++) {
-                            ImageView img = imageViewArrayList.get(imagesIndex);
-                            if(imagesIndex == index){
-                                img.setVisibility(View.VISIBLE);
-                            }else{
-                                img.setVisibility(View.GONE);
-                            }
-                        }
-
-                    }
-                });
-
-                lay_frames.addView(frame_view);
-            }
-
-            setFrame(localFrameItemArrayList.get(0));
-            for (int imagesIndex = 0; imagesIndex < imageViewArrayList.size(); imagesIndex++) {
-                ImageView img = imageViewArrayList.get(imagesIndex);
-                if(imagesIndex == 0){
-                    img.setVisibility(View.VISIBLE);
-                }else{
-                    img.setVisibility(View.GONE);
-                }
-            }
-        }*/
-        /*
-
-        if (dynamicFrameArrayList.size() > 0) {
-
-            for (int i = 0; i < dynamicFrameArrayList.size(); i++) {
-                LocalFrameItemNew localFrameItem = dynamicFrameArrayList.get(i);
-
-
-
-                View frame_view = localFrameItem.getFrameView();
-                ImageView ivselected = frame_view.findViewById(R.id.ivselected);
-                imageViewArrayList.add(ivselected);
-
-                frame_view.setTag(i);
-                frame_view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int index = (int) view.getTag();
-                        index1=index;
-                        LocalFrameItemNew lfi = dynamicFrameArrayList.get(index);
-                        setFrameNEW(lfi);
-                        Log.d("ImageIndex",""+index);
-                        for (int imagesIndex = 0; imagesIndex < imageViewArrayList.size(); imagesIndex++) {
-                            ImageView img = imageViewArrayList.get(imagesIndex);
-
-                            try {
-                                if (imagesIndex == index) {
-                                    img.setVisibility(View.VISIBLE);
-                                } else {
-                                    img.setVisibility(View.GONE);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Log.d("Errror",""+e.getMessage());
-                            }
-
-                        }
-
-                    }
-                });
-
-                lay_frames.addView(frame_view);
-                //
-            }
-
-            setFrameNEW(dynamicFrameArrayList.get(0));
-
-            for (int imagesIndex = 0; imagesIndex < imageViewArrayList.size(); imagesIndex++) {
-                try {
-                    ImageView img = imageViewArrayList.get(imagesIndex);
-                    if (imagesIndex == 0) {
-                        img.setVisibility(View.VISIBLE);
-                    } else {
-                        img.setVisibility(View.GONE);
-                    }
-                }
-                catch (Exception e)
-                {
-
-                }
-
-            }
-        }
-*/
         val frameChooseAdapter = FrameChooseAdapter(this, framePreviewArrayList)
         val horizontalLayoutManagaer = LinearLayoutManager(
             this@ChooseFrameForPhotoActivityNew,
@@ -403,25 +261,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         recyclerView!!.setAdapter(frameChooseAdapter)
         setFrameNEW(framePreviewArrayList[0])
 
-
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // do something after 2s = 2000 miliseconds
-                horizontalScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        horizontalScrollView.fullScroll(HorizontalScrollView.FOCUS_LEFT);
-
-                    }
-                },2000);
-                //horizontalScrollView.fullScroll(HorizontalScrollView.FO);
-
-            }
-        }, 10);
-
-*/mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
+        mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
                 rootView: View?,
                 text: String?,
@@ -446,19 +286,11 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                     i = 0
                     views.clear()
                     selectedPosition = 0
-                    tvtextcolor!!.isEnabled = true
-                    tvfonttype!!.isEnabled = true
-                    tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                    tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
                     backpressed = true
                 } else {
                     i -= 1
                     views.removeAt(selectedPosition)
                     selectedPosition = i - 1
-                    tvtextcolor!!.isEnabled = true
-                    tvfonttype!!.isEnabled = true
-                    tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                    tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
                     backpressed = false
                 }
             }
@@ -478,7 +310,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
             ) {
             }
         })
-        findViewById<View>(R.id.btnchangebackgroundcolor).setOnClickListener {
+        findViewById<View>(R.id.linearbackgroundcolor).setOnClickListener {
             val dialog = Dialog(
                 this@ChooseFrameForPhotoActivityNew,
                 R.style.DialogAnimation
@@ -513,55 +345,26 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
             }
             dialog.show()
         }
-        tvaddimage!!.setOnClickListener {
-            Dexter.withActivity(this@ChooseFrameForPhotoActivityNew)
-                .withPermissions(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                        if (report.areAllPermissionsGranted()) {
-                            val builder = AlertDialog.Builder(this@ChooseFrameForPhotoActivityNew)
-                            builder.setTitle("Choose")
-                            val animals = arrayOf("Camera", "Gallery")
-                            builder.setItems(animals) { dialog, which ->
-                                when (which) {
-                                    0 -> startCamera()
-                                    1 -> startGallery()
-                                }
-                            }
-                            val dialog = builder.create()
-                            dialog.show()
-                        } else {
-                            showSettingsDialog()
-                        }
-                    }
 
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: List<PermissionRequest>,
-                        token: PermissionToken
-                    ) {
-                        token.continuePermissionRequest()
-                    }
-                }).check()
-        }
-        tvaddtext!!.setOnClickListener {
+        linearAddText!!.setOnClickListener {
             rootTextView = null
             showAddTextDialog("", selected_color)
         }
-        tvtextcolor!!.setOnClickListener { showColorPickerDialog() }
-        tvfonttype!!.setOnClickListener {
+        linearTextcolor!!.setOnClickListener {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                showColorPickerDialog()
+            }
+        }
+        linearfonttype!!.setOnClickListener {
             var defaultText = ""
             if (defaultText.equals("", ignoreCase = true)) {
-                defaultText = "Custom Text"
+                defaultText = storeValue!!
             }
             showFonttypeDialog(defaultText)
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
             if (ivlogoselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
                 ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
-                setPrefernces("false", "1")
                 linearLogo!!.setBackgroundResource(0)
                 linearLogo!!.visibility = View.GONE
                 ivframelogo!!.visibility = View.GONE
@@ -574,7 +377,6 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                setPrefernces("true", "1")
                 linearLogo!!.setBackgroundResource(0)
                 linearLogo!!.visibility = View.VISIBLE
                 ivframelogo!!.visibility = View.VISIBLE
@@ -590,7 +392,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         ivemailselect!!.setOnClickListener(View.OnClickListener {
             if (ivemailselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.email_select).constantState) {
                 ivemailselect!!.setImageResource(R.drawable.email_deselect)
-                setPrefernces("false", "3")
+
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.GONE
                 ivEmail!!.visibility = View.GONE
@@ -604,7 +406,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
-                setPrefernces("true", "3")
+
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.VISIBLE
                 ivEmail!!.visibility = View.VISIBLE
@@ -621,7 +423,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         ivphoneselect!!.setOnClickListener(View.OnClickListener {
             if (ivphoneselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
                 ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
-                setPrefernces("false", "2")
+
                 linearPhone!!.visibility = View.GONE
                 linearPhone!!.setBackgroundResource(0)
                 ivcall!!.visibility = View.GONE
@@ -636,7 +438,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivphoneselect!!.setImageResource(R.drawable.mobile_select)
-                setPrefernces("true", "2")
+
                 linearPhone!!.visibility = View.VISIBLE
                 linearPhone!!.setBackgroundResource(0)
                 ivcall!!.visibility = View.VISIBLE
@@ -654,7 +456,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         ivwebsiteselect!!.setOnClickListener(View.OnClickListener {
             if (ivwebsiteselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.website_select).constantState) {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_deselect)
-                setPrefernces("false", "5")
+
                 linearWebsite!!.visibility = View.GONE
                 linearWebsite!!.setBackgroundResource(0)
                 ivWebsite!!.visibility = View.GONE
@@ -669,7 +471,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
-                setPrefernces("true", "5")
+
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
                 websiteLine!!.visibility = View.VISIBLE
@@ -687,7 +489,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         ivaddressselect!!.setOnClickListener(View.OnClickListener {
             if (ivaddressselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.location_select).constantState) {
                 ivaddressselect!!.setImageResource(R.drawable.location_deselect)
-                setPrefernces("false", "4")
+
                 linearAddress!!.visibility = View.GONE
                 linearAddress!!.setBackgroundResource(0)
                 ivLocation!!.visibility = View.GONE
@@ -701,7 +503,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-                setPrefernces("true", "4")
+
                 linearAddress!!.setBackgroundResource(0)
                 linearAddress!!.visibility = View.VISIBLE
                 ivLocation!!.visibility = View.VISIBLE
@@ -718,7 +520,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         ivnameSelect!!.setOnClickListener(View.OnClickListener {
             if (ivnameSelect!!.getDrawable().constantState === resources.getDrawable(R.drawable.name_select).constantState) {
                 ivnameSelect!!.setImageResource(R.drawable.name_deselect)
-                setPrefernces("false", "6")
+
                 frameName!!.visibility = View.GONE
                 linearName!!.visibility = View.GONE
                 linearName!!.setBackgroundResource(0)
@@ -731,7 +533,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivnameSelect!!.setImageResource(R.drawable.name_select)
-                setPrefernces("true", "6")
+
                 linearName!!.visibility = View.VISIBLE
                 tvframename!!.visibility = View.VISIBLE
                 frameName!!.visibility = View.VISIBLE
@@ -746,15 +548,6 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         })
     }
 
-    fun setPrefernces(isDelete: String?, prefernceValue: String?) {
-        Global.showProgressDialog(this@ChooseFrameForPhotoActivityNew)
-        apiManager!!.setPrefernces(
-            ApiEndpoints.setpreference,
-            Global.getPreference(Constant.PREF_TOKEN, ""),
-            isDelete,
-            prefernceValue
-        )
-    }
 
     override fun onResume() {
         super.onResume()
@@ -829,17 +622,6 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
 
             //rootTextView = null;
             Global.hideSoftKeyboard(this@ChooseFrameForPhotoActivityNew, edtext)
-            if (tempEnteredText == "") {
-                tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
-                tvtextcolor!!.isEnabled = true
-                tvfonttype!!.isEnabled = true
-            } else {
-                tvtextcolor!!.isEnabled = true
-                tvfonttype!!.isEnabled = true
-                tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
-            }
             emailValue = false
             addressValue = false
             phoneValue = false
@@ -921,10 +703,10 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
+
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
+        tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
         tvtitle.text = resources.getString(R.string.txt_frame)
-        tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.setOnClickListener {
             linearAddress!!.setBackgroundResource(0)
@@ -940,12 +722,12 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
             ivaddressclose!!.visibility = View.GONE
             ivnameClose!!.visibility = View.GONE
             mPhotoEditor!!.clearHelperBox()
-            if (!Global.getPreference(Constant.PREF_PREMIUM, false)) {
+            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
                 llwatermark!!.visibility = View.VISIBLE
             } else {
                 llwatermark!!.visibility = View.GONE
             }
-            Global.showProgressDialog(this@ChooseFrameForPhotoActivityNew)
+
             val handler = Handler()
             handler.postDelayed({
                 Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
@@ -1022,36 +804,6 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         return super.onOptionsItemSelected(item)
     }
 
-    override fun isConnected(requestService: String?, isConnected: Boolean) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
-            if (!isConnected) {
-                Global.noInternetConnectionDialog(this@ChooseFrameForPhotoActivityNew)
-            }
-        }
-    }
-
-    override fun onSuccessResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
-            if (requestService.equals(ApiEndpoints.setpreference, ignoreCase = true)) {
-                try {
-                    Log.d("response", responseString!!)
-                    processResponse(responseString)
-                    if (status) {
-                        setFrameNEW(framePreview)
-                    } else {
-                        Global.showFailDialog(this@ChooseFrameForPhotoActivityNew, message)
-                    }
-                } catch (e: Exception) {
-                }
-            }
-        }
-    }
 
     /**
      * Showing Alert Dialog with Settings option
@@ -1077,18 +829,6 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         intent.data = uri
         startActivityForResult(intent, 101)
     }
-
-    override fun onErrorResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
-            Global.showFailDialog(this@ChooseFrameForPhotoActivityNew, responseString)
-        }
-    }
-
 
 
     fun setFrameNEW(localFrameItem: FramePreview?) {
@@ -1177,7 +917,11 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         {
             phoneLine.setVisibility(View.VISIBLE);
             websiteLine.setVisibility(View.VISIBLE);
-        }*/imagemultiTouchListenerNew.setOnGestureControl(object :
+        }*/
+
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+
+        imagemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNewNotRotate.OnGestureControl {
             override fun onClick() {
                 linearPhone!!.setBackgroundResource(0)
@@ -1227,6 +971,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         phonemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNotMoveble.OnGestureControl {
             override fun onClick() {
+                storeValue = businessItem!!.busi_mobile
                 linearPhone!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearEmail!!.setBackgroundResource(0)
                 linearAddress!!.setBackgroundResource(0)
@@ -1250,6 +995,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
 
             override fun onLongClick() {}
             override fun onTouch() {
+                storeValue = businessItem!!.busi_mobile
                 linearPhone!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearEmail!!.setBackgroundResource(0)
                 linearAddress!!.setBackgroundResource(0)
@@ -1274,6 +1020,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         emailmultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNotMoveble.OnGestureControl {
             override fun onClick() {
+                storeValue = businessItem!!.busi_email
                 linearEmail!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearWebsite!!.setBackgroundResource(0)
@@ -1296,6 +1043,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
 
             override fun onLongClick() {}
             override fun onTouch() {
+                storeValue = businessItem!!.busi_email
                 linearEmail!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearAddress!!.setBackgroundResource(0)
@@ -1320,6 +1068,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         websitemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNotMoveble.OnGestureControl {
             override fun onClick() {
+                storeValue = businessItem!!.busi_website
                 linearWebsite!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearAddress!!.setBackgroundResource(0)
@@ -1343,6 +1092,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
 
             override fun onLongClick() {}
             override fun onTouch() {
+                storeValue = businessItem!!.busi_website
                 linearWebsite!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearAddress!!.setBackgroundResource(0)
@@ -1367,6 +1117,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         addressmultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNotMoveble.OnGestureControl {
             override fun onClick() {
+                storeValue = businessItem!!.busi_address
                 linearAddress!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearWebsite!!.setBackgroundResource(0)
@@ -1390,6 +1141,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
 
             override fun onLongClick() {}
             override fun onTouch() {
+                storeValue = businessItem!!.busi_address
                 linearAddress!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearWebsite!!.setBackgroundResource(0)
@@ -1414,6 +1166,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         namemultiTouchListenerNer.setOnGestureControl(object :
             MultiTouchListenerNotMoveble.OnGestureControl {
             override fun onClick() {
+                storeValue = businessItem!!.busi_name
                 linearName!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearWebsite!!.setBackgroundResource(0)
@@ -1437,6 +1190,7 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
 
             override fun onLongClick() {}
             override fun onTouch() {
+                storeValue = businessItem!!.busi_name
                 linearName!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
                 linearWebsite!!.setBackgroundResource(0)
@@ -1464,136 +1218,136 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         frameAddress!!.setOnTouchListener(addressmultiTouchListenerNew)
         frameLogo!!.setOnTouchListener(imagemultiTouchListenerNew)
         frameName!!.setOnTouchListener(namemultiTouchListenerNer)
-        val businessItem = Global.currentBusiness
+
         if (businessItem != null) {
             try {
                 if (index1 == 0) {
-                    if (businessItem.busiName != "" && businessItem.busiName != null) {
+                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.setVisibility(View.VISIBLE)
                         frameName!!.setVisibility(View.VISIBLE)
                         tvframename!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setText(businessItem.busiName)
+                        tvframename!!.setText(businessItem.busi_name)
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
                         linearLogo!!.setVisibility(View.VISIBLE)
                         ivframelogo!!.setVisibility(View.VISIBLE)
                         frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.setVisibility(View.VISIBLE)
                         linearPhone!!.setVisibility(View.VISIBLE)
                         ivcall!!.setVisibility(View.VISIBLE)
                         tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
                 } else if (index1 == 2) {
-                    if (businessItem.busiName != "" && businessItem.busiName != null) {
+                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.setVisibility(View.VISIBLE)
                         frameName!!.setVisibility(View.VISIBLE)
                         tvframename!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setText(businessItem.busiName)
+                        tvframename!!.setText(businessItem.busi_name)
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
                         linearLogo!!.setVisibility(View.VISIBLE)
                         ivframelogo!!.setVisibility(View.VISIBLE)
                         frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.setVisibility(View.VISIBLE)
                         linearPhone!!.setVisibility(View.VISIBLE)
                         ivcall!!.setVisibility(View.VISIBLE)
                         tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiAddress != null && businessItem.busiAddress != "") {
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
                         linearAddress!!.setVisibility(View.VISIBLE)
                         ivLocation!!.setVisibility(View.VISIBLE)
                         tvframelocation!!.setVisibility(View.VISIBLE)
                         frameAddress!!.setVisibility(View.VISIBLE)
-                        tvframelocation!!.setText(businessItem.busiAddress)
+                        tvframelocation!!.setText(businessItem.busi_address)
                         ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
-                    if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
+                    if (businessItem.busi_email != "") {
                         linearEmail!!.setVisibility(View.VISIBLE)
                         ivEmail!!.setVisibility(View.VISIBLE)
                         tvframeemail!!.setVisibility(View.VISIBLE)
                         frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                    if (businessItem.busiWebsite != null && businessItem.busiWebsite != "") {
+                    if (businessItem.busi_website != "") {
                         linearWebsite!!.setVisibility(View.VISIBLE)
                         ivWebsite!!.setVisibility(View.VISIBLE)
                         tvframeweb!!.setVisibility(View.VISIBLE)
                         frameWebsite!!.setVisibility(View.VISIBLE)
-                        tvframeweb!!.setText(businessItem.busiWebsite)
+                        tvframeweb!!.setText(businessItem.busi_address)
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 } else if (index1 == 3) {
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
+                    if (businessItem.busi_logo != "") {
                         linearLogo!!.setVisibility(View.VISIBLE)
                         ivframelogo!!.setVisibility(View.VISIBLE)
                         frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
+                    if (businessItem.busi_mobile != "") {
                         framePhone!!.setVisibility(View.VISIBLE)
                         linearPhone!!.setVisibility(View.VISIBLE)
                         ivcall!!.setVisibility(View.VISIBLE)
                         tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
+                    if (businessItem.busi_email != "") {
                         linearEmail!!.setVisibility(View.VISIBLE)
                         ivEmail!!.setVisibility(View.VISIBLE)
                         tvframeemail!!.setVisibility(View.VISIBLE)
                         frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
                 } else if (index1 == 4) {
-                    if (businessItem.busiName != "" && businessItem.busiName != null) {
+                    if (businessItem.busi_name != "") {
                         linearName!!.setVisibility(View.VISIBLE)
                         frameName!!.setVisibility(View.VISIBLE)
                         tvframename!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setText(businessItem.busiName)
+                        tvframename!!.setText(businessItem.busi_name)
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
+                    if (businessItem.busi_logo != "") {
                         linearLogo!!.setVisibility(View.VISIBLE)
                         ivframelogo!!.setVisibility(View.VISIBLE)
                         frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.setVisibility(View.VISIBLE)
                         linearPhone!!.setVisibility(View.VISIBLE)
                         ivcall!!.setVisibility(View.VISIBLE)
                         tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
                         linearEmail!!.setVisibility(View.VISIBLE)
                         ivEmail!!.setVisibility(View.VISIBLE)
                         tvframeemail!!.setVisibility(View.VISIBLE)
                         frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
                 } /*else if (index1 == 5) {
@@ -1904,44 +1658,44 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
 
                     }
                 } */ else {
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
                         linearLogo!!.setVisibility(View.VISIBLE)
                         ivframelogo!!.setVisibility(View.VISIBLE)
                         frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.setVisibility(View.VISIBLE)
                         linearPhone!!.setVisibility(View.VISIBLE)
                         ivcall!!.setVisibility(View.VISIBLE)
                         tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiAddress != null && businessItem.busiAddress != "") {
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
                         linearAddress!!.setVisibility(View.VISIBLE)
                         ivLocation!!.setVisibility(View.VISIBLE)
                         tvframelocation!!.setVisibility(View.VISIBLE)
                         frameAddress!!.setVisibility(View.VISIBLE)
-                        tvframelocation!!.setText(businessItem.busiAddress)
+                        tvframelocation!!.setText(businessItem.busi_address)
                         ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
-                    if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
                         linearEmail!!.setVisibility(View.VISIBLE)
                         ivEmail!!.setVisibility(View.VISIBLE)
                         tvframeemail!!.setVisibility(View.VISIBLE)
                         frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                    if (businessItem.busiWebsite != null && businessItem.busiWebsite != "") {
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
                         linearWebsite!!.setVisibility(View.VISIBLE)
                         ivWebsite!!.setVisibility(View.VISIBLE)
                         tvframeweb!!.setVisibility(View.VISIBLE)
                         frameWebsite!!.setVisibility(View.VISIBLE)
-                        tvframeweb!!.setText(businessItem.busiWebsite)
+                        tvframeweb!!.setText(businessItem.busi_website)
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 }
@@ -1981,27 +1735,6 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         llframe!!.addView(frame_view)
     }
 
-    fun processResponse(responseString: String?) {
-        status = false
-        message = ""
-        try {
-            val jsonObject = JSONObject(responseString)
-            if (jsonObject.has("status")) {
-                status = jsonObject.getBoolean("status")
-            }
-            if (jsonObject.has("message")) {
-                message = jsonObject.getString("message")
-            }
-            if (jsonObject.has("current_business")) {
-                val businessJsonObject = jsonObject.getJSONObject("current_business")
-                Global.storeCurrentBusiness(businessJsonObject.toString())
-            } else {
-                Global.storeCurrentBusiness("")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun showColorPickerDialog() {
@@ -2108,15 +1841,10 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
         dialog.show()
     }
 
-    fun showFonttypeDialog(defaultText: String?) {
+    private fun showFonttypeDialog(defaultText: String?) {
         val dialog = Dialog(
             this@ChooseFrameForPhotoActivityNew,
             R.style.DialogAnimation
-        )
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window!!.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT)
         )
         dialog.setContentView(R.layout.custom_choose_font_dialog)
         dialog.setCancelable(true)
@@ -3136,5 +2864,18 @@ class ChooseFrameForPhotoActivityNew : AppCompatActivity(), ApiResponseListener,
                     )
             }
         }
+    }
+
+
+    private fun showPopupBusinessCategoryDialog(context: Context) {
+        val layout = LayoutInflater.from(context).inflate(R.layout.layout_business_category, null)
+        rcvFont = layout.findViewById<View>(R.id.rcvBusinessCategory) as RecyclerView
+        val builder = AlertDialog.Builder(context)
+            .setView(layout)
+            .setCancelable(false)
+        alertDialog = builder.create()
+        alertDialog!!.show()
+
+
     }
 }

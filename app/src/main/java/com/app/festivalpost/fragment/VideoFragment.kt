@@ -27,28 +27,14 @@ import com.app.festivalpost.adapter.VideoCategoryItemAdapter
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
-import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
-import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
-import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
-import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
-import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
-import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.emegamart.lelys.utils.extensions.hide
-import com.emegamart.lelys.utils.extensions.loadImageFromUrl
 import com.emegamart.lelys.utils.extensions.show
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_video.*
-import java.io.File
-import java.io.FileOutputStream
 
 @Suppress("DEPRECATION")
 class VideoFragment : BaseFragment() {

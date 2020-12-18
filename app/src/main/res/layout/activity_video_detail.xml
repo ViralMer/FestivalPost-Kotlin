@@ -5,16 +5,16 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorWhite"
-    android:orientation="vertical"
+    android:orientation="vertical">
 
-    tools:context=".LoginActivity">
-
-    <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.appcompat.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <LinearLayout
@@ -24,38 +24,46 @@
             android:orientation="horizontal"
             android:padding="14dp">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:src="@drawable/ic_baseline_keyboard_backspace_24"
+
+                />
+
 
             <TextView
                 android:id="@+id/tvtitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/txt_signup"
+                android:fontFamily="@font/antipastopro_medium_trial"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/_16ssp"
-                android:textStyle="bold" />
+                android:text="@string/lbl_add_business"
+                android:textSize="@dimen/_24ssp"/>
 
             <TextView
-                android:id="@+id/tvaction"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:id="@+id/btn_next"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:layout_gravity="center"
-                android:layout_marginRight="@dimen/_5sdp"
-                android:background="@drawable/large_blue_button_bg"
                 android:gravity="center"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="@string/txt_done"
-                android:textColor="@color/colorWhite"
-                android:textSize="14dp"
-                android:textStyle="bold" />
-
+                android:background="@drawable/button_background"
+                android:text="@string/txt_next"
+                android:fontFamily="@font/sf_ui_medium"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16sdp" />
         </LinearLayout>
 
 
+
     </androidx.appcompat.widget.Toolbar>
+
 
 
     <FrameLayout
@@ -419,6 +427,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="4"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp" />
 
