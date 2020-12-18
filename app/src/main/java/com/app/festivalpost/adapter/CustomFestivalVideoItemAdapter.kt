@@ -30,7 +30,7 @@ class CustomFestivalVideoItemAdapter(var context: Context, var originaldata: Arr
         val videoPageItem = originaldata!![position]
 
         Glide.with(context).load(videoPageItem!!.video_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(holder.imageView)
-        holder.tvTitle.text=videoPageItem.video_image;
+        holder.tvTitle.text=videoPageItem.video_name;
 
         holder.tvNew.show()
         holder.tvNew.text=videoPageItem.video_date!!

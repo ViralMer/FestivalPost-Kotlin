@@ -19,6 +19,12 @@ interface RestApis {
     fun getVideoPageData(@Field("token")token:String= getApiToken()):Call<VideoPageResponse>
 
     @FormUrlEncoded
+    @POST("getLanguageVideo")
+    fun getVideoLanguageData(@Field("videoid")videoid:String,@Field("languageid")languageid:String,@Field("token")token:String= getApiToken()):Call<VideoLanguageItemResponse>
+
+
+
+    @FormUrlEncoded
     @POST("getfestivalimages")
     fun getCategoryImages(@Field("postcategoryid")postcategoryid:String):Call<CategoryImagesResponse>
 

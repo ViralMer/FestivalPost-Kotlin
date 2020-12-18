@@ -9,12 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
+import com.app.festivalpost.models.VideoLanguageItem
 import com.app.festivalpost.models.VideoListItem
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
 import java.util.*
 
-class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<VideoListItem>) :
+class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<VideoLanguageItem>) :
     RecyclerView.Adapter<ChooseVideoAdapter.ViewHolder>() {
     var searchCount = 0
     var onItemClickListener: OnItemClickListener
@@ -26,8 +27,8 @@ class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<Video
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photoItem = originaldata[position]
-        if (photoItem.thumbnail != null && !photoItem.thumbnail.equals("", ignoreCase = true)) {
-            Glide.with(context).load(photoItem.thumbnail).placeholder(R.drawable.placeholder_img)
+        if (photoItem.image != null && !photoItem.image.equals("", ignoreCase = true)) {
+            Glide.with(context).load(photoItem.image).placeholder(R.drawable.placeholder_img)
                 .error(
                     R.drawable.placeholder_img
                 ).into(holder.ivphoto)
@@ -51,11 +52,7 @@ class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<Video
             onItemClickListener.onItemClicked(p, 0)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
-                if (i != index) {
-                    pp.setIs_selected(false)
-                } else {
-                    pp.setIs_selected(true)
-                }
+                pp.isIs_selected = i == index
                 originaldata[i] = pp
             }
             notifyDataSetChanged()

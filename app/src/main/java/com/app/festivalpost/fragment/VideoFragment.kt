@@ -110,12 +110,12 @@ class VideoFragment : BaseFragment() {
                 if (res.status!!) {
 
                     festivalVideoArrayList = res.festival
-                    categoryVideoArrayList = res.cateogry
+                    categoryVideoArrayList = res.category
 
                     rcvCustomFestivalVideo!!.layoutManager = LinearLayoutManager(
                         activity,
                         LinearLayoutManager.HORIZONTAL,
-                        true
+                        false
                     )
                     val customFestivalAdapter =
                         CustomFestivalVideoItemAdapter(activity!!, festivalVideoArrayList)

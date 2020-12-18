@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.activity.MyBounceInterpolator
 
 import com.app.festivalpost.R
@@ -30,7 +31,10 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.VideoLanguageItem
 import com.app.festivalpost.models.VideoListItem
+import com.app.festivalpost.utils.extensions.callApi
+import com.app.festivalpost.utils.extensions.getRestApis
 import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -46,7 +50,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
+class VideoDetailActivity : AppBaseActivity(), ApiResponseListener,OnItemClickListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -60,8 +64,8 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
     var savedBmp: Bitmap? = null
     var url: String? = null
     var p: ProgressDialog? = null
-    var videoListItem: VideoListItem? = null
-    var videoListItemArrayList = ArrayList<VideoListItem>()
+    var videoListItem: VideoLanguageItem? = null
+    var videoListItemArrayList = ArrayList<VideoLanguageItem>()
     var tvframephone: TextView? = null
     var tvframephone1: TextView? = null
     var tvframeemail: TextView? = null
@@ -80,6 +84,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
     var ivlogo1: ImageView? = null
     var frameLayout: FrameLayout? = null
     var frameLayout1: FrameLayout? = null
+    var videoid: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_detail)
@@ -90,14 +95,13 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
         openAddImageDialog()
         setActionbar()
         apiManager = ApiManager(this@VideoDetailActivity)
-        layroot = findViewById<View>(R.id.layroot) as LinearLayout
+        
         rvdata = findViewById<View>(R.id.rvdata) as RecyclerView
         frameLayout1 = findViewById<View>(R.id.frame) as FrameLayout
         videoView = findViewById<View>(R.id.ivvideo) as AndExoPlayerView
         horizontalLayoutManagaer = GridLayoutManager(this@VideoDetailActivity, 4)
         rvdata!!.layoutManager = horizontalLayoutManagaer
         rvdata!!.itemAnimator = DefaultItemAnimator()
-        Global.showProgressDialog(this@VideoDetailActivity)
         val frame_view = layoutInflater.inflate(R.layout.video_save_image, null, false)
         frameLayout = frame_view.findViewById(R.id.frame)
         tvframephone = frame_view.findViewById(R.id.tvframephone)
@@ -116,17 +120,18 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
         textWebsite1 = findViewById(R.id.viewwebsite)
         ivlogo = frame_view.findViewById(R.id.ivframelogo1)
         ivlogo1 = findViewById(R.id.ivframelogo1)
-        apiManager!!.getFestivalVideos(
-            ApiEndpoints.getfestivalvideos,
-            Global.getPreference(Constant.PREF_TOKEN, "")
-        )
+
+        videoid=intent.getStringExtra("video_id")
+
+
+        loadAccoutData()
         p = ProgressDialog(this@VideoDetailActivity)
 
 
 //        int colorInt=Integer.parseInt(color);
     }
 
-    fun setVideoData(videoData: VideoListItem?) {
+    fun setVideoData(videoData: VideoLanguageItem?) {
         val businessItem = Global.currentBusinessNEW
         Log.d(
             "BusinessData",
@@ -138,8 +143,8 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             tvframename1!!.visibility = View.VISIBLE
             tvframename!!.text = businessItem.busiName
             tvframename1!!.text = businessItem.busiName
-            tvframename!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframename1!!.setTextColor(Color.parseColor(videoData.color))
+            //tvframename!!.setTextColor(Color.parseColor(videoData!!.color))
+            //tvframename1!!.setTextColor(Color.parseColor(videoData.color))
         }
         if (businessItem.busiLogo != "") {
             ivlogo!!.visibility = View.VISIBLE
@@ -150,48 +155,45 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             ivlogo!!.setImageURI(Uri.parse("/storage/emulated/0/Imagename/logo.png"))
             url = businessItem.busiLogo
         }
-
-
-       
         if (businessItem.busiMobile != "") {
             tvframephone!!.visibility = View.VISIBLE
             tvframephone1!!.visibility = View.VISIBLE
             tvframephone!!.text = businessItem.busiMobile
             tvframephone1!!.text = businessItem.busiMobile
-            tvframephone!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframephone1!!.setTextColor(Color.parseColor(videoData.color))
+            //tvframephone!!.setTextColor(Color.parseColor(videoData!!.color))
+            //tvframephone1!!.setTextColor(Color.parseColor(videoData.color))
         }
         if (businessItem.busiAddress != "") {
             tvframelocation!!.visibility = View.VISIBLE
             tvframelocation1!!.visibility = View.VISIBLE
             tvframelocation!!.text = businessItem.busiAddress
             tvframelocation1!!.text = businessItem.busiAddress
-            tvframelocation!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframelocation1!!.setTextColor(Color.parseColor(videoData.color))
+            /*tvframelocation!!.setTextColor(Color.parseColor(videoData!!.color))
+            tvframelocation1!!.setTextColor(Color.parseColor(videoData.color))*/
         }
         if (businessItem.busiEmail != "") {
             tvframeemail!!.visibility = View.VISIBLE
             tvframeemail1!!.visibility = View.VISIBLE
             tvframeemail!!.text = businessItem.busiEmail
             tvframeemail1!!.text = businessItem.busiEmail
-            tvframeemail!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframeemail1!!.setTextColor(Color.parseColor(videoData.color))
+            /*tvframeemail!!.setTextColor(Color.parseColor(videoData!!.color))
+            tvframeemail1!!.setTextColor(Color.parseColor(videoData.color))*/
             textEmail!!.visibility = View.VISIBLE
-            textEmail!!.setTextColor(Color.parseColor(videoData.color))
+            //textEmail!!.setTextColor(Color.parseColor(videoData.color))
             textEmail1!!.visibility = View.VISIBLE
-            textEmail1!!.setTextColor(Color.parseColor(videoData.color))
+            //textEmail1!!.setTextColor(Color.parseColor(videoData.color))
         }
         if (businessItem.busiWebsite != "") {
             tvframeweb!!.visibility = View.VISIBLE
             tvframeweb1!!.visibility = View.VISIBLE
             tvframeweb!!.text = businessItem.busiWebsite
             tvframeweb1!!.text = businessItem.busiWebsite
-            tvframeweb!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframeweb1!!.setTextColor(Color.parseColor(videoData.color))
+            /*tvframeweb!!.setTextColor(Color.parseColor(videoData!!.color))
+            tvframeweb1!!.setTextColor(Color.parseColor(videoData.color))*/
             textWebsite!!.visibility = View.VISIBLE
-            textWebsite!!.setTextColor(Color.parseColor(videoData.color))
+            //textWebsite!!.setTextColor(Color.parseColor(videoData.color))
             textWebsite1!!.visibility = View.VISIBLE
-            textWebsite1!!.setTextColor(Color.parseColor(videoData.color))
+            //textWebsite1!!.setTextColor(Color.parseColor(videoData.color))
         }
         frameLayout!!.isDrawingCacheEnabled = true
         frameLayout!!.buildDrawingCache(true)
@@ -267,79 +269,21 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
         }
     }
 
-    fun processResponse(responseString: String?) {
-        videoListItemArrayList = ArrayList()
-        status = false
-        message = ""
-        try {
-            val jsonObject = JSONObject(responseString)
-            if (jsonObject.has("status")) {
-                status = jsonObject.getBoolean("status")
-            }
-            if (jsonObject.has("color")) {
-                color = jsonObject.getString("color")
-                Log.d("colorcode", "" + color)
-                tvframename!!.setTextColor(Color.parseColor(color))
-                tvframename1!!.setTextColor(Color.parseColor(color))
-            }
-            if (jsonObject.has("message")) {
-                message = jsonObject.getString("message")
-            }
-            if (jsonObject.has("data")) {
-                val jsonArray = jsonObject.getJSONArray("data")
-                if (jsonArray.length() > 0) {
-                    for (i in 0 until jsonArray.length()) {
-                        val j = jsonArray.getJSONObject(i)
-                        val f = Gson().fromJson(j.toString(), VideoListItem::class.java)
-                        val videoListItem = VideoListItem()
-                        videoListItem.date_added = j.getString("date_added")
-                        videoListItem.thumbnail = j.getString("thumbnail")
-                        videoListItem.video_post_id = j.getInt("video_post_id")
-                        videoListItem.video_url = j.getString("video_url")
-                        videoListItem.color = j.getString("color")
-                        videoListItem.date = j.getString("date")
-                        try {
-                            Log.d("DAteGEt", "" + j.getString("date"))
-                        } catch (e: Exception) {
-                        }
-                        if (i == 0) {
-                            f.setIs_selected(true)
-                        } else {
-                            f.setIs_selected(false)
-                        }
-                        videoListItemArrayList.add(videoListItem)
-                        //videoListItemArrayList.add(f);
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+
 
     var video_path = ""
     override fun onItemClicked(`object`: Any?, index: Int) {
-        videoListItem = `object` as VideoListItem
+        videoListItem = `object` as VideoLanguageItem
         setVideoData(videoListItem)
-        if (videoListItem!!.thumbnail != null && !videoListItem!!.thumbnail.equals(
+        if (videoListItem!!.image != null && !videoListItem!!.image.equals(
                 "",
                 ignoreCase = true
             )
         ) {
-            video_path = videoListItem!!.video_url
+            video_path = videoListItem!!.video!!
             videoView!!.setSource(video_path)
             frameLayout1!!.visibility = View.VISIBLE
-            /*Log.d("VideoView",""+videoView.getBufferPercentage());
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    Global.dismissProgressDialog(VideoDetailActivity.this);
-                    setVideoData(videoListItem);
-                    videoView.start();
-                }
-            });
-*/
-            //Glide.with(VideoDetailActivity.this).load(videoListItem.getThumbnail()).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(ivbackground);
+
         }
     }
 
@@ -378,7 +322,7 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             if (requestService.equals(ApiEndpoints.getfestivalvideos, ignoreCase = true)) {
                 try {
                     Log.d("response", responseString!!)
-                    processResponse(responseString)
+
                     if (status) {
                         fillData()
                     } else {
@@ -393,11 +337,6 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
     }
 
     fun fillData() {
-
-        /*if (photoItemArrayList.size()>3)
-        {
-            horizontalLayoutManagaer.setStackFromEnd(true);
-        }*/
         Log.d("videoItemList", "" + videoListItemArrayList.size)
         if (videoListItemArrayList.size > 0) {
             val adapter = ChooseVideoAdapter(this@VideoDetailActivity, videoListItemArrayList)
@@ -405,12 +344,12 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             //new PlayVideo().execute();
             videoListItem = videoListItemArrayList[0]
             setVideoData(videoListItem)
-            if (videoListItem!!.thumbnail != null && !videoListItem!!.thumbnail.equals(
+            if (videoListItem!!.image != null && !videoListItem!!.image.equals(
                     "",
                     ignoreCase = true
                 )
             ) {
-                video_path = videoListItem!!.video_url
+                video_path = videoListItem!!.video!!
                 videoView!!.setSource(video_path)
                 frameLayout1!!.visibility = View.VISIBLE
                 /*videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -496,23 +435,6 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
             finish()
 
 
-/*
-            FileOutputStream f = new FileOutputStream(new File(myDir,
-                    videoname1));
-
-            Log.d("VideoName123", "Video Name1:" + videoname + "Video Name 2 : " + videoname1);
-            InputStream in = c.getInputStream();
-            byte[] buffer = new byte[1024];
-            int len1 = 0;
-            while ((len1 = in.read(buffer)) > 0) {
-                f.write(buffer, 0, len1);
-            }
-            f.close();
-
-*/
-
-
-            //SaveImage(savedBmp);
         } catch (e: IOException) {
             Log.d("Error....", e.toString())
             Global.dismissProgressDialog(this@VideoDetailActivity)
@@ -568,5 +490,23 @@ class VideoDetailActivity : AppCompatActivity(), ApiResponseListener,OnItemClick
                     token.continuePermissionRequest()
                 }
             }).check()
+    }
+
+
+    private fun loadAccoutData() {
+        showProgress(true)
+        callApi(
+
+            getRestApis().getVideoLanguageData(videoid!!,"0"), onApiSuccess = {
+                showProgress(false)
+                fillData()
+
+            }, onApiError = {
+                showProgress(false)
+
+            }, onNetworkError = {
+                showProgress(false)
+
+            })
     }
 }
