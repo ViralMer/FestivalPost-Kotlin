@@ -219,21 +219,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
         ivBack.onClick {
             onBackPressed()
         }
-        tvaction.setOnClickListener {
-            val builder: AlertDialog.Builder
-            builder = AlertDialog.Builder(this@AddBusinessActivity)
-            builder.setTitle(resources.getString(R.string.txt_delete_title))
-                .setMessage(resources.getString(R.string.txt_delete_message))
-                .setPositiveButton(resources.getString(R.string.txt_yes)) { dialog, which ->
-                    Global.showProgressDialog(this@AddBusinessActivity)
-                    apiManager!!.removemybusiness(
-                        ApiEndpoints.removemybusiness,
-                        businessItem!!.busi_id.toString() + ""
-                    )
-                }
-                .setNegativeButton(resources.getString(R.string.txt_no)) { dialog, which -> dialog.dismiss() }
-                .show()
-        }
+
     }
 
 

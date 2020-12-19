@@ -81,10 +81,9 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
         animateButton()
         tvaction!!.setOnClickListener {
             if (day in 0..1) {
-                /*val detailact =
-                    Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)
+                val detailact = Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)
                 detailact.putExtra("photo_path", photo_path)
-                startActivity(detailact)*/
+                startActivity(detailact)
             } else {
                 Global.getAlertDialog(
                     this@ChoosePhotoActivity,

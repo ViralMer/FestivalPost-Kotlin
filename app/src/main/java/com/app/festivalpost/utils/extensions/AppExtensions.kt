@@ -29,6 +29,8 @@ import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TOKEN
 import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TYPE
 import com.app.festivalpost.utils.Constants.PLAY_STORE_URL_PREFIX
 import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS_DATA
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_USER_DATA
 import com.app.festivalpost.utils.Constants.SharedPref.USER_EMAIL
@@ -38,6 +40,7 @@ import com.app.festivalpost.utils.Constants.SharedPref.USER_NUMBER
 import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
 import com.emegamart.lelys.utils.SharedPrefUtils
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.dialog_no_internet.*
 
@@ -176,6 +179,32 @@ fun getUserData(): ArrayList<UserDataItem> {
         ), object : TypeToken<ArrayList<UserDataItem>>() {}.type
     )
 }
+
+fun getCurrentBusinessData(): CurrentBusinessItem {
+    if (getSharedPrefInstance().getStringValue(KEY_CURRENT_BUSINESS) == "") {
+        return CurrentBusinessItem()
+
+    }
+    return Gson().fromJson<CurrentBusinessItem>(
+        getSharedPrefInstance().getStringValue(
+            KEY_CURRENT_BUSINESS
+        ), object : TypeToken<UserDataItem>() {}.type
+    )
+}
+
+fun <T> put (`object`:T,key:String)
+{
+    val jsonString=GsonBuilder().create().toJson(`object`);
+
+    getSharedPrefInstance().setValue(key,jsonString)
+}
+
+inline fun <reified T> get(key: String): T?{
+    val value = getSharedPrefInstance().getStringValue(key,"")
+    return GsonBuilder().create().fromJson(value,T::class.java)
+}
+
+
 
 fun Activity.showCurrentBusiness(model: CurrentBusinessItem) {
     launchActivity<AddBusinessActivity> {

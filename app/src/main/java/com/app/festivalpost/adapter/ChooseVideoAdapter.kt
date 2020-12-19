@@ -10,15 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.models.VideoLanguageItem
-import com.app.festivalpost.models.VideoListItem
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
-import java.util.*
+import kotlin.collections.ArrayList
 
-class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<VideoLanguageItem>) :
+class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<VideoLanguageItem?>) :
     RecyclerView.Adapter<ChooseVideoAdapter.ViewHolder>() {
     var searchCount = 0
-    var onItemClickListener: OnItemClickListener
+    var onItemClickListener: OnItemClickListener = context as OnItemClickListener
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var view: View? = null
         view = LayoutInflater.from(parent.context).inflate(R.layout.custom_choose_photo_item, null)
@@ -27,20 +26,14 @@ class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<Video
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photoItem = originaldata[position]
-        if (photoItem.image != null && !photoItem.image.equals("", ignoreCase = true)) {
+        if (photoItem!!.image != null && !photoItem.image.equals("", ignoreCase = true)) {
             Glide.with(context).load(photoItem.image).placeholder(R.drawable.placeholder_img)
                 .error(
                     R.drawable.placeholder_img
                 ).into(holder.ivphoto)
         }
 
-        //holder.textView.setText(photoItem.getDate());
-        /*if (position==0) {
-            photoItem.setIs_selected(true);
-        }
-            else{
-                photoItem.setIs_selected(false);
-            }*/if (photoItem.isIs_selected) {
+       if (photoItem.isIs_selected) {
             holder.viewselected.visibility = View.VISIBLE
         } else {
             holder.viewselected.visibility = View.GONE
@@ -52,7 +45,7 @@ class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<Video
             onItemClickListener.onItemClicked(p, 0)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
-                pp.isIs_selected = i == index
+                pp!!.isIs_selected = i == index
                 originaldata[i] = pp
             }
             notifyDataSetChanged()
@@ -67,17 +60,14 @@ class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<Video
         val layMain: LinearLayout
         val ivphoto: RoundedImageView
         val viewselected: View
-        val textView: TextView
+
 
         init {
             layMain = itemView.findViewById<View>(R.id.lay_main) as LinearLayout
             ivphoto = itemView.findViewById<View>(R.id.ivphoto) as RoundedImageView
             viewselected = itemView.findViewById(R.id.viewselected) as View
-            textView = itemView.findViewById<View>(R.id.tvname) as TextView
+
         }
     }
 
-    init {
-        onItemClickListener = context as OnItemClickListener
-    }
 }

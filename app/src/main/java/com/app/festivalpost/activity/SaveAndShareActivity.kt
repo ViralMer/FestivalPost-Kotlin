@@ -26,6 +26,9 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.CurrentBusinessItem
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
+import com.emegamart.lelys.utils.extensions.get
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -42,8 +45,7 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
     var message = ""
     var ivimage: ImageView? = null
     var bmp: Bitmap? = null
-    var saveImage = 0
-    var shareImage = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -67,7 +69,7 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
                 }
             }
         }
-        val businessItem = Global.currentBusiness
+        val businessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
         setActionbar()
         ivimage = findViewById(R.id.ivimage)
         if (bmp != null) {
@@ -376,23 +378,12 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
 
     override fun onResume() {
         super.onResume()
-        val data = Global.getPreference("premium_data", 0)
-        if (data == 2) {
-            sharePhoto = false
-            savePhoto()
-        } else if (data == 3) {
-            sharePhoto = true
-            savePhoto()
-        }
+
     }
 
     private fun scanner(path: String) {
-        MediaScannerConnection.scanFile(this@SaveAndShareActivity, arrayOf(path), null,
-            object : MediaScannerConnection.OnScanCompletedListener {
-                override fun onScanCompleted(path: String, uri: Uri) {
-                    Log.i("TAG", "Finished scanning $path")
-                }
-            })
+        MediaScannerConnection.scanFile(this@SaveAndShareActivity, arrayOf(path), null
+        ) { path, uri -> Log.i("TAG", "Finished scanning $path") }
     }
 
     override fun onDestroy() {

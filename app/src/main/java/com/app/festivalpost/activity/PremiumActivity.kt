@@ -32,10 +32,7 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
-import com.app.festivalpost.models.BusinessItem
-import com.app.festivalpost.models.PlanItem
-import com.app.festivalpost.models.PlanItemDetails
-import com.app.festivalpost.models.UserItem
+import com.app.festivalpost.models.*
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.toast
@@ -49,7 +46,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
     var message = ""
     var planItemArrayList= arrayListOf<PlanItemDetails>()
     var userItem: UserItem? = null
-    var businessItem: BusinessItem? = null
+    var businessItem: CurrentBusinessItem? = null
     var score = "0"
     var billingProcessor: BillingProcessor? = null
     var readyToPurchase = false
@@ -289,7 +286,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         apiManager!!.purchaseplan(
             ApiEndpoints.purchaseplan,
             Global.getPreference(Constant.PREF_TOKEN, ""),
-            businessItem!!.busiId.toString(),
+            businessItem!!.busi_id.toString(),
             clicked_plan_model!!.planId.toString(),
             details!!.purchaseInfo.purchaseData.orderId,
             score
