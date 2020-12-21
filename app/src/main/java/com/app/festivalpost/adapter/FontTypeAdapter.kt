@@ -22,7 +22,7 @@ import com.emegamart.lelys.utils.extensions.show
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlin.collections.ArrayList
 
-class FontTypeAdapter(var context: Context, var originaldata: ArrayList<FontTypeList?>) :
+class FontTypeAdapter(var context: Context, var originaldata: ArrayList<FontTypeList?>,var text:String) :
     RecyclerView.Adapter<FontTypeAdapter.ViewHolder>() {
     var searchCount = 0
     var onItemClickListener: OnItemClickListener = context as OnItemClickListener
@@ -35,21 +35,21 @@ class FontTypeAdapter(var context: Context, var originaldata: ArrayList<FontType
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val businessCategoryItem = originaldata[position]
 
-        holder.tvTitle.text=businessCategoryItem!!.name
+        holder.tvTitle.text=text
 
 
-        if (businessCategoryItem.is_selected!!) {
+        if (businessCategoryItem!!.is_selected!!) {
             holder.ivSelected.visibility = View.VISIBLE
         } else {
             holder.ivSelected.visibility = View.GONE
         }
 
 
-        holder.ivSelected.tag = position
-        holder.ivSelected.setOnClickListener { view ->
+        holder.itemView.tag = position
+        holder.itemView.setOnClickListener { view ->
             val index = view.tag as Int
             val p = originaldata[index]
-            onItemClickListener.onItemClicked(p, 0)
+            onItemClickListener.onItemClicked(p, index)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
                 pp!!.is_selected = i == index
@@ -76,4 +76,5 @@ class FontTypeAdapter(var context: Context, var originaldata: ArrayList<FontType
 
 
     }
+
 }

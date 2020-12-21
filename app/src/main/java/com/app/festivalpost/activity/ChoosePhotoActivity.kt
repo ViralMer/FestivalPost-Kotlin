@@ -118,13 +118,13 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
 
     private var photo_path = ""
     override fun onItemClicked(`object`: Any?, index: Int) {
-        val photoItem = `object` as PhotoItem
+        val photoItem = `object` as CategoryItem
         if (!photoItem.post_content.equals(
                 "",
                 ignoreCase = true
             )
         ) {
-            photo_path = photoItem.post_content
+            photo_path = photoItem.post_content!!
             Glide.with(this@ChoosePhotoActivity).load(photoItem.post_content)
                 .placeholder(R.drawable.placeholder_img).error(
                     R.drawable.placeholder_img

@@ -585,5 +585,6 @@
     <string name="lbl_use_all_images">Use all images</string>
     <string name="txt_choose_plans"><font color='#48A8BC'>C</font>hoose Plans</string>
     <string name="lbl_purchase">Purchase</string>
+    <string name="hint_choose_font">Choose your Font</string>
 
 </resources>

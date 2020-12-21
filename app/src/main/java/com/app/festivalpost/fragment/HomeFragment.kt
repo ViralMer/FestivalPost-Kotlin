@@ -235,20 +235,19 @@ class HomeFragment : BaseFragment() {
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         activity!!.startActivity(detailAct)
                         activity!!.finish()
-                    } else {
-                        if (res.message == "user not valid") {
-                            val intent = Intent(
-                                activity, LoginActivity::class.java
-                            )
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            activity!!.finish()
-                        }
                     }
 
 
                 } else {
+                    if (res.message == "user not valid") {
+                        val intent = Intent(
+                            activity, LoginActivity::class.java
+                        )
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        activity!!.finish()
+                    }
                     linearFestival.hide()
                     linearCategory.hide()
                 }

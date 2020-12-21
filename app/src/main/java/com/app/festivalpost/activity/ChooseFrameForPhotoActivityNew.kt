@@ -25,6 +25,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,10 +52,7 @@ import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
 import com.bumptech.glide.Glide
-import com.emegamart.lelys.utils.extensions.get
-import com.emegamart.lelys.utils.extensions.getCurrentBusinessData
-import com.emegamart.lelys.utils.extensions.getCustomFrameList
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.emegamart.lelys.utils.extensions.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.karumi.dexter.Dexter
@@ -360,7 +358,14 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener {
             if (defaultText.equals("", ignoreCase = true)) {
                 defaultText = storeValue!!
             }
-            showFonttypeDialog(defaultText)
+            fontTypeList.clear()
+            fontTypeList.add(FontTypeList("fonts/museomoderno_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/aaaargh.ttf"))
+            fontTypeList.add(FontTypeList("fonts/bold.ttf"))
+            fontTypeList.add(FontTypeList("fonts/armopb.ttf"))
+            fontTypeList.add(FontTypeList("fonts/corbel.ttf"))
+            storeValue="Festival Post"
+            showPopupBusinessCategoryDialog(this,storeValue!!)
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
             if (ivlogoselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
@@ -2846,35 +2851,92 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener {
 
     override fun onItemClicked(`object`: Any?, index: Int) {
         Log.d("index123", "" + index)
-        val photoItem = `object` as FramePreview
-        index1 = index
-        setFrameNEW(photoItem)
-        if (index >= 19) {
-            if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
-                    "",
-                    ignoreCase = true
-                )
-            ) {
-                //setFrameNEW(photoItem);
-                Glide.with(this@ChooseFrameForPhotoActivityNew).load(framePreview!!.dynamic_images)
-                    .placeholder(
-                        R.drawable.placeholder_img
-                    ).error(R.drawable.placeholder_img).into(
-                        ivframebg!!
+        val photoItem: FramePreview?=null
+        var fontItem : FontTypeList?=null
+        if (`object`==photoItem) {
+            photoItem=`object` as FrameP
+            index1 = index
+            setFrameNEW(photoItem)
+            if (index >= 19) {
+                if (photoItem!!.dynamic_images != null && !photoItem.dynamic_images.equals(
+                        "",
+                        ignoreCase = true
                     )
+                ) {
+                    //setFrameNEW(photoItem);
+                    Glide.with(this@ChooseFrameForPhotoActivityNew).load(framePreview!!.dynamic_images)
+                        .placeholder(
+                            R.drawable.placeholder_img
+                        ).error(R.drawable.placeholder_img).into(
+                            ivframebg!!
+                        )
+                }
             }
         }
+        else if (`object`==fontItem) {
+            fontItem=`object` as FontTypeList
+            alertDialog!!.dismiss()
+            val path=fontItem!!.name
+            Log.d("Abcd",""+path)
+            if (nameValue) {
+                nametypeface = Typeface.createFromAsset(assets, path)
+                tvframename!!.typeface = nametypeface
+            } else if (textallSelected) {
+                allfonttypeface = Typeface.createFromAsset(assets, path)
+                tvframephone!!.typeface = allfonttypeface
+                tvframeemail!!.typeface = allfonttypeface
+                tvframeweb!!.typeface = allfonttypeface
+                tvframelocation!!.typeface = allfonttypeface
+                tvframename!!.typeface = allfonttypeface
+            } else if (phoneValue) {
+                phoneTypeface = Typeface.createFromAsset(assets, path)
+                tvframephone!!.typeface = phoneTypeface
+            } else if (emailValue) {
+                emailTypeface = Typeface.createFromAsset(assets, path)
+                tvframeemail!!.typeface = emailTypeface
+            } else if (websiteValue) {
+                websiteTypeface = Typeface.createFromAsset(assets, path)
+                tvframeweb!!.typeface = websiteTypeface
+            } else if (addressValue) {
+                addressTypeface = Typeface.createFromAsset(assets, path)
+                tvframelocation!!.typeface = addressTypeface
+            } else {
+                selectedFontTypeface =
+                    Typeface.createFromAsset(assets, path)
+                for (p in views.indices) {
+                    if (p == selectedPosition) {
+                        rootTextView = views[p].view
+                        if (rootTextView != null) {
+                            mPhotoEditor!!.editText(
+                                rootTextView!!,
+                                selectedFontTypeface,
+                                views[p].text,
+                                views[p].color
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 
 
-    private fun showPopupBusinessCategoryDialog(context: Context) {
-        val layout = LayoutInflater.from(context).inflate(R.layout.layout_business_category, null)
-        rcvFont = layout.findViewById<View>(R.id.rcvBusinessCategory) as RecyclerView
+    private fun showPopupBusinessCategoryDialog(context: Context,text:String) {
+        val layout = LayoutInflater.from(context).inflate(R.layout.layout_font_type, null)
+        rcvFont = layout.findViewById<View>(R.id.rcvFontType) as RecyclerView
+        val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as AppCompatImageView
+        fontTypeAdapter= FontTypeAdapter(this,fontTypeList,text)
+        rcvFont!!.adapter=fontTypeAdapter
         val builder = AlertDialog.Builder(context)
             .setView(layout)
-            .setCancelable(false)
+            .setCancelable(true)
         alertDialog = builder.create()
         alertDialog!!.show()
+        ib_cancel.onClick {
+            alertDialog!!.dismiss()
+        }
 
 
     }

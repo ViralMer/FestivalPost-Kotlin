@@ -18,12 +18,13 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
-            android:tint="@color/teal_500"
-            android:src="@drawable/business_bag"
+
+            android:src="@drawable/ic_fonttype"
             android:gravity="center"
             android:layout_gravity="center"
-            app:tint="@color/teal_500"
-            tools:ignore="UseAppTint" />
+             />
+
+
 
         <TextView
 
@@ -32,14 +33,24 @@
             android:layout_marginLeft="@dimen/_2sdp"
             android:fontFamily="@font/sf_ui_medium"
             android:textSize="@dimen/_16ssp"
+            android:layout_weight="10"
             android:textColor="@color/colorBlack"
-            android:text="@string/hint_business_category"
+            android:text="@string/hint_choose_font"
             android:padding="@dimen/_5sdp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ib_cancel"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_gravity="center|right"
+            android:src="@drawable/ic_baseline_close_24"
+            />
+
     </LinearLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvBusinessCategory"
+        android:id="@+id/rcvFontType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
