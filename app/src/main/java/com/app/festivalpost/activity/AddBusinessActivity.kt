@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
-import com.app.festivalpost.adapter.BusinessItemAdapter
+
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener

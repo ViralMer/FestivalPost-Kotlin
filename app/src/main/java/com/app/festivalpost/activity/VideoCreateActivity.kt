@@ -18,11 +18,13 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.VideoListItem
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -30,17 +32,17 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.netcompss.ffmpeg4android.CommandValidationException
 import com.netcompss.loader.LoadJNI
+import com.potyvideo.library.AndExoPlayerView
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-/*import com.arthenica.mobileffmpeg.Config;
-import com.arthenica.mobileffmpeg.FFmpeg;*/   class VideoCreateActivity : AppCompatActivity() {
+class VideoCreateActivity : AppBaseActivity() {
     var videoPath: String? = null
     var selectedVideoPath: String? = null
     var PassCutVideoFilepath: String? = null
     var p: ProgressDialog? = null
-    var videoView: VideoView? = null
+    var videoView: AndExoPlayerView? = null
     var btnSave: Button? = null
     var btnShare: Button? = null
     var tvframephone: TextView? = null
@@ -128,12 +130,13 @@ import com.arthenica.mobileffmpeg.FFmpeg;*/   class VideoCreateActivity : AppCom
         ivlogo1 = findViewById(R.id.ivframelogo1)
         textEmail1 = findViewById(R.id.viewPhone)
         textWebsite1 = findViewById(R.id.viewwebsite)
-        videoView!!.setVideoPath("/data/data/com.app.festivalpost/files/video_demo.mp4")
-        videoView!!.setOnPreparedListener(MediaPlayer.OnPreparedListener {
+        videoView!!.setSource("/data/data/com.app.festivalpost/files/video_demo.mp4")
+        /*videoView!!.setOnPreparedListener(MediaPlayer.OnPreparedListener {
             setVideoData(videoListItem)
             Log.d("videoPAth", "" + Global.getPreference("video_name", ""))
             videoView!!.start()
-        })
+        })*/
+        Log.d("VideoPAth", "" + getSharedPrefInstance().getStringValue("image_name")  + " Video_name"+getSharedPrefInstance().getStringValue("video_name"),)
         btnSave = findViewById(R.id.btnsubmit)
         btnShare = findViewById(R.id.btnshare)
         p = ProgressDialog(this@VideoCreateActivity)
@@ -141,13 +144,13 @@ import com.arthenica.mobileffmpeg.FFmpeg;*/   class VideoCreateActivity : AppCom
 
 //        int colorInt=Integer.parseInt(color);
         btnSave!!.setOnClickListener(View.OnClickListener {
-            videoView!!.stopPlayback()
+            videoView!!.stopPlayer()
             openAddImageDialog()
             AsyncTaskExampleNew().execute()
         })
         btnShare!!.setOnClickListener(View.OnClickListener {
-            videoView!!.stopPlayback()
             openAddImageDialog()
+            videoView!!.stopPlayer()
             if (save) {
             } else {
                 AsyncTaskExampleNew().execute()
@@ -158,28 +161,24 @@ import com.arthenica.mobileffmpeg.FFmpeg;*/   class VideoCreateActivity : AppCom
 
     private fun saveVideoToInternalStorage() {
         val inputCode: Array<String>
-        Log.d("VideoNameNew", "" + Global.getPreference("video_name", "") + videoPath)
+
         videoPath = File(Constant.FOLDER_NAME, videoName).absolutePath
-        Log.d("IMAGEPATH", "" + Global.getPreference("video_name", ""))
-        Log.d("IMAGEPATH1", "" + Global.getPreference("image_name", ""))
         Log.d("IMAGEPATH2", "/storage/emulated/0$videoPath")
         videoPath = File(Constant.FOLDER_NAME, videoName).absolutePath
-        Log.d("VideoPAth", "" + videoPath)
-        inputCode = arrayOf(
+        Log.d("VideoPAth", "" + getSharedPrefInstance().getStringValue("image_name")  + " Video_name"+getSharedPrefInstance().getStringValue("video_name"),)
+        inputCode =
             arrayOf(
                 "ffmpeg",
                 "-y",
                 "-i",
-                Global.getPreference("video_name", ""),
+                getSharedPrefInstance().getStringValue("video_name"),
                 "-i",
-                Global.getPreference("image_name", ""),
+                getSharedPrefInstance().getStringValue("image_name"),
                 "-filter_complex",
                 "overlay=(W-w):(H-h)",
                 "-codec:a",
                 "copy",
-                "/storage/emulated/0/FestivalPost/$videoName"
-            ).toString()
-        )
+                "/storage/emulated/0/FestivalPost/$videoName")
         try {
             addVideoWaterMark(inputCode, this@VideoCreateActivity)
         } catch (e: CommandValidationException) {
@@ -274,11 +273,12 @@ import com.arthenica.mobileffmpeg.FFmpeg;*/   class VideoCreateActivity : AppCom
         override fun onPostExecute(aVoid: Void?) {
             p!!.dismiss()
             frameLayout!!.visibility = View.GONE
-            videoView!!.setVideoPath("/storage/emulated/0$videoPath")
-            videoView!!.setOnPreparedListener {
+            videoView!!.setSource("/storage/emulated/0$videoPath")
+            /*videoView!!.setOnPreparedListener {
                 Global.dismissProgressDialog(this@VideoCreateActivity)
                 videoView!!.start()
-            }
+            }*/
+
             Toast.makeText(this@VideoCreateActivity, "Video Saved Successfully", Toast.LENGTH_SHORT)
                 .show()
             val detailAct = Intent(this@VideoCreateActivity, HomeActivity::class.java)

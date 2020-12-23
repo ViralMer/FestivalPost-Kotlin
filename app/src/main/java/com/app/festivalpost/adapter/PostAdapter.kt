@@ -4,11 +4,13 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,15 +25,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.R
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.FileListItem
 import com.app.festivalpost.models.PostItem
+import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import java.util.*
 import java.util.function.Consumer
 
-class PostAdapter(var context: Context, var originaldata: ArrayList<PostItem>) :
+class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem>) :
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     var searchCount = 0
     private var isLoaderVisible = false
@@ -44,17 +49,14 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<PostItem>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val festivalItem = originaldata[position]
         Log.d("image_url", "" + originaldata.size)
-        holder.tvname.text = festivalItem.name
-        Log.d("image_url", "" + festivalItem.name)
-        Glide.with(context).load(festivalItem.photo_url).placeholder(R.drawable.placeholder_img)
-            .error(
-                R.drawable.placeholder_img
-            ).into(holder.ivphoto)
-        Log.d("image_url", "" + festivalItem.photo_url)
+        holder.tvname.text = getSharedPrefInstance().getStringValue(USER_NAME)
+        val path: String =
+            Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
+        val bitmap = BitmapFactory.decodeFile(path + "/" + festivalItem.path)
+        holder.ivphoto.setImageBitmap(bitmap)
         holder.layMain.tag = festivalItem
         holder.layMain.setOnClickListener { view ->
-            val postItem = view.tag as PostItem
-            showFullScreenImage(postItem.photo_url)
+            showFullScreenImage(path)
         }
     }
 
@@ -144,31 +146,14 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<PostItem>) :
         }
     }
 
-    fun addItems(postItems: ArrayList<PostItem>?) {
-        originaldata.addAll(postItems!!)
-        notifyDataSetChanged()
-    }
 
-    fun addLoading() {
-        isLoaderVisible = true
-        originaldata.add(PostItem())
-        notifyItemInserted(originaldata.size - 1)
-    }
-
-    fun removeLoading() {
-        isLoaderVisible = false
-        val position = originaldata.size - 1
-        val item = getItem(position)
-        originaldata.removeAt(position)
-        notifyItemRemoved(position)
-    }
 
     fun clear() {
         originaldata.clear()
         notifyDataSetChanged()
     }
 
-    fun getItem(position: Int): PostItem {
+    fun getItem(position: Int): FileListItem {
         return originaldata[position]
     }
 }

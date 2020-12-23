@@ -12,7 +12,10 @@ import com.app.festivalpost.fragment.AccountFragment
 import com.app.festivalpost.fragment.CustomFragment
 import com.app.festivalpost.fragment.HomeFragment
 import com.app.festivalpost.fragment.VideoFragment
+import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.show
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppBaseActivity() {
     var tvaction: TextView? = null
@@ -25,7 +28,7 @@ class HomeActivity : AppBaseActivity() {
         instance = this
 
         val mainHandler = Handler(Looper.getMainLooper())
-        var runnable: Runnable = Runnable { loadHomeFragment() }
+        val runnable = Runnable { loadHomeFragment() }
 
         mainHandler.postDelayed(runnable, 0)
         setupBottomNavigation()
@@ -51,6 +54,7 @@ class HomeActivity : AppBaseActivity() {
                 }
                 R.id.nav_post -> {
                     //loadAccountFragment()
+                    loadCustomFragment()
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_profile -> {
@@ -62,22 +66,14 @@ class HomeActivity : AppBaseActivity() {
         })
     }
 
-    fun loadHomeFragment() {
+    private fun loadHomeFragment() {
         val fragment = HomeFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
+        toolbar.show()
         //tvtitle!!.text = resources.getString(R.string.txt_home)
     }
-
-    fun loadHomeFragment1() {
-        val fragment = HomeFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
-        //tvtitle!!.text = resources.getString(R.string.txt_home)
-    }
-
 
 
     private fun loadCustomFragment() {
@@ -85,7 +81,8 @@ class HomeActivity : AppBaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        //tvtitle!!.text = resources.getString(R.string.txt_custom)
+        toolbar.show()
+
     }
 
     private fun loadAccountFragment() {
@@ -93,7 +90,8 @@ class HomeActivity : AppBaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        //tvtitle!!.text = resources.getString(R.string.txt_account)
+        toolbar.hide()
+
     }
 
     private fun loadVideoFragment() {
@@ -101,19 +99,13 @@ class HomeActivity : AppBaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        //tvtitle!!.text = resources.getString(R.string.txt_account)
+        toolbar.show()
+
     }
 
-
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
             else -> {
@@ -122,9 +114,6 @@ class HomeActivity : AppBaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 
     companion object {
         var instance: HomeActivity? = null

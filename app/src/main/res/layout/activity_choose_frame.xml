@@ -172,30 +172,12 @@
         android:fillViewport="true"
         android:scrollbars="none">
 
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Heading"
-                android:text="@string/txt_choose_photo_frame"
-                 />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorDivider" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvdata"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -253,15 +235,38 @@
 
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Heading"
+                android:visibility="gone"
+                android:text="@string/txt_choose_photo_frame"
+                 />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvdata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:weightSum="4"
+                android:weightSum="5"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
                 <LinearLayout
+                    android:id="@+id/linearAddText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -290,11 +295,12 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linearAddimage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_weight="1"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_gravity="center"
                     android:gravity="center"
                     >
@@ -321,6 +327,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/lineartextcolor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -350,6 +357,7 @@
                     android:textStyle="bold" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/linearFonttype"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -377,6 +385,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linearbackgroundcolor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

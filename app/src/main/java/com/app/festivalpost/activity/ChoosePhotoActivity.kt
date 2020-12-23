@@ -83,6 +83,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
             if (day in 0..1) {
                 val detailact = Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)
                 detailact.putExtra("photo_path", photo_path)
+                detailact.putExtra("image_type", image_type)
                 startActivity(detailact)
             } else {
                 Global.getAlertDialog(
@@ -117,6 +118,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
 
 
     private var photo_path = ""
+    private var image_type = 0
     override fun onItemClicked(`object`: Any?, index: Int) {
         val photoItem = `object` as CategoryItem
         if (!photoItem.post_content.equals(
@@ -125,6 +127,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
             )
         ) {
             photo_path = photoItem.post_content!!
+            image_type = photoItem.image_type!!
             Glide.with(this@ChoosePhotoActivity).load(photoItem.post_content)
                 .placeholder(R.drawable.placeholder_img).error(
                     R.drawable.placeholder_img
@@ -197,8 +200,8 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
                             ChoosePhotoAdapter(this@ChoosePhotoActivity, photoItemArrayList)
                         rvdata!!.adapter = adapter
                         val photoItem = photoItemArrayList[0]
-
-                        photo_path = photoItem!!.post_content!!
+                        photoItem!!.is_selected=true
+                        photo_path = photoItem.post_content!!
                         Glide.with(this@ChoosePhotoActivity).load(photoItem.post_content)
                             .placeholder(R.drawable.placeholder_img).error(
                                 R.drawable.placeholder_img

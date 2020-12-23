@@ -3,6 +3,7 @@ package com.app.festivalpost.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -19,36 +20,43 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.festivalpost.AppBaseActivity
 
 import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.SaveAndShareActivity
+import com.app.festivalpost.adapter.FontTypeAdapter
 import com.app.festivalpost.adapter.FrameChooseAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
-import com.app.festivalpost.models.FrameListItem
-import com.app.festivalpost.models.FramePreview
-import com.app.festivalpost.models.LocalFrameItemNew
-import com.app.festivalpost.models.ViewData
+import com.app.festivalpost.models.*
 import com.app.festivalpost.photoeditor.OnPhotoEditorListener
 import com.app.festivalpost.photoeditor.PhotoEditor
 import com.app.festivalpost.photoeditor.PhotoEditorView
 import com.app.festivalpost.photoeditor.ViewType
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
+import com.app.festivalpost.utils.Constants
 import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.get
+import com.emegamart.lelys.utils.extensions.getCustomFrameList
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.emegamart.lelys.utils.extensions.onClick
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.getError
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.getFilePath
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.with
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -58,16 +66,15 @@ import org.json.JSONObject
 import top.defaults.colorpicker.ColorPickerView
 import java.util.*
 
-class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemClickListener {
-    var apiManager: ApiManager? = null
-    var status = false
-    var message = ""
+class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnItemClickListener,
+    ColorPickerDialogListener {
     private var photoEditorView: PhotoEditorView? = null
-    private var tvaddtext: TextView? = null
-    private var tvaddimage: TextView? = null
-    private var tvtextcolor: TextView? = null
-    private var tvfonttype: TextView? = null
-    private val horizontalScrollView: HorizontalScrollView? = null
+    private var linearAddText: LinearLayout? = null
+    private var linearTextcolor: LinearLayout? = null
+    private var linearfonttype: LinearLayout? = null
+    private var linearAddImage: LinearLayout? = null
+    private var linearbackgroundcolor: LinearLayout? = null
+
     var views: MutableList<ViewData> = ArrayList()
     var layroot: LinearLayout? = null
     var recyclerView: RecyclerView? = null
@@ -75,16 +82,17 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
     var profilePath: String? = ""
     var selected_color = Color.BLACK
     var rootTextView: View? = null
+    var storeValue: String? = null
     var selectedFontTypeface: Typeface? = null
-    var localFrameItemNew: LocalFrameItemNew? = null
+
     var framePreview: FramePreview? = null
     var llframe: LinearLayout? = null
-    var lay_frames: LinearLayout? = null
     var ivbackground: ImageView? = null
     var selectedPosition = 0
     var llwatermark: LinearLayout? = null
     var tempEnteredText: String? = null
     var i = 0
+    var plus = 0
     var frameLayout: FrameLayout? = null
     var ivframebg1: ImageView? = null
     var imageView1_2: ImageView? = null
@@ -149,6 +157,17 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
     var addressselected_color = 0
     var allselectedcolor = 0
     var namecolor = Color.BLACK
+    var fontTypeAdapter: FontTypeAdapter? = null
+    var fontTypeList = arrayListOf<FontTypeList?>()
+    var rcvFont: RecyclerView? = null
+    var alertDialog: AlertDialog? = null
+
+
+    override fun onResume() {
+        super.onResume()
+        llwatermark!!.visibility = View.GONE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -160,7 +179,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             .permitAll().build()
         StrictMode.setThreadPolicy(policy)
         frameLayout = findViewById(R.id.frameLayout)
-        apiManager = ApiManager(this@ChooseFrameActivityNew)
+
         setActionbar()
         selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
         phoneTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
@@ -201,7 +220,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             }
         }
         t.start()
-        frameLayout!!.setOnClickListener(View.OnClickListener {
+        frameLayout!!.setOnClickListener({
             linearLogo!!.setBackgroundResource(0)
             linearEmail!!.setBackgroundResource(0)
             linearAddress!!.setBackgroundResource(0)
@@ -229,28 +248,16 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
         mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
             .setPinchTextScalable(true)
             .build()
-        tvaddtext = findViewById<View>(R.id.tvaddtext) as TextView
-        tvaddimage = findViewById<View>(R.id.tvaddimage) as TextView
-        tvtextcolor = findViewById<View>(R.id.tvtextcolor) as TextView
-        tvfonttype = findViewById<View>(R.id.tvfonttype) as TextView
-        tvtextcolor!!.isEnabled = true
-        tvfonttype!!.isEnabled = true
+        linearAddText = findViewById<View>(R.id.linearAddText) as LinearLayout
+        linearTextcolor = findViewById<View>(R.id.lineartextcolor) as LinearLayout
+        linearfonttype = findViewById<View>(R.id.linearFonttype) as LinearLayout
+        linearbackgroundcolor = findViewById<View>(R.id.linearbackgroundcolor) as LinearLayout
+        linearAddImage = findViewById<View>(R.id.linearAddimage) as LinearLayout
         textallSelected = true
-        val localFrameItemArrayList = Global.allFrames
-        try {
-            framePreviewArrayList = Global.newFrames
-        } catch (e: OutOfMemoryError) {
-        } catch (e: Exception) {
-        }
-        var frameListItems1: ArrayList<FrameListItem>
-        val gson = Gson()
-        val json = Global.getPreference(Constant.PREF_FRAME_LIST, "")
-        frameListItems1 = if (json!!.isEmpty()) {
-            ArrayList()
-        } else {
-            val type = object : TypeToken<ArrayList<FrameListItem?>?>() {}.type
-            gson.fromJson(json, type)
-        }
+
+
+        var frameListItems1: ArrayList<FrameListItem1>
+        frameListItems1 = getCustomFrameList()
         Log.d("FrameListSize1", "" + frameListItems1.size)
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
@@ -260,11 +267,16 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 )
             )
         }
+        try {
+            framePreviewArrayList.addAll(Global.newFrames)
+        } catch (e: OutOfMemoryError) {
+        } catch (e: Exception) {
+        }
         val frameChooseAdapter = FrameChooseAdapter(this, framePreviewArrayList)
         val horizontalLayoutManagaer =
             LinearLayoutManager(this@ChooseFrameActivityNew, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView!!.setLayoutManager(horizontalLayoutManagaer)
-        recyclerView!!.setAdapter(frameChooseAdapter)
+        recyclerView!!.layoutManager = horizontalLayoutManagaer
+        recyclerView!!.adapter = frameChooseAdapter
         setFrameNEW(framePreviewArrayList[0])
 
         mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
@@ -294,19 +306,11 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                     i = 0
                     views.clear()
                     selectedPosition = 0
-                    tvtextcolor!!.isEnabled = true
-                    tvfonttype!!.isEnabled = true
-                    tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                    tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
                     backpressed = true
                 } else {
                     i -= 1
                     views.removeAt(selectedPosition)
                     selectedPosition = i - 1
-                    tvtextcolor!!.isEnabled = true
-                    tvfonttype!!.isEnabled = true
-                    tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                    tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
                     backpressed = false
                 }
             }
@@ -326,58 +330,26 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             ) {
             }
         })
-        findViewById<View>(R.id.btnchangebackgroundcolor).setOnClickListener {
-            val dialog = Dialog(
-                this@ChooseFrameActivityNew,
-                R.style.DialogAnimation
-            )
-            dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.window!!.setBackgroundDrawable(
-                ColorDrawable(Color.TRANSPARENT)
-            )
-            dialog.setContentView(R.layout.custom_color_picker_dialog)
-            dialog.setCancelable(true)
-            dialog.setCanceledOnTouchOutside(true)
-            val colorPickerView = dialog.findViewById<View>(R.id.colorPickerView) as ColorPickerView
-            val viewColor = dialog.findViewById<View>(R.id.viewColor)
-            colorPickerView.setInitialColor(Color.RED)
-            colorPickerView.setEnabledBrightness(true)
-            colorPickerView.setEnabledAlpha(true)
-            viewColor.setBackgroundColor(Color.RED)
-            colorPickerView.subscribe { color, fromUser, shouldPropagate ->
-                selected_color = color
-                viewColor.setBackgroundColor(color)
-            }
-            val btndone = dialog.findViewById<View>(R.id.btndone) as TextView
-            val btncancel = dialog.findViewById<View>(R.id.btncancel) as TextView
-            btndone.setOnClickListener {
-                layroot!!.setBackgroundColor(colorPickerView.color)
-                dialog.dismiss()
-            }
-            btncancel.setOnClickListener {
-                selected_color = R.color.colorBlack
-                dialog.dismiss()
-            }
-            dialog.show()
-        }
-        tvaddimage!!.setOnClickListener { openAddImageDialog() }
-        tvaddtext!!.setOnClickListener {
+        linearAddImage!!.setOnClickListener { openAddImageDialog() }
+        linearAddText!!.setOnClickListener {
             rootTextView = null
             showAddTextDialog("", selected_color)
         }
-        tvtextcolor!!.setOnClickListener { showColorPickerDialog() }
-        tvfonttype!!.setOnClickListener {
-            var defaultText = ""
-            if (defaultText.equals("", ignoreCase = true)) {
-                defaultText = "Custom Text"
-            }
-            showFonttypeDialog(defaultText)
+        linearTextcolor!!.setOnClickListener { ColorPickerDialog.newBuilder().show(this) }
+        linearbackgroundcolor!!.setOnClickListener { ColorPickerDialog.newBuilder().show(this) }
+        linearfonttype!!.setOnClickListener {
+            fontTypeList.clear()
+            fontTypeList.add(FontTypeList("fonts/museomoderno_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/aaargh.ttf"))
+            fontTypeList.add(FontTypeList("fonts/bold.ttf"))
+            fontTypeList.add(FontTypeList("fonts/armopb.ttf"))
+            fontTypeList.add(FontTypeList("fonts/corbel.ttf"))
+            storeValue = "Festival Post"
+            showPopupBusinessCategoryDialog(this, storeValue!!)
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
-            if (ivlogoselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
+            if (ivlogoselect!!.drawable.constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
                 ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
-                setPrefernces("false", "1")
                 linearLogo!!.setBackgroundResource(0)
                 linearLogo!!.visibility = View.GONE
                 ivframelogo!!.visibility = View.GONE
@@ -390,7 +362,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                setPrefernces("true", "1")
+
                 linearLogo!!.setBackgroundResource(0)
                 linearLogo!!.visibility = View.VISIBLE
                 ivframelogo!!.visibility = View.VISIBLE
@@ -404,9 +376,9 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             }
         })
         ivemailselect!!.setOnClickListener(View.OnClickListener {
-            if (ivemailselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.email_select).constantState) {
+            if (ivemailselect!!.drawable.constantState === resources.getDrawable(R.drawable.email_select).constantState) {
                 ivemailselect!!.setImageResource(R.drawable.email_deselect)
-                setPrefernces("false", "3")
+
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.GONE
                 ivEmail!!.visibility = View.GONE
@@ -420,7 +392,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
-                setPrefernces("true", "3")
+
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.VISIBLE
                 ivEmail!!.visibility = View.VISIBLE
@@ -435,9 +407,9 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             }
         })
         ivphoneselect!!.setOnClickListener(View.OnClickListener {
-            if (ivphoneselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
+            if (ivphoneselect!!.drawable.constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
                 ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
-                setPrefernces("false", "2")
+
                 linearPhone!!.visibility = View.GONE
                 linearPhone!!.setBackgroundResource(0)
                 ivcall!!.visibility = View.GONE
@@ -452,7 +424,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivphoneselect!!.setImageResource(R.drawable.mobile_select)
-                setPrefernces("true", "2")
+
                 linearPhone!!.visibility = View.VISIBLE
                 linearPhone!!.setBackgroundResource(0)
                 ivcall!!.visibility = View.VISIBLE
@@ -468,9 +440,9 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             }
         })
         ivwebsiteselect!!.setOnClickListener(View.OnClickListener {
-            if (ivwebsiteselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.website_select).constantState) {
+            if (ivwebsiteselect!!.drawable.constantState === resources.getDrawable(R.drawable.website_select).constantState) {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_deselect)
-                setPrefernces("false", "5")
+
                 linearWebsite!!.visibility = View.GONE
                 linearWebsite!!.setBackgroundResource(0)
                 websiteLine!!.visibility = View.GONE
@@ -485,7 +457,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
-                setPrefernces("true", "5")
+
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
                 ivWebsite!!.visibility = View.VISIBLE
@@ -501,9 +473,9 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             }
         })
         ivaddressselect!!.setOnClickListener(View.OnClickListener {
-            if (ivaddressselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.location_select).constantState) {
+            if (ivaddressselect!!.drawable.constantState === resources.getDrawable(R.drawable.location_select).constantState) {
                 ivaddressselect!!.setImageResource(R.drawable.location_deselect)
-                setPrefernces("false", "4")
+
                 linearAddress!!.visibility = View.GONE
                 linearAddress!!.setBackgroundResource(0)
                 ivLocation!!.visibility = View.GONE
@@ -517,7 +489,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-                setPrefernces("true", "4")
+
                 linearAddress!!.setBackgroundResource(0)
                 linearAddress!!.visibility = View.VISIBLE
                 ivLocation!!.visibility = View.VISIBLE
@@ -532,9 +504,9 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             }
         })
         ivnameSelect!!.setOnClickListener(View.OnClickListener {
-            if (ivnameSelect!!.getDrawable().constantState === resources.getDrawable(R.drawable.name_select).constantState) {
+            if (ivnameSelect!!.drawable.constantState === resources.getDrawable(R.drawable.name_select).constantState) {
                 ivnameSelect!!.setImageResource(R.drawable.name_deselect)
-                setPrefernces("false", "6")
+
                 frameName!!.visibility = View.GONE
                 linearName!!.visibility = View.GONE
                 linearName!!.setBackgroundResource(0)
@@ -547,7 +519,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivnameSelect!!.setImageResource(R.drawable.name_select)
-                setPrefernces("true", "6")
+
                 linearName!!.visibility = View.VISIBLE
                 tvframename!!.visibility = View.VISIBLE
                 frameName!!.visibility = View.VISIBLE
@@ -562,22 +534,8 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
         })
     }
 
-    fun spToPx(sp: Float): Int {
-        val r = resources
-        return Math.round(
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                sp,
-                r.displayMetrics
-            )
-        )
-    }
 
-    override fun onResume() {
-        super.onResume()
-        llwatermark!!.visibility = View.GONE
-    }
-
+    @SuppressLint("ClickableViewAccessibility")
     fun setFrameNEW(localFrameItem: FramePreview?) {
         Global.dismissProgressDialog(this@ChooseFrameActivityNew)
         if (llframe!!.childCount > 0) llframe!!.removeAllViews()
@@ -624,13 +582,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
         val emailmultiTouchListenerNew = MultiTouchListenerNotMoveble()
         val websitemultiTouchListenerNew = MultiTouchListenerNotMoveble()
         val addressmultiTouchListenerNew = MultiTouchListenerNotMoveble()
-        frameLogo!!.setVisibility(View.GONE)
-        ivphotoclose!!.setVisibility(View.GONE)
-        frameEmail!!.setVisibility(View.GONE)
-        frameWebsite!!.setVisibility(View.GONE)
-        frameAddress!!.setVisibility(View.GONE)
-        framePhone!!.setVisibility(View.GONE)
-        frameName!!.setVisibility(View.GONE)
+        frameLogo!!.visibility = View.GONE
+        ivphotoclose!!.visibility = View.GONE
+        frameEmail!!.visibility = View.GONE
+        frameWebsite!!.visibility = View.GONE
+        frameAddress!!.visibility = View.GONE
+        framePhone!!.visibility = View.GONE
+        frameName!!.visibility = View.GONE
         linearPhone!!.setBackgroundResource(0)
         linearEmail!!.setBackgroundResource(0)
         linearAddress!!.setBackgroundResource(0)
@@ -672,13 +630,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(R.drawable.contact_white_bg_image)
-                frameLogo!!.setVisibility(View.VISIBLE)
-                ivphotoclose!!.setVisibility(View.VISIBLE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameLogo!!.visibility = View.VISIBLE
+                ivphotoclose!!.visibility = View.VISIBLE
+                ivphoneclose!!.visibility = View.GONE
+                ivaddressclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = false
                 websiteValue = false
@@ -695,13 +653,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(R.drawable.contact_white_bg_image)
-                frameLogo!!.setVisibility(View.VISIBLE)
-                ivphotoclose!!.setVisibility(View.VISIBLE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameLogo!!.visibility = View.VISIBLE
+                ivphotoclose!!.visibility = View.VISIBLE
+                ivphoneclose!!.visibility = View.GONE
+                ivaddressclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = false
                 websiteValue = false
@@ -719,13 +677,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearWebsite!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
-                framePhone!!.setVisibility(View.VISIBLE)
-                ivphoneclose!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
+                framePhone!!.visibility = View.VISIBLE
+                ivphoneclose!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = true
                 websiteValue = false
@@ -742,13 +700,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearWebsite!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
-                framePhone!!.setVisibility(View.VISIBLE)
-                ivphoneclose!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                framePhone!!.visibility = View.VISIBLE
+                ivphoneclose!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = true
                 websiteValue = false
@@ -766,13 +724,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameEmail!!.setVisibility(View.VISIBLE)
-                ivemailclose!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameEmail!!.visibility = View.VISIBLE
+                ivemailclose!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 emailValue = true
                 phoneValue = false
                 websiteValue = false
@@ -789,13 +747,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameEmail!!.setVisibility(View.VISIBLE)
-                ivemailclose!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameEmail!!.visibility = View.VISIBLE
+                ivemailclose!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 emailValue = true
                 phoneValue = false
                 websiteValue = false
@@ -813,13 +771,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearEmail!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameWebsite!!.setVisibility(View.VISIBLE)
-                ivwebsiteclose!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameWebsite!!.visibility = View.VISIBLE
+                ivwebsiteclose!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = false
                 websiteValue = true
@@ -836,13 +794,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 linearEmail!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameWebsite!!.setVisibility(View.VISIBLE)
-                ivwebsiteclose!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameWebsite!!.visibility = View.VISIBLE
+                ivwebsiteclose!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = false
                 websiteValue = true
@@ -866,13 +824,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 textallSelected = false
                 nameValue = false
                 linearLogo!!.setBackgroundResource(0)
-                frameAddress!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.VISIBLE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameAddress!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.VISIBLE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
             }
 
             override fun onLongClick() {}
@@ -889,13 +847,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 addressValue = true
                 textallSelected = false
                 nameValue = false
-                frameAddress!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.VISIBLE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+                frameAddress!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.VISIBLE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
             }
         })
         namemultiTouchListenerNer.setOnGestureControl(object :
@@ -913,13 +871,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 addressValue = false
                 textallSelected = false
                 nameValue = true
-                frameName!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-            ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.VISIBLE)
+                frameName!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.VISIBLE
             }
 
             override fun onLongClick() {}
@@ -936,13 +894,13 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                 addressValue = false
                 textallSelected = false
                 nameValue = true
-                frameName!!.setVisibility(View.VISIBLE)
-                ivaddressclose!!.setVisibility(View.GONE)
-                ivphoneclose!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.VISIBLE)
+                frameName!!.visibility = View.VISIBLE
+                ivaddressclose!!.visibility = View.GONE
+                ivphoneclose!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.VISIBLE
             }
         })
         framePhone!!.setOnTouchListener(phonemultiTouchListenerNew)
@@ -951,146 +909,146 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
         frameAddress!!.setOnTouchListener(addressmultiTouchListenerNew)
         frameLogo!!.setOnTouchListener(imagemultiTouchListenerNew)
         frameName!!.setOnTouchListener(namemultiTouchListenerNer)
-        val businessItem = Global.currentBusiness
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
         if (businessItem != null) {
             try {
                 if (index1 == 0) {
-                    if (businessItem.busiName != "" && businessItem.busiName != null) {
-                        linearName!!.setVisibility(View.VISIBLE)
-                        frameName!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setText(businessItem.busiName)
+                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
+                        linearName!!.visibility = View.VISIBLE
+                        frameName!!.visibility = View.VISIBLE
+                        tvframename!!.visibility = View.VISIBLE
+                        tvframename!!.text = businessItem.busi_name
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
-                    if (businessItem.busiLogo != "") {
-                        linearLogo!!.setVisibility(View.VISIBLE)
-                        ivframelogo!!.setVisibility(View.VISIBLE)
-                        frameLogo!!.setVisibility(View.VISIBLE)
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
-                        framePhone!!.setVisibility(View.VISIBLE)
-                        linearPhone!!.setVisibility(View.VISIBLE)
-                        ivcall!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
                 } else if (index1 == 2) {
-                    if (businessItem.busiName != "" && businessItem.busiName != null) {
-                        linearName!!.setVisibility(View.VISIBLE)
-                    frameName!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setText(businessItem.busiName)
+                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
+                        linearName!!.visibility = View.VISIBLE
+                        frameName!!.visibility = View.VISIBLE
+                        tvframename!!.visibility = View.VISIBLE
+                        tvframename!!.text = businessItem.busi_name
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
-                        linearLogo!!.setVisibility(View.VISIBLE)
-                        ivframelogo!!.setVisibility(View.VISIBLE)
-                        frameLogo!!.setVisibility(View.VISIBLE)
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
-                        framePhone!!.setVisibility(View.VISIBLE)
-                        linearPhone!!.setVisibility(View.VISIBLE)
-                        ivcall!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiAddress != null && businessItem.busiAddress != "") {
-                        linearAddress!!.setVisibility(View.VISIBLE)
-                        ivLocation!!.setVisibility(View.VISIBLE)
-                        tvframelocation!!.setVisibility(View.VISIBLE)
-                        frameAddress!!.setVisibility(View.VISIBLE)
-                        tvframelocation!!.setText(businessItem.busiAddress)
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
+                        linearAddress!!.visibility = View.VISIBLE
+                        ivLocation!!.visibility = View.VISIBLE
+                        tvframelocation!!.visibility = View.VISIBLE
+                        frameAddress!!.visibility = View.VISIBLE
+                        tvframelocation!!.text = businessItem.busi_address
                         ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
-                    if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
-                        linearEmail!!.setVisibility(View.VISIBLE)
-                        ivEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setVisibility(View.VISIBLE)
-                        frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                    if (businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                    if (businessItem.busiWebsite != "") {
-                        linearWebsite!!.setVisibility(View.VISIBLE)
-                        ivWebsite!!.setVisibility(View.VISIBLE)
-                        tvframeweb!!.setVisibility(View.VISIBLE)
-                        frameWebsite!!.setVisibility(View.VISIBLE)
-                        tvframeweb!!.setText(businessItem.busiWebsite)
+                    if (businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_address
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 } else if (index1 == 3) {
-                    if (businessItem.busiLogo != "") {
-                        linearLogo!!.setVisibility(View.VISIBLE)
-                        ivframelogo!!.setVisibility(View.VISIBLE)
-                        frameLogo!!.setVisibility(View.VISIBLE)
+                    if (businessItem.busi_logo != "") {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != "") {
-                        framePhone!!.setVisibility(View.VISIBLE)
-                        linearPhone!!.setVisibility(View.VISIBLE)
-                        ivcall!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                    if (businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiEmail != "") {
-                        linearEmail!!.setVisibility(View.VISIBLE)
-                        ivEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setVisibility(View.VISIBLE)
-                        frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                    if (businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
                 } else if (index1 == 4) {
-                    if (businessItem.busiName != "" && businessItem.busiName != null) {
-                        linearName!!.setVisibility(View.VISIBLE)
-                        frameName!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setVisibility(View.VISIBLE)
-                        tvframename!!.setText(businessItem.busiName)
+                    if (businessItem.busi_name != "") {
+                        linearName!!.visibility = View.VISIBLE
+                        frameName!!.visibility = View.VISIBLE
+                        tvframename!!.visibility = View.VISIBLE
+                        tvframename!!.text = businessItem.busi_name
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
-                        linearLogo!!.setVisibility(View.VISIBLE)
-                        ivframelogo!!.setVisibility(View.VISIBLE)
-                        frameLogo!!.setVisibility(View.VISIBLE)
+                    if (businessItem.busi_logo != "") {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
-                        framePhone!!.setVisibility(View.VISIBLE)
-                        linearPhone!!.setVisibility(View.VISIBLE)
-                        ivcall!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
-                        linearEmail!!.setVisibility(View.VISIBLE)
-                        ivEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setVisibility(View.VISIBLE)
-                        frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                } /* else if (index1 == 5) {
+                } /*else if (index1 == 5) {
 
                     if (!businessItem.getBusiLogo().equals("") && businessItem.getBusiLogo() != null) {
                         linearLogo.setVisibility(View.VISIBLE);
                         ivframelogo.setVisibility(View.VISIBLE);
                         frameLogo.setVisibility(View.VISIBLE);
                         ivlogoselect.setImageResource(R.drawable.logo_select);
-                        Glide.with(ChooseFrameActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
+                        Glide.with(ChooseFrameForPhotoActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
                     }
 
 
@@ -1123,7 +1081,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                         ivframelogo.setVisibility(View.VISIBLE);
                         frameLogo.setVisibility(View.VISIBLE);
                         ivlogoselect.setImageResource(R.drawable.logo_select);
-                        Glide.with(ChooseFrameActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
+                        Glide.with(ChooseFrameForPhotoActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
                     }
 
 
@@ -1156,7 +1114,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                         tvframeweb.setText(businessItem.getBusiWebsite());
                         ivwebsiteselect.setImageResource(R.drawable.website_select);
                     }
-                } */
+                }*/
                 /*else if (index1 == 7) {
 
 
@@ -1174,7 +1132,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                         ivframelogo.setVisibility(View.VISIBLE);
                         frameLogo.setVisibility(View.VISIBLE);
                         ivlogoselect.setImageResource(R.drawable.logo_select);
-                        Glide.with(ChooseFrameActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
+                        Glide.with(ChooseFrameForPhotoActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
                     }
 
 
@@ -1208,7 +1166,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                         ivframelogo.setVisibility(View.VISIBLE);
                         frameLogo.setVisibility(View.VISIBLE);
                         ivlogoselect.setImageResource(R.drawable.logo_select);
-                        Glide.with(ChooseFrameActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
+                        Glide.with(ChooseFrameForPhotoActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
                     }
 
 
@@ -1258,7 +1216,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                         ivframelogo.setVisibility(View.VISIBLE);
                         frameLogo.setVisibility(View.VISIBLE);
                         ivlogoselect.setImageResource(R.drawable.logo_select);
-                        Glide.with(ChooseFrameActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
+                        Glide.with(ChooseFrameForPhotoActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
                     }
 
 
@@ -1317,7 +1275,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                         ivframelogo.setVisibility(View.VISIBLE);
                         frameLogo.setVisibility(View.VISIBLE);
                         ivlogoselect.setImageResource(R.drawable.logo_select);
-                        Glide.with(ChooseFrameActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
+                        Glide.with(ChooseFrameForPhotoActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
                     }
 
 
@@ -1377,7 +1335,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                         ivframelogo.setVisibility(View.VISIBLE);
                         frameLogo.setVisibility(View.VISIBLE);
                         ivlogoselect.setImageResource(R.drawable.logo_select);
-                        Glide.with(ChooseFrameActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
+                        Glide.with(ChooseFrameForPhotoActivityNew.this).load(businessItem.getBusiLogo()).into(ivframelogo);
                     }
 
 
@@ -1391,79 +1349,79 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
 
                     }
                 } */ else {
-                    if (businessItem.busiLogo != "" && businessItem.busiLogo != null) {
-                        linearLogo!!.setVisibility(View.VISIBLE)
-                        ivframelogo!!.setVisibility(View.VISIBLE)
-                        frameLogo!!.setVisibility(View.VISIBLE)
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameActivityNew).load(businessItem.busiLogo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
-                    if (businessItem.busiMobile != null && businessItem.busiMobile != "") {
-                        framePhone!!.setVisibility(View.VISIBLE)
-                        linearPhone!!.setVisibility(View.VISIBLE)
-                        ivcall!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setVisibility(View.VISIBLE)
-                        tvframephone!!.setText(businessItem.busiMobile)
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                    if (businessItem.busiAddress != null && businessItem.busiAddress != "") {
-                        linearAddress!!.setVisibility(View.VISIBLE)
-                        ivLocation!!.setVisibility(View.VISIBLE)
-                        tvframelocation!!.setVisibility(View.VISIBLE)
-                        frameAddress!!.setVisibility(View.VISIBLE)
-                        tvframelocation!!.setText(businessItem.busiAddress)
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
+                        linearAddress!!.visibility = View.VISIBLE
+                        ivLocation!!.visibility = View.VISIBLE
+                        tvframelocation!!.visibility = View.VISIBLE
+                        frameAddress!!.visibility = View.VISIBLE
+                        tvframelocation!!.text = businessItem.busi_address
                         ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
-                    if (businessItem.busiEmail != null && businessItem.busiEmail != "") {
-                        linearEmail!!.setVisibility(View.VISIBLE)
-                        ivEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setVisibility(View.VISIBLE)
-                        frameEmail!!.setVisibility(View.VISIBLE)
-                        tvframeemail!!.setText(businessItem.busiEmail)
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                    if (businessItem.busiWebsite != null && businessItem.busiWebsite != "") {
-                        linearWebsite!!.setVisibility(View.VISIBLE)
-                        ivWebsite!!.setVisibility(View.VISIBLE)
-                        tvframeweb!!.setVisibility(View.VISIBLE)
-                        frameWebsite!!.setVisibility(View.VISIBLE)
-                        tvframeweb!!.setText(businessItem.busiWebsite)
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 }
             } catch (e: Exception) {
             }
-            ivphoneclose!!.setOnClickListener(View.OnClickListener {
-                framePhone!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
+            ivphoneclose!!.setOnClickListener {
+                framePhone!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
                 ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
-            })
-            ivphotoclose!!.setOnClickListener(View.OnClickListener {
-                frameLogo!!.setVisibility(View.GONE)
-                ivphotoclose!!.setVisibility(View.GONE)
+            }
+            ivphotoclose!!.setOnClickListener {
+                frameLogo!!.visibility = View.GONE
+                ivphotoclose!!.visibility = View.GONE
                 ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
-            })
-            ivemailclose!!.setOnClickListener(View.OnClickListener {
-                frameEmail!!.setVisibility(View.GONE)
-                ivemailclose!!.setVisibility(View.GONE)
+            }
+            ivemailclose!!.setOnClickListener {
+                frameEmail!!.visibility = View.GONE
+                ivemailclose!!.visibility = View.GONE
                 ivemailselect!!.setImageResource(R.drawable.email_deselect)
-            })
-            ivwebsiteclose!!.setOnClickListener(View.OnClickListener {
-                frameWebsite!!.setVisibility(View.GONE)
-                ivwebsiteclose!!.setVisibility(View.GONE)
+            }
+            ivwebsiteclose!!.setOnClickListener {
+                frameWebsite!!.visibility = View.GONE
+                ivwebsiteclose!!.visibility = View.GONE
                 ivwebsiteselect!!.setImageResource(R.drawable.website_deselect)
-            })
-            ivaddressclose!!.setOnClickListener(View.OnClickListener {
-                frameAddress!!.setVisibility(View.GONE)
-                ivaddressclose!!.setVisibility(View.GONE)
+            }
+            ivaddressclose!!.setOnClickListener {
+                frameAddress!!.visibility = View.GONE
+                ivaddressclose!!.visibility = View.GONE
                 ivaddressselect!!.setImageResource(R.drawable.location_deselect)
-            })
-            ivnameClose!!.setOnClickListener(View.OnClickListener {
-                frameName!!.setVisibility(View.GONE)
-                ivnameClose!!.setVisibility(View.GONE)
+            }
+            ivnameClose!!.setOnClickListener {
+                frameName!!.visibility = View.GONE
+                ivnameClose!!.visibility = View.GONE
                 ivnameSelect!!.setImageResource(R.drawable.name_deselect)
-            })
+            }
         }
         llframe!!.addView(frame_view)
     }
@@ -1536,17 +1494,6 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
 
             //rootTextView = null;
             Global.hideSoftKeyboard(this@ChooseFrameActivityNew, edtext)
-            if (tempEnteredText == "") {
-                tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
-                tvtextcolor!!.isEnabled = true
-                tvfonttype!!.isEnabled = true
-            } else {
-                tvtextcolor!!.isEnabled = true
-                tvfonttype!!.isEnabled = true
-                tvtextcolor!!.setBackgroundResource(R.drawable.small_button_bg)
-                tvfonttype!!.setBackgroundResource(R.drawable.small_button_bg)
-            }
             dialog.dismiss()
             emailValue = false
             addressValue = false
@@ -1559,1137 +1506,6 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
         dialog.show()
     }
 
-    fun showColorPickerDialog() {
-        val dialog = Dialog(
-            this@ChooseFrameActivityNew,
-            R.style.DialogAnimation
-        )
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window!!.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT)
-        )
-        dialog.setContentView(R.layout.custom_color_picker_dialog)
-        dialog.setCancelable(true)
-        dialog.setCanceledOnTouchOutside(true)
-        val colorPickerView = dialog.findViewById<View>(R.id.colorPickerView) as ColorPickerView
-        val viewColor = dialog.findViewById<View>(R.id.viewColor)
-        colorPickerView.setInitialColor(Color.RED)
-        colorPickerView.setEnabledBrightness(true)
-        colorPickerView.setEnabledAlpha(true)
-        viewColor.setBackgroundColor(Color.RED)
-        colorPickerView.subscribe { color, fromUser, shouldPropagate ->
-            selected_color = color
-            viewColor.setBackgroundColor(color)
-        }
-        val btndone = dialog.findViewById<View>(R.id.btndone) as TextView
-        val btncancel = dialog.findViewById<View>(R.id.btncancel) as TextView
-        btndone.setOnClickListener {
-            if (nameValue) {
-                namecolor = colorPickerView.color
-                tvframename!!.setTextColor(namecolor)
-            } else if (textallSelected) {
-                allselectedcolor = colorPickerView.color
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    ivcall!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                    ivEmail!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                    ivWebsite!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                    ivLocation!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                }
-                tvframephone!!.setTextColor(allselectedcolor)
-                tvframeemail!!.setTextColor(allselectedcolor)
-                tvframeweb!!.setTextColor(allselectedcolor)
-                tvframelocation!!.setTextColor(allselectedcolor)
-                tvframename!!.setTextColor(allselectedcolor)
-            } else if (phoneValue) {
-                phoneselected_color = colorPickerView.color
-                tvframephone!!.setTextColor(phoneselected_color)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ivcall!!.backgroundTintList = ColorStateList.valueOf(phoneselected_color)
-                }
-            } else if (emailValue) {
-                emailselected_color = colorPickerView.color
-                tvframeemail!!.setTextColor(emailselected_color)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ivEmail!!.backgroundTintList = ColorStateList.valueOf(emailselected_color)
-                }
-            } else if (websiteValue) {
-                websiteselected_color = colorPickerView.color
-                tvframeweb!!.setTextColor(websiteselected_color)
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    ivWebsite!!.backgroundTintList = ColorStateList.valueOf(websiteselected_color)
-                }
-            } else if (addressValue) {
-                addressselected_color = colorPickerView.color
-                tvframelocation!!.setTextColor(addressselected_color)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ivLocation!!.backgroundTintList = ColorStateList.valueOf(addressselected_color)
-                }
-            } else {
-                selected_color = colorPickerView.color
-                Log.d("SelectedColor", "" + selected_color)
-                /*if (rootTextView != null) {
-                            mPhotoEditor.editText(rootTextView, selectedFontTypeface, tempEnteredText, selected_color);
-                        }*/for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        Log.d("SelectedColor12", "" + views[p].color)
-                        rootTextView = views[p].view
-                        views[p] = ViewData(
-                            views[p].view,
-                            views[p].text,
-                            views[p].position,
-                            selected_color
-                        )
-                        Log.d("SelectedColor1", "" + selected_color)
-                        Log.d("SelectedColor11", "" + views[p].color)
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                null,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            //rootTextView=null;
-            dialog.dismiss()
-        }
-        btncancel.setOnClickListener {
-            selected_color = R.color.colorBlack
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
-    fun showFonttypeDialog(defaultText: String?) {
-        val dialog = Dialog(
-            this@ChooseFrameActivityNew,
-            R.style.DialogAnimation
-        )
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window!!.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT)
-        )
-        dialog.setContentView(R.layout.custom_choose_font_dialog)
-        dialog.setCancelable(true)
-        dialog.setCanceledOnTouchOutside(true)
-        val tvnamefont1 = dialog.findViewById<View>(R.id.tvnamefont1) as TextView
-        val tvnamefont2 = dialog.findViewById<View>(R.id.tvnamefont2) as TextView
-        val tvnamefont3 = dialog.findViewById<View>(R.id.tvnamefont3) as TextView
-        val tvnamefont4 = dialog.findViewById<View>(R.id.tvnamefont4) as TextView
-        val tvnamefont5 = dialog.findViewById<View>(R.id.tvnamefont5) as TextView
-        val tvnamefont6 = dialog.findViewById<View>(R.id.tvnamefont6) as TextView
-        val tvnamefont7 = dialog.findViewById<View>(R.id.tvnamefont7) as TextView
-        val tvnamefont8 = dialog.findViewById<View>(R.id.tvnamefont8) as TextView
-        val tvnamefont9 = dialog.findViewById<View>(R.id.tvnamefont9) as TextView
-        val tvnamefont10 = dialog.findViewById<View>(R.id.tvnamefont10) as TextView
-        val tvnamefont11 = dialog.findViewById<View>(R.id.tvnamefont11) as TextView
-        val tvnamefont12 = dialog.findViewById<View>(R.id.tvnamefont12) as TextView
-        val tvnamefont13 = dialog.findViewById<View>(R.id.tvnamefont13) as TextView
-        val tvnamefont14 = dialog.findViewById<View>(R.id.tvnamefont14) as TextView
-        val tvnamefont15 = dialog.findViewById<View>(R.id.tvnamefont15) as TextView
-        val tvnamefont16 = dialog.findViewById<View>(R.id.tvnamefont16) as TextView
-        val tvnamefont17 = dialog.findViewById<View>(R.id.tvnamefont17) as TextView
-        val tvnamefont18 = dialog.findViewById<View>(R.id.tvnamefont18) as TextView
-        val tvnamefont19 = dialog.findViewById<View>(R.id.tvnamefont19) as TextView
-        val tvnamefont20 = dialog.findViewById<View>(R.id.tvnamefont20) as TextView
-        val tvnamefont21 = dialog.findViewById<View>(R.id.tvnamefont21) as TextView
-        val tvnamefont22 = dialog.findViewById<View>(R.id.tvnamefont22) as TextView
-        tvnamefont1.text = defaultText
-        tvnamefont2.text = defaultText
-        tvnamefont3.text = defaultText
-        tvnamefont4.text = defaultText
-        tvnamefont5.text = defaultText
-        tvnamefont6.text = defaultText
-        tvnamefont7.text = defaultText
-        tvnamefont8.text = defaultText
-        tvnamefont9.text = defaultText
-        tvnamefont10.text = defaultText
-        tvnamefont11.text = defaultText
-        tvnamefont12.text = defaultText
-        tvnamefont13.text = defaultText
-        tvnamefont14.text = defaultText
-        tvnamefont15.text = defaultText
-        tvnamefont16.text = defaultText
-        tvnamefont17.text = defaultText
-        tvnamefont18.text = defaultText
-        tvnamefont19.text = defaultText
-        tvnamefont20.text = defaultText
-        tvnamefont21.text = defaultText
-        tvnamefont22.text = defaultText
-        tvnamefont1.setTypeface(Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf"))
-        tvnamefont2.setTypeface(Typeface.createFromAsset(assets, "fonts/anton_regular.ttf"))
-        tvnamefont3.setTypeface(Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf"))
-        tvnamefont4.setTypeface(Typeface.createFromAsset(assets, "fonts/notable_regular.ttf"))
-        tvnamefont5.setTypeface(Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf"))
-        tvnamefont6.setTypeface(Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf"))
-        tvnamefont7.setTypeface(Typeface.createFromAsset(assets, "fonts/aaargh.ttf"))
-        tvnamefont8.setTypeface(Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf"))
-        tvnamefont9.setTypeface(Typeface.createFromAsset(assets, "fonts/armopb.ttf"))
-        tvnamefont10.setTypeface(Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf"))
-        tvnamefont11.setTypeface(Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf"))
-        tvnamefont12.setTypeface(Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf"))
-        tvnamefont13.setTypeface(Typeface.createFromAsset(assets, "fonts/jedi.ttf"))
-        tvnamefont14.setTypeface(Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf"))
-        tvnamefont15.setTypeface(Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf"))
-        tvnamefont16.setTypeface(Typeface.createFromAsset(assets, "fonts/something_strange.ttf"))
-        tvnamefont17.setTypeface(Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf"))
-        tvnamefont18.setTypeface(Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf"))
-        tvnamefont19.setTypeface(Typeface.createFromAsset(assets, "fonts/squitcher.ttf"))
-        tvnamefont20.setTypeface(Typeface.createFromAsset(assets, "fonts/unicorn.ttf"))
-        tvnamefont21.setTypeface(Typeface.createFromAsset(assets, "fonts/xo.ttf"))
-        tvnamefont22.setTypeface(Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf"))
-        tvnamefont1.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont2.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/anton_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/anton_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/anton_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/anton_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/anton_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/anton_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/anton_regular.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont3.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                if (rootTextView != null) for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        Log.d("SelectedColor111", "" + views[p].color)
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont4.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/notable_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/notable_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/notable_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/notable_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/notable_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/notable_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/notable_regular.ttf")
-                if (rootTextView != null) for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont5.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont6.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/yellowtail_regular.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont7.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/aaargh.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/aaargh.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/aaargh.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/aaargh.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/aaargh.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/aaargh.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aaargh.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont8.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/alice_wiker.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont9.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/armopb.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/armopb.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/armopb.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/armopb.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/armopb.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/armopb.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/armopb.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont10.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/babelsans_oblique.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont11.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/brushstrike_trial.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont12.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/chinesetakeaway.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont13.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/jedi.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/jedi.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/jedi.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/jedi.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/jedi.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/jedi.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/jedi.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont14.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/itromatic_bold.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont15.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/minecraftia_regular.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont16.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/something_strange.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/something_strange.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/something_strange.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/something_strange.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/something_strange.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/something_strange.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/something_strange.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont17.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/sf_foxboro_script.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont18.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/piedra_regular.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont19.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/squitcher.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/squitcher.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/squitcher.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/squitcher.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/squitcher.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/squitcher.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/squitcher.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont20.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/unicorn.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/unicorn.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/unicorn.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/unicorn.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/unicorn.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/unicorn.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/unicorn.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont21.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/xo.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/xo.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/xo.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/xo.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/xo.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/xo.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/xo.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        tvnamefont22.setOnClickListener {
-            if (nameValue) {
-                nametypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframename!!.setTypeface(nametypeface)
-            } else if (textallSelected) {
-                allfonttypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframephone!!.setTypeface(allfonttypeface)
-                tvframeemail!!.setTypeface(allfonttypeface)
-                tvframeweb!!.setTypeface(allfonttypeface)
-                tvframelocation!!.setTypeface(allfonttypeface)
-                tvframename!!.setTypeface(allfonttypeface)
-            } else if (phoneValue) {
-                phoneTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframephone!!.setTypeface(phoneTypeface)
-            } else if (emailValue) {
-                emailTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframeemail!!.setTypeface(emailTypeface)
-            } else if (websiteValue) {
-                websiteTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframeweb!!.setTypeface(websiteTypeface)
-            } else if (addressValue) {
-                addressTypeface = Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                tvframelocation!!.setTypeface(addressTypeface)
-            } else {
-                selectedFontTypeface =
-                    Typeface.createFromAsset(assets, "fonts/museomoderno_regular.ttf")
-                for (p in views.indices) {
-                    if (p == selectedPosition) {
-                        rootTextView = views[p].view
-                        if (rootTextView != null) {
-                            mPhotoEditor!!.editText(
-                                rootTextView!!,
-                                selectedFontTypeface,
-                                views[p].text,
-                                views[p].color
-                            )
-                        }
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-        val dialogButton = dialog.findViewById<View>(R.id.btndone) as TextView
-        dialogButton.setOnClickListener { /*selectedFontTypeface = Typeface.createFromAsset(getAssets(), "fonts/open_sans_regular.ttf");
-                    for (int p=0;p<views.size();p++) {
-
-                        if (p == selectedPosition) {
-                            rootTextView = views.get(p).getView();
-                            if (rootTextView != null) {
-                                mPhotoEditor.editText(rootTextView, selectedFontTypeface, views.get(p).getText(), selected_color);
-                            }
-                        }
-                    }*/
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
-    fun setPrefernces(isDelete: String?, prefernceValue: String?) {
-        Global.showProgressDialog(this@ChooseFrameActivityNew)
-        apiManager!!.setPrefernces(
-            ApiEndpoints.setpreference,
-            Global.getPreference(Constant.PREF_TOKEN, ""),
-            isDelete,
-            prefernceValue
-        )
-    }
-
-    private fun dpToPx(dp: Int): Int {
-        val r = resources
-        return Math.round(
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp.toFloat(),
-                r.displayMetrics
-            )
-        )
-    }
 
     var tvaction: TextView? = null
     fun setActionbar() {
@@ -2716,7 +1532,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             ivaddressclose!!.visibility = View.GONE
             ivnameClose!!.visibility = View.GONE
             mPhotoEditor!!.clearHelperBox()
-            if (!Global.getPreference(Constant.PREF_PREMIUM, false)) {
+            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
                 llwatermark!!.visibility = View.VISIBLE
             } else {
                 llwatermark!!.visibility = View.GONE
@@ -2726,9 +1542,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
             handler.postDelayed({
                 Global.dismissProgressDialog(this@ChooseFrameActivityNew)
                 layroot!!.isDrawingCacheEnabled = true
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
-                    layroot!!.buildDrawingCache(true)
-                }
+                layroot!!.buildDrawingCache(true)
                 val savedBmp = Bitmap.createBitmap(
                     layroot!!.drawingCache
                 )
@@ -2796,70 +1610,6 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
         return super.onOptionsItemSelected(item)
     }
 
-    override fun isConnected(requestService: String?, isConnected: Boolean) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@ChooseFrameActivityNew)
-            if (!isConnected) {
-                Global.noInternetConnectionDialog(this@ChooseFrameActivityNew)
-            }
-        }
-    }
-
-    override fun onSuccessResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@ChooseFrameActivityNew)
-            if (requestService.equals(ApiEndpoints.setpreference, ignoreCase = true)) {
-                try {
-                    Log.d("response", responseString!!)
-                    Global.dismissProgressDialog(this@ChooseFrameActivityNew)
-                    processResponse(responseString)
-                    if (status) {
-                        setFrameNEW(framePreview)
-                    } else {
-                        Global.showFailDialog(this@ChooseFrameActivityNew, message)
-                    }
-                } catch (e: Exception) {
-                }
-            }
-        }
-    }
-
-    override fun onErrorResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@ChooseFrameActivityNew)
-            Global.showFailDialog(this@ChooseFrameActivityNew, responseString)
-        }
-    }
-
-    fun processResponse(responseString: String?) {
-        status = false
-        message = ""
-        try {
-            val jsonObject = JSONObject(responseString)
-            if (jsonObject.has("status")) {
-                status = jsonObject.getBoolean("status")
-            }
-            if (jsonObject.has("message")) {
-                message = jsonObject.getString("message")
-            }
-            if (jsonObject.has("current_business")) {
-                val businessJsonObject = jsonObject.getJSONObject("current_business")
-                Global.storeCurrentBusiness(businessJsonObject.toString())
-            } else {
-                Global.storeCurrentBusiness("")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 
     /**
      * Showing Alert Dialog with Settings option
@@ -2957,7 +1707,7 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
         val photoItem = `object` as FramePreview
         index1 = index
         setFrameNEW(photoItem)
-        if (index >= 19) {
+        if (index < plus) {
             if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
                     "",
                     ignoreCase = true
@@ -2971,32 +1721,147 @@ class ChooseFrameActivityNew : AppCompatActivity(), ApiResponseListener,OnItemCl
                     )
             }
         }
-    } /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            if (resultCode == RESULT_OK) {
-                Uri imageuri = data.getData();// Get intent
+    }
 
-                Log.d("URI Path : ", "" + imageuri.toString());
-
-
-                String realpath = ImagePicker.Companion.getFilePath(data);
-                profilePath = realpath;
-
-                FrameLayout.LayoutParams imgparams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-                imgparams.height = Global.pxtoSdp(getApplicationContext(), 300);
-                imgparams.width = Global.pxtoSdp(getApplicationContext(), 300);
-                //ivbackground.setLayoutParams(imgparams);
-                ivbackground.setImageURI(imageuri);
-                Log.d("Real Path : ", "" + realpath);
-            } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                //Toast.makeText(this, "" + ImagePicker.Companion.getError(data.toString(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Image Cancelled", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            Log.d("Exceptipn",""+e.getMessage());
+    private fun showPopupBusinessCategoryDialog(context: Context, text: String) {
+        val layout = LayoutInflater.from(context).inflate(R.layout.layout_font_type, null)
+        rcvFont = layout.findViewById<View>(R.id.rcvFontType) as RecyclerView
+        val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as AppCompatImageView
+        fontTypeAdapter = FontTypeAdapter(this, fontTypeList, text)
+        rcvFont!!.adapter = fontTypeAdapter
+        val builder = AlertDialog.Builder(context)
+            .setView(layout)
+            .setCancelable(true)
+        alertDialog = builder.create()
+        alertDialog!!.show()
+        ib_cancel.onClick {
+            alertDialog!!.dismiss()
         }
-    }*/
+
+
+    }
+
+    override fun onFontItemClicked(`object`: Any?, index: Int) {
+        alertDialog!!.dismiss()
+        val fontItem1 = `object` as FontTypeList
+        val path = fontItem1.name
+        Log.d("Abcd", "" + path)
+        if (nameValue) {
+            nametypeface = Typeface.createFromAsset(assets, path)
+            tvframename!!.typeface = nametypeface
+        } else if (textallSelected) {
+            allfonttypeface = Typeface.createFromAsset(assets, path)
+            tvframephone!!.typeface = allfonttypeface
+            tvframeemail!!.typeface = allfonttypeface
+            tvframeweb!!.typeface = allfonttypeface
+            tvframelocation!!.typeface = allfonttypeface
+            tvframename!!.typeface = allfonttypeface
+        } else if (phoneValue) {
+            phoneTypeface = Typeface.createFromAsset(assets, path)
+            tvframephone!!.typeface = phoneTypeface
+        } else if (emailValue) {
+            emailTypeface = Typeface.createFromAsset(assets, path)
+            tvframeemail!!.typeface = emailTypeface
+        } else if (websiteValue) {
+            websiteTypeface = Typeface.createFromAsset(assets, path)
+            tvframeweb!!.typeface = websiteTypeface
+        } else if (addressValue) {
+            addressTypeface = Typeface.createFromAsset(assets, path)
+            tvframelocation!!.typeface = addressTypeface
+        } else {
+            selectedFontTypeface =
+                Typeface.createFromAsset(assets, path)
+            for (p in views.indices) {
+                if (p == selectedPosition) {
+                    rootTextView = views[p].view
+                    if (rootTextView != null) {
+                        mPhotoEditor!!.editText(
+                            rootTextView!!,
+                            selectedFontTypeface,
+                            views[p].text,
+                            views[p].color
+                        )
+                    }
+                }
+            }
+        }
+
+    }
+
+    override fun onColorSelected(dialogId: Int, color: Int) {
+        namecolor = color
+        if (nameValue) {
+            namecolor = color
+            tvframename!!.setTextColor(namecolor)
+        } else if (textallSelected) {
+            allselectedcolor = color
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ivcall!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                ivEmail!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                ivWebsite!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                ivLocation!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+            }
+            tvframephone!!.setTextColor(allselectedcolor)
+            tvframeemail!!.setTextColor(allselectedcolor)
+            tvframeweb!!.setTextColor(allselectedcolor)
+            tvframelocation!!.setTextColor(allselectedcolor)
+            tvframename!!.setTextColor(allselectedcolor)
+        } else if (phoneValue) {
+            phoneselected_color = color
+            tvframephone!!.setTextColor(phoneselected_color)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ivcall!!.backgroundTintList = ColorStateList.valueOf(phoneselected_color)
+            }
+        } else if (emailValue) {
+            emailselected_color = color
+            tvframeemail!!.setTextColor(emailselected_color)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ivEmail!!.backgroundTintList = ColorStateList.valueOf(emailselected_color)
+            }
+        } else if (websiteValue) {
+            websiteselected_color = color
+            tvframeweb!!.setTextColor(websiteselected_color)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ivWebsite!!.backgroundTintList = ColorStateList.valueOf(websiteselected_color)
+            }
+        } else if (addressValue) {
+            addressselected_color = color
+            tvframelocation!!.setTextColor(addressselected_color)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ivLocation!!.backgroundTintList = ColorStateList.valueOf(addressselected_color)
+            }
+        } else {
+            selected_color = color
+            Log.d("SelectedColor", "" + selected_color)
+            /*if (rootTextView != null) {
+                        mPhotoEditor.editText(rootTextView, selectedFontTypeface, tempEnteredText, selected_color);
+                    }*/for (p in views.indices) {
+                if (p == selectedPosition) {
+                    Log.d("SelectedColor12", "" + views[p].color)
+                    rootTextView = views[p].view
+                    views[p] = ViewData(
+                        views[p].view,
+                        views[p].text,
+                        views[p].position,
+                        selected_color
+                    )
+                    Log.d("SelectedColor1", "" + selected_color)
+                    Log.d("SelectedColor11", "" + views[p].color)
+                    if (rootTextView != null) {
+                        mPhotoEditor!!.editText(
+                            rootTextView!!,
+                            null,
+                            views[p].text,
+                            views[p].color
+                        )
+                    }
+                }
+            }
+        }
+        Log.d("ColorID", "Dialog id :$dialogId ColorId:$color")
+    }
+
+    override fun onDialogDismissed(dialogId: Int) {
+
+    }
 }

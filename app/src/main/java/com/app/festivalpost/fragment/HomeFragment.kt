@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper.getMainLooper
-import android.os.StrictMode
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.LoginActivity
@@ -34,8 +32,9 @@ import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
 import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
-import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+
 import com.emegamart.lelys.utils.extensions.*
+import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -71,18 +70,13 @@ class HomeFragment : BaseFragment() {
         rcvCustomFestival = view.findViewById(R.id.customFestival)
 
         viewPager = view.findViewById(R.id.sliderviewPager)
-        //loadHomePageData()
+
 
 
         val mainHandler = Handler(getMainLooper())
-        var runnable: Runnable = object : Runnable {
-            override fun run() {
-                loadHomePageData()
-            }
+        val runnable= Runnable { loadHomePageData() }
 
-        }
-
-        if(savedInstanceState==null) mainHandler.postDelayed(runnable, 0)
+        mainHandler.postDelayed(runnable, 0)
 
 
 
@@ -109,7 +103,7 @@ class HomeFragment : BaseFragment() {
                 )
             ) {
                 Glide.with(activity!!).load(festivalItem.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(ivphoto)
-                //ivphoto.loadImageFromUrl(festivalItem.fest_image!!)
+
             }
 
             container.addView(view)
@@ -155,10 +149,11 @@ class HomeFragment : BaseFragment() {
                     getSharedPrefInstance().setValue(LOG_OUT, res.logout)
                     getSharedPrefInstance().setValue(IS_PREMIUM, res.premium)
                     getSharedPrefInstance().setValue(CURRENT_DATE, res.current_date)
-                    getSharedPrefInstance().setValue(KEY_FRAME_LIST, res.frameList)
+                    getSharedPrefInstance().setValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
                     put(res.current_business,KEY_CURRENT_BUSINESS)
-                    val businessItem1 =get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
 
+
+                    Log.d("GetApiToken", getApiToken() + "    122"+  res.frameList.size + " 123"+ getCustomFrameList().size)
 
                     sliderArrayList = res.slider
                     festivalArrayList = res.festival

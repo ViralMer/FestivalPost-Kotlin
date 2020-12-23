@@ -74,10 +74,9 @@
 
 
 
-        <VideoView
+        <com.potyvideo.library.AndExoPlayerView
             android:id="@+id/ivvideo"
             android:layout_width="1080px"
-
             android:layout_height="1080px"
             />
 

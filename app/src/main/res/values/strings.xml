@@ -519,7 +519,6 @@
     <string name="txt_my_posts">My Posts</string>
 
 
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txt_contact_settings">Contact Settings</string>
     <string name="email">Email</string>
@@ -552,7 +551,7 @@
     <string name="error_no_internet">No Internet</string>
     <string name="error_something_went_wrong">Something went wrong</string>
     <string name="lbl_tap_to_retry">Tap to Retry</string>
-    <string name="token">$2y$12$Z96yBa38IA4pepghLGb3auzTKw/hzOFo3UEwd0OKzw.TY/InyyEOe</string>
+    <string name="token">$2y$12$RwS1mSk5VHgquTuxLW2Msu5.8Qr2ON3fqsTbHW6vI2FWgLi1Pvu3.</string>
     <string name="lbl_add_business"><font color='#48A8BC'>A</font>dd Business</string>
     <string name="lbl_tap_choose"><![CDATA[Tap & Choose]]></string>
     <string name="hint_business_name">Enter your business name</string>
@@ -586,5 +585,7 @@
     <string name="txt_choose_plans"><font color='#48A8BC'>C</font>hoose Plans</string>
     <string name="lbl_purchase">Purchase</string>
     <string name="hint_choose_font">Choose your Font</string>
+    <string name="free">Free</string>
+    <string name="preimum">Premium</string>
 
 </resources>

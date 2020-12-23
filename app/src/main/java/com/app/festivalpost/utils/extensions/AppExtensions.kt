@@ -162,12 +162,14 @@ fun getCustomFrameList(): ArrayList<FrameListItem1> {
     if (getSharedPrefInstance().getStringValue(KEY_FRAME_LIST) == "") {
         return ArrayList()
     }
+
     return Gson().fromJson<ArrayList<FrameListItem1>>(
         getSharedPrefInstance().getStringValue(
             KEY_FRAME_LIST
         ), object : TypeToken<ArrayList<FrameListItem1>>() {}.type
     )
 }
+
 
 fun getUserData(): ArrayList<UserDataItem> {
     if (getSharedPrefInstance().getStringValue(KEY_USER_DATA) == "") {

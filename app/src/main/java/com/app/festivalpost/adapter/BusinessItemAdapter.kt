@@ -29,6 +29,7 @@ import kotlin.collections.ArrayList
 
 class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<CurrentBusinessItem?>) : RecyclerView.Adapter<BusinessItemAdapter.BusinessItemAdapterViewHolder>() {
 
+    var onItemClickListener: OnItemClickListener = context as OnItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BusinessItemAdapter.BusinessItemAdapterViewHolder {
         val view: View? =
@@ -77,19 +78,20 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
 
 
 
-        /*holder.laymain.tag = position
-        holder.laymain.setOnClickListener { view ->
+
+
+        holder.itemView.tag = position
+        holder.itemView.setOnClickListener { view ->
             val index = view.tag as Int
             val p = originaldata[index]
-            //onItemClickListener.onItemClicked(p, 0)
+            onItemClickListener.onItemClicked(p, 0)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
-                pp!!.is_current_business=1
+                //pp!!.is_current_business=1
                 originaldata[i] = pp
             }
             notifyDataSetChanged()
         }
-*/
 
 
 
@@ -107,7 +109,7 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
 
         val profileEdit :AppCompatImageView = view.findViewById<View>(R.id.profileEdit) as AppCompatImageView
         val ivcurrentbusiness :AppCompatImageView = view.findViewById<View>(R.id.ivcurrentbusiness) as AppCompatImageView
-        //val laymain :LinearLayout = view.findViewById<View>(R.id.laymain) as LinearLayout
+
 
 
     }

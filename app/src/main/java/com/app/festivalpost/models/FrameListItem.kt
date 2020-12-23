@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-class   FrameListItem : Serializable {
+class  FrameListItem : Serializable {
     @SerializedName("user_frames_id")
     @Expose
     var user_frames_id = 0

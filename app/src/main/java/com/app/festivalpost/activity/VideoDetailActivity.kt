@@ -29,6 +29,7 @@ import com.app.festivalpost.models.VideoLanguageItem
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.getCustomFrameList
+import com.emegamart.lelys.utils.extensions.launchActivity
 import com.emegamart.lelys.utils.extensions.onClick
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -212,7 +213,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
 
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         val ivBack = toolbar.findViewById<View>(R.id.ivBack) as AppCompatImageView
-        val tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
+        val tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
 
             tvtitle.text = resources.getString(R.string.txt_add_business)
 
@@ -220,16 +221,9 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             onBackPressed()
         }
         tvaction.setOnClickListener {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.setTitle(resources.getString(R.string.txt_delete_title))
-                .setMessage(resources.getString(R.string.txt_delete_message))
-                .setPositiveButton(resources.getString(R.string.txt_yes)) { dialog, which ->
-
-
-
-                }
-                .setNegativeButton(resources.getString(R.string.txt_no)) { dialog, which -> dialog.dismiss() }
-                .show()
+            launchActivity<ChooseVideoFrameActivity> {
+                putExtra("video_path",video_path)
+            }
         }
     }
 
@@ -393,7 +387,6 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     private fun loadAccoutData() {
         showProgress(true)
         callApi(
-
             getRestApis().getVideoLanguageData(videoid!!, "0"), onApiSuccess = {
                 showProgress(false)
                 Log.d("videoItemList", "" + it.data.size)

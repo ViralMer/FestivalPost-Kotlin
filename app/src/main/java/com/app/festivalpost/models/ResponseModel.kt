@@ -14,7 +14,7 @@ data class HomePageResponse(
     val slider: ArrayList<HomePageItem?>,
     val festival: ArrayList<HomePageItem?>,
     val cateogry: ArrayList<HomePageItem?>,
-    val frameList: ArrayList<FrameListItem>,
+    val frameList: ArrayList<FrameListItem1>,
     val current_business: CurrentBusinessItem,
     val current_business_new: CurrentBusinessItem,
     val premium: Boolean? = false,
@@ -32,17 +32,17 @@ data class VideoPageResponse(
     val message: String? = null,
 )
 
-    data class HomePageItem(
-        val fest_id: String? = null,
-        val fest_name: String? = null,
-        val fest_info: String? = null,
-        val fest_image: String? = null,
-        val fest_type: String? = null,
-        val fest_date: String? = null,
-        val current_date: String? = null,
-        val fest_day: String? = null,
-        val fest_is_delete: String? = null
-    )
+data class HomePageItem(
+    val fest_id: String? = null,
+    val fest_name: String? = null,
+    val fest_info: String? = null,
+    val fest_image: String? = null,
+    val fest_type: String? = null,
+    val fest_date: String? = null,
+    val current_date: String? = null,
+    val fest_day: String? = null,
+    val fest_is_delete: String? = null
+)
 
 data class VideoPageItem(
     val id: String? = null,
@@ -50,7 +50,7 @@ data class VideoPageItem(
     val video_date: String? = null,
     val video_image: String? = null,
     val video_type: String? = null,
-    )
+)
 
 data class VideoLanguageItemResponse(
     val data: ArrayList<VideoLanguageItem?>,
@@ -63,28 +63,28 @@ data class VideoLanguageItem(
     val image: String? = null,
     val video: String? = null,
     val type: String? = null,
-    var isIs_selected:Boolean=false
+    var isIs_selected: Boolean = false
 ) : Serializable
 
-    data class CurrentBusinessItem(
-        val busi_id: Int? = 0,
-        val user_id: Int? = 0,
-        val busi_name: String? = null,
-        val busi_email: String? = null,
-        val busi_mobile: String? = null,
-        val busi_mobile_second: String? = null,
-        val busi_website: String? = null,
-        val busi_address: String? = null,
-        val busi_logo: String? = null,
-        val busi_is_approved: Int? = 0,
-        val busi_delete: Int? = 0,
-        val plan_name: String? = null,
-        val purc_start_date: String? = null,
-        val purc_end_date: String? = null,
-        val need_to_upgrade: String? = null,
-        val plan_id: String? = null,
-        var is_current_business: Int? = 0
-    ) :Serializable
+data class CurrentBusinessItem(
+    val busi_id: Int? = 0,
+    val user_id: Int? = 0,
+    val busi_name: String? = null,
+    val busi_email: String? = null,
+    val busi_mobile: String? = null,
+    val busi_mobile_second: String? = null,
+    val busi_website: String? = null,
+    val busi_address: String? = null,
+    val busi_logo: String? = null,
+    val busi_is_approved: Int? = 0,
+    val busi_delete: Int? = 0,
+    val plan_name: String? = null,
+    val purc_start_date: String? = null,
+    val purc_end_date: String? = null,
+    val need_to_upgrade: String? = null,
+    val plan_id: String? = null,
+    var is_current_business: Int? = 0
+) : Serializable
 
 data class FrameListItem1(
     val user_frames_id: Int? = 0,
@@ -95,16 +95,52 @@ data class FrameListItem1(
     val date_added: String? = null
 )
 
-    data class CategoryImagesResponse(
-        val data: ArrayList<CategoryItem?>,
-        val status: Boolean? = false,
-        val message: String? = null
-    )
+data class CategoryImagesResponse(
+    val data: ArrayList<CategoryItem?>,
+    val status: Boolean? = false,
+    val message: String? = null
+)
 
 data class ProfileResponse(
     val data: UserDataItem,
     val status: Boolean? = false,
     val message: String? = null
+)
+
+data class FileListItem(
+    val path: String? = null
+)
+
+data class CustomCategoryResponse(
+    val data: ArrayList<CustomCategoryItem>,
+    val status: Boolean? = false,
+    val message: String? = null
+)
+
+data class CustomCategoryPostResponse(
+    val data: ArrayList<CustomCategoryPostItem>,
+    val status: Boolean? = false,
+    val message: String? = null
+)
+
+data class CustomCategoryPostItem(
+    val id: String? = null,
+    val banner_image: String? = null,
+    val image: String? = null,
+    val position_x: String? = null,
+    val position_y: String? = null,
+    val img_position_x: String? = null,
+    val img_position_y: String? = null,
+    val img_height: String? = null,
+    val img_width: String? = null,
+    val type: String? = null,
+    var is_selected: Boolean? = false,
+) : Serializable
+
+data class CustomCategoryItem(
+    val custom_cateogry_id: String? = null,
+    val name: String? = null,
+    val custom_image: String? = null,
 )
 
 data class AddBussiensResponse(
@@ -141,6 +177,8 @@ data class CategoryItem(
     val post_is_deleted: Int? = 0,
     val post_content: String? = null,
     var is_selected: Boolean? = false,
+    var image_type: Int? = null,
+    var language_id: Int? = null,
 
     )
 
@@ -192,7 +230,7 @@ data class PlanItemDetails(
     val sku: String? = null,
 
 
-)
+    )
 
 class DeviceInfo1(_context: Context) : Serializable {
     var deviceUDID = ""

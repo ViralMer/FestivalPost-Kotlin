@@ -10,6 +10,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.ChoosePhotoActivity
 import com.app.festivalpost.R
+import com.app.festivalpost.activity.ChooseFrameForPhotoActivityNew
+import com.app.festivalpost.activity.FontOnItemClickListener
 import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.models.BusinessCategory
 import com.app.festivalpost.models.FontTypeList
@@ -25,7 +27,7 @@ import kotlin.collections.ArrayList
 class FontTypeAdapter(var context: Context, var originaldata: ArrayList<FontTypeList?>,var text:String) :
     RecyclerView.Adapter<FontTypeAdapter.ViewHolder>() {
     var searchCount = 0
-    var onItemClickListener: OnItemClickListener = context as OnItemClickListener
+    var onItemClickListener: FontOnItemClickListener = context as FontOnItemClickListener
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View? =
             LayoutInflater.from(parent.context).inflate(R.layout.layout_business_category_item, null,false)
@@ -49,7 +51,7 @@ class FontTypeAdapter(var context: Context, var originaldata: ArrayList<FontType
         holder.itemView.setOnClickListener { view ->
             val index = view.tag as Int
             val p = originaldata[index]
-            onItemClickListener.onItemClicked(p, index)
+            onItemClickListener.onFontItemClicked(p, index)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
                 pp!!.is_selected = i == index

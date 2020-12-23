@@ -1,29 +1,24 @@
 package com.app.festivalpost.activity
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
-import android.os.Build
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.provider.MediaStore
-import android.provider.Settings
-import android.util.DisplayMetrics
 import android.util.Log
-import android.util.TypedValue
-import android.view.*
-import android.view.animation.AnimationUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.Window
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
@@ -32,74 +27,55 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.PickerBuilder.onImageReceivedListener
-import com.app.festivalpost.activity.PickerBuilder.onPermissionRefusedListener
-import com.app.festivalpost.adapter.FrameChooseAdapter
-import com.app.festivalpost.apifunctions.ApiEndpoints
-import com.app.festivalpost.apifunctions.ApiManager
-import com.app.festivalpost.apifunctions.ApiResponseListener
-import com.app.festivalpost.globals.Constant
-import com.app.festivalpost.globals.Global
-import com.app.festivalpost.photoeditor.OnPhotoEditorListener
-import com.app.festivalpost.photoeditor.PhotoEditor
-import com.app.festivalpost.activity.OnItemClickListener
-import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
 import com.app.festivalpost.adapter.FontTypeAdapter
+import com.app.festivalpost.adapter.FrameChooseAdapter
+import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
-
+import com.app.festivalpost.photoeditor.PhotoEditor
 import com.app.festivalpost.photoeditor.PhotoEditorView
-import com.app.festivalpost.photoeditor.ViewType
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import org.json.JSONObject
-import top.defaults.colorpicker.ColorPickerView
+import kotlinx.android.synthetic.main.activity_choose_video_frame.*
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.ArrayList
 
-class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,FontOnItemClickListener,ColorPickerDialogListener {
+class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnItemClickListener,ColorPickerDialogListener {
     private var photoEditorView: PhotoEditorView? = null
     private var linearAddText: LinearLayout? = null
     private var linearTextcolor: LinearLayout? = null
     private var linearfonttype: LinearLayout? = null
-    private var linearbackgroundcolor: LinearLayout? = null
 
 
-    var framePreview: FramePreview? = null
 
+    var video_path: String? = null
+    var video_item: VideoListItem? = null
 
+    var recyclerView: RecyclerView? = null
+    var llframe: LinearLayout? = null
     var layroot: LinearLayout? = null
+
     var views: MutableList<ViewData> = ArrayList()
     var mPhotoEditor: PhotoEditor? = null
     var tempEnteredText: String? = null
     var selectedPosition = 0
-    var index1 = 0
-    var plus = 0
-    var width = 0
-    var height = 0
     var selected_color = Color.BLACK
     var rootTextView: View? = null
     var selectedFontTypeface: Typeface? = null
-    var llframe: LinearLayout? = null
-    var lay_frames: LinearLayout? = null
-    var llwatermark: LinearLayout? = null
-    var ivbackground: ImageView? = null
-    private var photo_path: String? = ""
-    private var image_type: Int? = 0
-    private var storeValue: String? = ""
+
+    var index1: Int? = 0
     var i = 0
     var backpressed = true
+    var storeValue: String? = null
+    var framePreview: FramePreview? = null
     var ivframelogo: ImageView? = null
     var ivframebg: ImageView? = null
     var ivcall: ImageView? = null
@@ -158,108 +134,41 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
     var allselectedcolor = 0
     var namecolor = Color.BLACK
     var framePreviewArrayList = ArrayList<FramePreview>()
-    var recyclerView: RecyclerView? = null
     var fontTypeAdapter: FontTypeAdapter? = null
     var fontTypeList = arrayListOf<FontTypeList?>()
     var rcvFont: RecyclerView? = null
     var alertDialog: AlertDialog? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
-        setContentView(R.layout.activity_choose_frame_for_photo)
-        Thread.setDefaultUncaughtExceptionHandler { thread, e ->
-            Log.d("AppCrash", "" + thread.toString())
-            Log.d("AppCrash1", "" + e.message.toString())
-        }
+        setContentView(R.layout.activity_choose_video_frame)
+
         val bundle = intent.extras
         if (bundle != null) {
-            if (bundle.containsKey("photo_path")) {
-                photo_path = bundle["photo_path"] as String?
-            }
-            if (bundle.containsKey("image_type")) {
-                image_type = bundle["image_type"] as Int?
+            if (bundle.containsKey("video_path")) {
+                video_path = intent.getStringExtra("video_path")
             }
         }
-
-
+        Log.d("video_path",""+video_path)
         setActionbar()
-        selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        phoneTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        emailTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        websiteTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        addressTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        allfonttypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        nametypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        recyclerView = findViewById(R.id.rvdata)
-        ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
-        if (photo_path != null && !photo_path.equals("", ignoreCase = true)) {
-            Glide.with(this@ChooseFrameForPhotoActivityNew).load(photo_path)
-                .placeholder(R.drawable.placeholder_img).error(
-                    R.drawable.placeholder_img
-                ).into(
-                    ivbackground!!
-                )
-        }
-
-        layroot = findViewById<View>(R.id.layroot) as LinearLayout
-        llframe = findViewById<View>(R.id.llframe) as LinearLayout
-        llwatermark = findViewById<View>(R.id.llwatermark) as LinearLayout
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        height = displayMetrics.heightPixels
-        width = displayMetrics.widthPixels
-        val params=layroot!!.layoutParams
-        params.height=width
-        params.width=width
-        val params1=llframe!!.layoutParams
-        params1.height=width
-        params1.width=width
-
         photoEditorView = findViewById<View>(R.id.photoEditorView) as PhotoEditorView
         mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
             .setPinchTextScalable(true)
             .build()
-            linearAddText = findViewById<View>(R.id.linearAddText) as LinearLayout
-            linearTextcolor = findViewById<View>(R.id.lineartextcolor) as LinearLayout
-            linearfonttype = findViewById<View>(R.id.linearFonttype) as LinearLayout
-            linearbackgroundcolor = findViewById<View>(R.id.linearbackgroundcolor) as LinearLayout
-
-        layroot!!.setOnClickListener {
-            linearLogo!!.setBackgroundResource(0)
-            linearEmail!!.setBackgroundResource(0)
-            linearAddress!!.setBackgroundResource(0)
-            linearPhone!!.setBackgroundResource(0)
-            linearWebsite!!.setBackgroundResource(0)
-            linearName!!.setBackgroundResource(0)
-            ivphoneclose!!.visibility = View.GONE
-            ivphotoclose!!.visibility = View.GONE
-            ivemailclose!!.visibility = View.GONE
-            ivwebsiteclose!!.visibility = View.GONE
-            ivaddressclose!!.visibility = View.GONE
-            ivnameClose!!.visibility = View.GONE
-            emailValue = false
-            phoneValue = false
-            websiteValue = false
-            addressValue = false
-            textallSelected = true
-            nameValue = false
+        linearAddText = findViewById<View>(R.id.linearAddText) as LinearLayout
+        linearTextcolor = findViewById<View>(R.id.lineartextcolor) as LinearLayout
+        linearfonttype = findViewById<View>(R.id.linearFonttype) as LinearLayout
+        layroot = findViewById<View>(R.id.layroot) as LinearLayout
+        llframe = findViewById<View>(R.id.llframe) as LinearLayout
+        recyclerView = findViewById(R.id.rvdata)
+        ivvideo!!.setSource(video_path)
+        try {
+            framePreviewArrayList = Global.newFrames
+        } catch (e: OutOfMemoryError) {
+        } catch (e: Exception) {
         }
-        ivphoneselect = findViewById(R.id.ivMobileSelected)
-        ivemailselect = findViewById(R.id.ivEmailSelected)
-        ivaddressselect = findViewById(R.id.ivAddressSelected)
-        ivwebsiteselect = findViewById(R.id.ivWebsiteSelected)
-        ivlogoselect = findViewById(R.id.ivLogoSelected)
-        ivnameSelect = findViewById(R.id.ivNameSelected)
-
         var frameListItems1 = arrayListOf<FrameListItem1>()
         frameListItems1 = getCustomFrameList()
-        Log.d("framesize",""+ getCustomFrameList().size)
-        plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
                 FramePreview(
@@ -268,132 +177,23 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 )
             )
         }
-        Log.d("FrmaeSize",""+framePreviewArrayList.size)
-        try {
-            framePreviewArrayList.addAll(Global.newFrames)
-        } catch (e: OutOfMemoryError) {
-
-        } catch (e: Exception) {
-        }
-
 
 
         val frameChooseAdapter = FrameChooseAdapter(this, framePreviewArrayList)
         val horizontalLayoutManagaer = LinearLayoutManager(
-            this@ChooseFrameForPhotoActivityNew,
+            this,
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        recyclerView!!.layoutManager = horizontalLayoutManagaer
-        recyclerView!!.adapter = frameChooseAdapter
-        if (getCustomFrameList().isNotEmpty()) {
-            val photoItem=framePreviewArrayList[0]
-            setFrameNEW(framePreviewArrayList[0])
-            if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
-                    "",
-                    ignoreCase = true
-                )
-            ) {
-                //setFrameNEW(photoItem);
-                Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem!!.dynamic_images)
-                    .placeholder(
-                        R.drawable.placeholder_img
-                    ).error(R.drawable.placeholder_img).into(
-                        ivframebg!!
-                    )
-            }
-
-        }
-        else{
-            setFrameNEW(framePreviewArrayList[0])
-
-        }
-
-        mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
-            override fun onEditTextChangeListener(
-                rootView: View?,
-                text: String?,
-                colorCode: Int,
-                viewList: Int
-            ) {
-                for (i in views.indices) {
-                    if (i == viewList) {
-                        rootTextView = rootView
-                        showAddTextDialog(text, colorCode)
-                        break
-                    }
-                }
-            }
-
-            override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
-                backpressed = false
-            }
-
-            override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
-                if (numberOfAddedViews == 0) {
-                    i = 0
-                    views.clear()
-                    selectedPosition = 0
-                    backpressed = true
-                } else {
-                    i -= 1
-                    views.removeAt(selectedPosition)
-                    selectedPosition = i - 1
-                    backpressed = false
-                }
-            }
-
-            override fun onStartViewChangeListener(
-                viewType: ViewType?,
-                numberOfAddedViews: Int,
-                view: View?
-            ) {
-                selectedPosition = numberOfAddedViews
-            }
-
-            override fun onStopViewChangeListener(
-                viewType: ViewType?,
-                numberOfAddedViews: Int,
-                view: View?
-            ) {
-            }
-        })
-        findViewById<View>(R.id.linearbackgroundcolor).setOnClickListener {
-            val dialog = Dialog(
-                this@ChooseFrameForPhotoActivityNew,
-                R.style.DialogAnimation
-            )
-            dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.window!!.setBackgroundDrawable(
-                ColorDrawable(Color.TRANSPARENT)
-            )
-            dialog.setContentView(R.layout.custom_color_picker_dialog)
-            dialog.setCancelable(true)
-            dialog.setCanceledOnTouchOutside(true)
-            val colorPickerView = dialog.findViewById<View>(R.id.colorPickerView) as ColorPickerView
-            val viewColor = dialog.findViewById<View>(R.id.viewColor)
-            colorPickerView.setInitialColor(Color.RED)
-            colorPickerView.setEnabledBrightness(true)
-            colorPickerView.setEnabledAlpha(true)
-            viewColor.setBackgroundColor(Color.RED)
-            colorPickerView.subscribe { color, fromUser, shouldPropagate ->
-                selected_color = color
-                viewColor.setBackgroundColor(color)
-            }
-            val btndone = dialog.findViewById<View>(R.id.btndone) as TextView
-            val btncancel = dialog.findViewById<View>(R.id.btncancel) as TextView
-            btndone.setOnClickListener {
-                layroot!!.setBackgroundColor(colorPickerView.color)
-                dialog.dismiss()
-            }
-            btncancel.setOnClickListener {
-                selected_color = R.color.colorBlack
-                dialog.dismiss()
-            }
-            dialog.show()
-        }
-
+        recyclerView!!.setLayoutManager(horizontalLayoutManagaer)
+        recyclerView!!.setAdapter(frameChooseAdapter)
+        setFrameNEW(framePreviewArrayList[0])
+        ivphoneselect = findViewById(R.id.ivMobileSelected)
+        ivemailselect = findViewById(R.id.ivEmailSelected)
+        ivaddressselect = findViewById(R.id.ivAddressSelected)
+        ivwebsiteselect = findViewById(R.id.ivWebsiteSelected)
+        ivlogoselect = findViewById(R.id.ivLogoSelected)
+        ivnameSelect = findViewById(R.id.ivNameSelected)
         linearAddText!!.setOnClickListener {
             rootTextView = null
             showAddTextDialog("", selected_color)
@@ -402,10 +202,6 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             ColorPickerDialog.newBuilder().show(this)
         }
         linearfonttype!!.setOnClickListener {
-            var defaultText = ""
-            if (defaultText.equals("", ignoreCase = true)) {
-                defaultText = storeValue!!
-            }
             fontTypeList.clear()
             fontTypeList.add(FontTypeList("fonts/museomoderno_regular.ttf"))
             fontTypeList.add(FontTypeList("fonts/aaargh.ttf"))
@@ -416,7 +212,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             showPopupBusinessCategoryDialog(this,storeValue!!)
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
-            if (ivlogoselect!!.drawable.constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
+            if (ivlogoselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
                 ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
                 linearLogo!!.setBackgroundResource(0)
                 linearLogo!!.visibility = View.GONE
@@ -443,13 +239,12 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             }
         })
         ivemailselect!!.setOnClickListener(View.OnClickListener {
-            if (ivemailselect!!.drawable.constantState === resources.getDrawable(R.drawable.email_select).constantState) {
+            if (ivemailselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.email_select).constantState) {
                 ivemailselect!!.setImageResource(R.drawable.email_deselect)
 
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.GONE
                 ivEmail!!.visibility = View.GONE
-                phoneLine!!.visibility = View.GONE
                 tvframeemail!!.visibility = View.GONE
                 frameEmail!!.visibility = View.GONE
                 ivphotoclose!!.visibility = View.GONE
@@ -460,7 +255,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
-                phoneLine!!.visibility=View.VISIBLE
+
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.VISIBLE
                 ivEmail!!.visibility = View.VISIBLE
@@ -475,7 +270,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             }
         })
         ivphoneselect!!.setOnClickListener(View.OnClickListener {
-            if (ivphoneselect!!.drawable.constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
+            if (ivphoneselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
                 ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
 
                 linearPhone!!.visibility = View.GONE
@@ -483,7 +278,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivcall!!.visibility = View.GONE
                 tvframephone!!.visibility = View.GONE
                 framePhone!!.visibility = View.GONE
-
+                phoneLine!!.visibility = View.GONE
                 ivphotoclose!!.visibility = View.GONE
                 ivaddressclose!!.visibility = View.GONE
                 ivphoneclose!!.visibility = View.GONE
@@ -492,9 +287,11 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+
                 linearPhone!!.visibility = View.VISIBLE
                 linearPhone!!.setBackgroundResource(0)
                 ivcall!!.visibility = View.VISIBLE
+                phoneLine!!.visibility = View.VISIBLE
                 tvframephone!!.visibility = View.VISIBLE
                 framePhone!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -506,8 +303,9 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             }
         })
         ivwebsiteselect!!.setOnClickListener(View.OnClickListener {
-            if (ivwebsiteselect!!.drawable.constantState === resources.getDrawable(R.drawable.website_select).constantState) {
+            if (ivwebsiteselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.website_select).constantState) {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_deselect)
+
                 linearWebsite!!.visibility = View.GONE
                 linearWebsite!!.setBackgroundResource(0)
                 ivWebsite!!.visibility = View.GONE
@@ -522,6 +320,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
+
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
                 websiteLine!!.visibility = View.VISIBLE
@@ -537,7 +336,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             }
         })
         ivaddressselect!!.setOnClickListener(View.OnClickListener {
-            if (ivaddressselect!!.drawable.constantState === resources.getDrawable(R.drawable.location_select).constantState) {
+            if (ivaddressselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.location_select).constantState) {
                 ivaddressselect!!.setImageResource(R.drawable.location_deselect)
 
                 linearAddress!!.visibility = View.GONE
@@ -568,7 +367,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             }
         })
         ivnameSelect!!.setOnClickListener(View.OnClickListener {
-            if (ivnameSelect!!.drawable.constantState === resources.getDrawable(R.drawable.name_select).constantState) {
+            if (ivnameSelect!!.getDrawable().constantState === resources.getDrawable(R.drawable.name_select).constantState) {
                 ivnameSelect!!.setImageResource(R.drawable.name_deselect)
 
                 frameName!!.visibility = View.GONE
@@ -596,302 +395,15 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             }
         })
+
     }
-
-
-    override fun onResume() {
-        super.onResume()
-        llwatermark!!.visibility = View.GONE
-    }
-
-    @SuppressLint("ResourceAsColor")
-    fun showAddTextDialog(text: String?, color: Int) {
-        val dialog = Dialog(
-            this@ChooseFrameForPhotoActivityNew,
-            R.style.DialogAnimation
-        )
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window!!.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT)
-        )
-        dialog.setContentView(R.layout.custom_add_text_dialog)
-        dialog.setCancelable(true)
-        dialog.setCanceledOnTouchOutside(true)
-        val edtext = dialog.findViewById<View>(R.id.edtext) as EditText
-        edtext.setTextColor(R.color.colorBlack)
-        edtext.setText(text)
-        val btndone = dialog.findViewById<View>(R.id.btndone) as TextView
-        val btncancel = dialog.findViewById<View>(R.id.btncancel) as TextView
-        btndone.setOnClickListener {
-            try {
-                if (edtext.text.toString() != "") {
-                    tempEnteredText = edtext.text.toString()
-                    if (mPhotoEditor != null && !tempEnteredText.equals("", ignoreCase = true)) {
-                        if (rootTextView == null) {
-                            rootTextView =
-                                mPhotoEditor!!.addText(null, tempEnteredText, Color.BLACK)
-                            i += 1
-                            selectedPosition = i - 1
-                            views.add(
-                                ViewData(
-                                    rootTextView,
-                                    edtext.text.toString(),
-                                    i,
-                                    Color.BLACK
-                                )
-                            )
-                        } else {
-                            for (p in views.indices) {
-                                if (p == selectedPosition) {
-                                    rootTextView = views[p].view
-                                    views[p] = ViewData(
-                                        views[p].view,
-                                        tempEnteredText,
-                                        views[p].position,
-                                        views[p].color
-                                    )
-                                    if (rootTextView != null) {
-                                        mPhotoEditor!!.editText(
-                                            rootTextView!!,
-                                            null,
-                                            views[p].text,
-                                            views[p].color
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: IndexOutOfBoundsException) {
-                Log.d("IndexArray", "" + e.message)
-            } catch (e: Exception) {
-                Log.d("IndexArray1", "" + e.message)
-            }
-
-            //rootTextView = null;
-            Global.hideSoftKeyboard(this@ChooseFrameForPhotoActivityNew, edtext)
-            emailValue = false
-            addressValue = false
-            phoneValue = false
-            websiteValue = false
-            nameValue = false
-            textallSelected = false
-            dialog.dismiss()
-        }
-        btncancel.setOnClickListener { dialog.dismiss() }
-        dialog.show()
-    }
-
-    fun startCamera() {
-        PickerBuilder(this@ChooseFrameForPhotoActivityNew, PickerBuilder.SELECT_FROM_CAMERA)
-            .setOnImageReceivedListener(object : onImageReceivedListener {
-                override fun onImageReceived(imageUri: Uri?) {
-                    Toast.makeText(
-                        this@ChooseFrameForPhotoActivityNew,
-                        "Got image - $imageUri",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    addImage(imageUri)
-                }
-            })
-            .setImageName("testImage")
-            .setImageFolderName(resources.getString(R.string.app_name))
-            .withTimeStamp(false)
-            .setCropScreenColor(resources.getColor(R.color.colorPrimary))
-            .start()
-    }
-
-    fun startGallery() {
-        PickerBuilder(this@ChooseFrameForPhotoActivityNew, PickerBuilder.SELECT_FROM_GALLERY)
-            .setOnImageReceivedListener(object : onImageReceivedListener {
-                override fun onImageReceived(imageUri: Uri?) {
-                    Toast.makeText(
-                        this@ChooseFrameForPhotoActivityNew,
-                        "Got image - $imageUri",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    addImage(imageUri)
-                }
-            })
-            .setImageName("test")
-            .setImageFolderName(resources.getString(R.string.app_name))
-            .setCropScreenColor(resources.getColor(R.color.colorPrimary))
-            .setOnPermissionRefusedListener(object : onPermissionRefusedListener {
-                override fun onPermissionRefused() {}
-            })
-            .start()
-    }
-
-    fun addImage(uri: Uri?) {
-        var bitmap: Bitmap? = null
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        if (mPhotoEditor != null && bitmap != null) {
-            mPhotoEditor!!.addImage(bitmap)
-        }
-    }
-
-    private fun dpToPx(dp: Int): Int {
-        val r = resources
-        return Math.round(
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp.toFloat(),
-                r.displayMetrics
-            )
-        )
-    }
-
-
-
-    var tvaction: TextView? = null
-    fun setActionbar() {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-
-        val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
-        tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
-        tvtitle.text = resources.getString(R.string.txt_frame)
-        tvaction!!.text = resources.getString(R.string.txt_next)
-        tvaction!!.setOnClickListener {
-            linearAddress!!.setBackgroundResource(0)
-            linearEmail!!.setBackgroundResource(0)
-            linearPhone!!.setBackgroundResource(0)
-            linearAddress!!.setBackgroundResource(0)
-            linearLogo!!.setBackgroundResource(0)
-            linearName!!.setBackgroundResource(0)
-            ivaddressclose!!.visibility = View.GONE
-            ivphoneclose!!.visibility = View.GONE
-            ivphotoclose!!.visibility = View.GONE
-            ivwebsiteclose!!.visibility = View.GONE
-            ivaddressclose!!.visibility = View.GONE
-            ivnameClose!!.visibility = View.GONE
-            mPhotoEditor!!.clearHelperBox()
-            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
-                llwatermark!!.visibility = View.VISIBLE
-            } else {
-                llwatermark!!.visibility = View.GONE
-            }
-
-            val handler = Handler()
-            handler.postDelayed({
-                Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
-                val params=ivframebg!!.layoutParams
-                params.width=width
-                params.height=width
-                layroot!!.isDrawingCacheEnabled = true
-                layroot!!.buildDrawingCache(true)
-                val savedBmp = Bitmap.createBitmap(
-                    layroot!!.drawingCache,0,0,width,width
-                )
-                layroot!!.isDrawingCacheEnabled = false
-                try {
-                    //Write file
-                    val filename = "bitmap.png"
-                    val stream = openFileOutput(filename, MODE_PRIVATE)
-                    savedBmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-
-                    //Cleanup
-                    stream.close()
-                    savedBmp.recycle()
-
-                    //Pop intent
-                    val in1 = Intent(
-                        this@ChooseFrameForPhotoActivityNew,
-                        SaveAndShareActivity::class.java
-                    )
-                    in1.putExtra("image", filename)
-                    startActivity(in1)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }, 1500)
-        }
-        animateButton()
-    }
-
-    fun animateButton() {
-        val myAnim =
-            AnimationUtils.loadAnimation(this@ChooseFrameForPhotoActivityNew, R.anim.bounce)
-        val interpolator = MyBounceInterpolator(0.2, 20.0)
-        myAnim.interpolator = interpolator
-        tvaction!!.startAnimation(myAnim)
-    }
-
-    override fun onBackPressed() {
-        if (backpressed) {
-            finish()
-        } else {
-            AlertDialog.Builder(this)
-                .setTitle("Exit")
-                .setMessage("If you are back your data will be lost?")
-                .setPositiveButton("Ok") { dialog, which -> finish() }
-                .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss() }
-                .show()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            android.R.id.home -> if (backpressed) {
-                onBackPressed()
-            } else {
-                AlertDialog.Builder(this)
-                    .setTitle("Exit")
-                    .setMessage("If you are back your changes will be lost?")
-                    .setPositiveButton("Ok") { dialog, which -> finish() }
-                    .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss() }
-                    .show()
-            }
-            else -> {
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-
-    /**
-     * Showing Alert Dialog with Settings option
-     * Navigates user to app settings
-     * NOTE: Keep proper title and message depending on your app
-     */
-    private fun showSettingsDialog() {
-        val builder = AlertDialog.Builder(this@ChooseFrameForPhotoActivityNew)
-        builder.setTitle("Need Permissions")
-        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.")
-        builder.setPositiveButton("GOTO SETTINGS") { dialog, which ->
-            dialog.cancel()
-            openSettings()
-        }
-        builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
-        builder.show()
-    }
-
-    // navigating user to app settings
-    private fun openSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package", packageName, null)
-        intent.data = uri
-        startActivityForResult(intent, 101)
-    }
-
 
     fun setFrameNEW(localFrameItem: FramePreview?) {
-        Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
+        showProgress(false)
         if (llframe!!.childCount > 0) llframe!!.removeAllViews()
         framePreview = localFrameItem
         textallSelected = true
-        val frame_view = LayoutInflater.from(this@ChooseFrameForPhotoActivityNew).inflate(
+        val frame_view = LayoutInflater.from(this).inflate(
             localFrameItem!!.layout_id,
             llframe, false
         )
@@ -932,14 +444,14 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         val emailmultiTouchListenerNew = MultiTouchListenerNotMoveble()
         val websitemultiTouchListenerNew = MultiTouchListenerNotMoveble()
         val addressmultiTouchListenerNew = MultiTouchListenerNotMoveble()
-        frameLogo!!.visibility = View.GONE
-        ivphotoclose!!.visibility = View.GONE
-        frameEmail!!.visibility = View.GONE
-        frameEmail!!.visibility = View.GONE
-        frameWebsite!!.visibility = View.GONE
-        frameAddress!!.visibility = View.GONE
-        framePhone!!.visibility = View.GONE
-        frameName!!.visibility = View.GONE
+        frameLogo!!.setVisibility(View.GONE)
+        ivphotoclose!!.setVisibility(View.GONE)
+        frameEmail!!.setVisibility(View.GONE)
+        frameEmail!!.setVisibility(View.GONE)
+        frameWebsite!!.setVisibility(View.GONE)
+        frameAddress!!.setVisibility(View.GONE)
+        framePhone!!.setVisibility(View.GONE)
+        frameName!!.setVisibility(View.GONE)
         linearPhone!!.setBackgroundResource(0)
         linearEmail!!.setBackgroundResource(0)
         linearAddress!!.setBackgroundResource(0)
@@ -985,13 +497,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(R.drawable.contact_white_bg_image)
-                frameLogo!!.visibility = View.VISIBLE
-                ivphotoclose!!.visibility = View.VISIBLE
-                ivphoneclose!!.visibility = View.GONE
-                ivaddressclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameLogo!!.setVisibility(View.VISIBLE)
+                ivphotoclose!!.setVisibility(View.VISIBLE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 emailValue = false
                 phoneValue = false
                 websiteValue = false
@@ -1008,13 +520,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(R.drawable.contact_white_bg_image)
-                frameLogo!!.visibility = View.VISIBLE
-                ivphotoclose!!.visibility = View.VISIBLE
-                ivphoneclose!!.visibility = View.GONE
-                ivaddressclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameLogo!!.setVisibility(View.VISIBLE)
+                ivphotoclose!!.setVisibility(View.VISIBLE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 emailValue = false
                 phoneValue = false
                 websiteValue = false
@@ -1033,13 +545,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearWebsite!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
-                framePhone!!.visibility = View.VISIBLE
-                ivphoneclose!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
+                framePhone!!.setVisibility(View.VISIBLE)
+                ivphoneclose!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
                 emailValue = false
                 phoneValue = true
                 websiteValue = false
@@ -1057,13 +569,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearWebsite!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
-                framePhone!!.visibility = View.VISIBLE
-                ivphoneclose!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                framePhone!!.setVisibility(View.VISIBLE)
+                ivphoneclose!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 emailValue = false
                 phoneValue = true
                 websiteValue = false
@@ -1081,13 +593,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameEmail!!.visibility = View.VISIBLE
-                ivemailclose!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameEmail!!.setVisibility(View.VISIBLE)
+                ivemailclose!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 emailValue = true
                 phoneValue = false
                 websiteValue = false
@@ -1105,13 +617,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearWebsite!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameEmail!!.visibility = View.VISIBLE
-                ivemailclose!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameEmail!!.setVisibility(View.VISIBLE)
+                ivemailclose!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 emailValue = true
                 phoneValue = false
                 websiteValue = false
@@ -1130,13 +642,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearEmail!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameWebsite!!.visibility = View.VISIBLE
-                ivwebsiteclose!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameWebsite!!.setVisibility(View.VISIBLE)
+                ivwebsiteclose!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 emailValue = false
                 phoneValue = false
                 websiteValue = true
@@ -1154,13 +666,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearEmail!!.setBackgroundResource(0)
                 linearName!!.setBackgroundResource(0)
                 linearLogo!!.setBackgroundResource(0)
-                frameWebsite!!.visibility = View.VISIBLE
-                ivwebsiteclose!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameWebsite!!.setVisibility(View.VISIBLE)
+                ivwebsiteclose!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 emailValue = false
                 phoneValue = false
                 websiteValue = true
@@ -1185,13 +697,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 textallSelected = false
                 nameValue = false
                 linearLogo!!.setBackgroundResource(0)
-                frameAddress!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.VISIBLE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameAddress!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.VISIBLE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
             }
 
             override fun onLongClick() {}
@@ -1209,13 +721,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 addressValue = true
                 textallSelected = false
                 nameValue = false
-                frameAddress!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.VISIBLE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameAddress!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.VISIBLE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
             }
         })
         namemultiTouchListenerNer.setOnGestureControl(object :
@@ -1234,13 +746,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 addressValue = false
                 textallSelected = false
                 nameValue = true
-                frameName!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.VISIBLE
+                frameName!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.VISIBLE)
             }
 
             override fun onLongClick() {}
@@ -1258,13 +770,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 addressValue = false
                 textallSelected = false
                 nameValue = true
-                frameName!!.visibility = View.VISIBLE
-                ivaddressclose!!.visibility = View.GONE
-                ivphoneclose!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.VISIBLE
+                frameName!!.setVisibility(View.VISIBLE)
+                ivaddressclose!!.setVisibility(View.GONE)
+                ivphoneclose!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.VISIBLE)
             }
         })
         framePhone!!.setOnTouchListener(phonemultiTouchListenerNew)
@@ -1276,136 +788,133 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
         if (businessItem != null) {
             try {
-                linearWebsite!!.hide()
-                linearEmail!!.hide()
-                linearAddress!!.hide()
-                if (index1 == 0+plus) {
+                if (index1 == 0) {
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
-                        linearName!!.visibility = View.VISIBLE
-                        frameName!!.visibility = View.VISIBLE
-                        tvframename!!.visibility = View.VISIBLE
-                        tvframename!!.text = businessItem.busi_name
+                        linearName!!.setVisibility(View.VISIBLE)
+                        frameName!!.setVisibility(View.VISIBLE)
+                        tvframename!!.setVisibility(View.VISIBLE)
+                        tvframename!!.setText(businessItem.busi_name)
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
-                        linearLogo!!.visibility = View.VISIBLE
-                        ivframelogo!!.visibility = View.VISIBLE
-                        frameLogo!!.visibility = View.VISIBLE
+                        linearLogo!!.setVisibility(View.VISIBLE)
+                        ivframelogo!!.setVisibility(View.VISIBLE)
+                        frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
-                        framePhone!!.visibility = View.VISIBLE
-                        linearPhone!!.visibility = View.VISIBLE
-                        ivcall!!.visibility = View.VISIBLE
-                        tvframephone!!.visibility = View.VISIBLE
-                        tvframephone!!.text = businessItem.busi_mobile
+                        framePhone!!.setVisibility(View.VISIBLE)
+                        linearPhone!!.setVisibility(View.VISIBLE)
+                        ivcall!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2) {
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
-                        linearName!!.visibility = View.VISIBLE
-                        frameName!!.visibility = View.VISIBLE
-                        tvframename!!.visibility = View.VISIBLE
-                        tvframename!!.text = businessItem.busi_name
+                        linearName!!.setVisibility(View.VISIBLE)
+                        frameName!!.setVisibility(View.VISIBLE)
+                        tvframename!!.setVisibility(View.VISIBLE)
+                        tvframename!!.setText(businessItem.busi_name)
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
-                        linearLogo!!.visibility = View.VISIBLE
-                        ivframelogo!!.visibility = View.VISIBLE
-                        frameLogo!!.visibility = View.VISIBLE
+                        linearLogo!!.setVisibility(View.VISIBLE)
+                        ivframelogo!!.setVisibility(View.VISIBLE)
+                        frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
-                        framePhone!!.visibility = View.VISIBLE
-                        linearPhone!!.visibility = View.VISIBLE
-                        ivcall!!.visibility = View.VISIBLE
-                        tvframephone!!.visibility = View.VISIBLE
-                        tvframephone!!.text = businessItem.busi_mobile
+                        framePhone!!.setVisibility(View.VISIBLE)
+                        linearPhone!!.setVisibility(View.VISIBLE)
+                        ivcall!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
                     if (businessItem.busi_address != null && businessItem.busi_address != "") {
-                        linearAddress!!.visibility = View.VISIBLE
-                        ivLocation!!.visibility = View.VISIBLE
-                        tvframelocation!!.visibility = View.VISIBLE
-                        frameAddress!!.visibility = View.VISIBLE
-                        tvframelocation!!.text = businessItem.busi_address
+                        linearAddress!!.setVisibility(View.VISIBLE)
+                        ivLocation!!.setVisibility(View.VISIBLE)
+                        tvframelocation!!.setVisibility(View.VISIBLE)
+                        frameAddress!!.setVisibility(View.VISIBLE)
+                        tvframelocation!!.setText(businessItem.busi_address)
                         ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
                     if (businessItem.busi_email != "") {
-                        linearEmail!!.visibility = View.VISIBLE
-                        ivEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.visibility = View.VISIBLE
-                        frameEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.text = businessItem.busi_email
+                        linearEmail!!.setVisibility(View.VISIBLE)
+                        ivEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setVisibility(View.VISIBLE)
+                        frameEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
                     if (businessItem.busi_website != "") {
-                        linearWebsite!!.visibility = View.VISIBLE
-                        ivWebsite!!.visibility = View.VISIBLE
-                        tvframeweb!!.visibility = View.VISIBLE
-                        frameWebsite!!.visibility = View.VISIBLE
-                        tvframeweb!!.text = businessItem.busi_address
+                        linearWebsite!!.setVisibility(View.VISIBLE)
+                        ivWebsite!!.setVisibility(View.VISIBLE)
+                        tvframeweb!!.setVisibility(View.VISIBLE)
+                        frameWebsite!!.setVisibility(View.VISIBLE)
+                        tvframeweb!!.setText(businessItem.busi_address)
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
-                } else if (index1 == 3+plus) {
+                } else if (index1 == 3) {
                     if (businessItem.busi_logo != "") {
-                        linearLogo!!.visibility = View.VISIBLE
-                        ivframelogo!!.visibility = View.VISIBLE
-                        frameLogo!!.visibility = View.VISIBLE
+                        linearLogo!!.setVisibility(View.VISIBLE)
+                        ivframelogo!!.setVisibility(View.VISIBLE)
+                        frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != "") {
-                        framePhone!!.visibility = View.VISIBLE
-                        linearPhone!!.visibility = View.VISIBLE
-                        ivcall!!.visibility = View.VISIBLE
-                        tvframephone!!.visibility = View.VISIBLE
-                        tvframephone!!.text = businessItem.busi_mobile
+                        framePhone!!.setVisibility(View.VISIBLE)
+                        linearPhone!!.setVisibility(View.VISIBLE)
+                        ivcall!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
                     if (businessItem.busi_email != "") {
-                        linearEmail!!.visibility = View.VISIBLE
-                        ivEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.visibility = View.VISIBLE
-                        frameEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.text = businessItem.busi_email
+                        linearEmail!!.setVisibility(View.VISIBLE)
+                        ivEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setVisibility(View.VISIBLE)
+                        frameEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                } else if (index1 == 4+plus) {
+                } else if (index1 == 4) {
                     if (businessItem.busi_name != "") {
-                        linearName!!.visibility = View.VISIBLE
-                        frameName!!.visibility = View.VISIBLE
-                        tvframename!!.visibility = View.VISIBLE
-                        tvframename!!.text = businessItem.busi_name
+                        linearName!!.setVisibility(View.VISIBLE)
+                        frameName!!.setVisibility(View.VISIBLE)
+                        tvframename!!.setVisibility(View.VISIBLE)
+                        tvframename!!.setText(businessItem.busi_name)
                         ivnameSelect!!.setImageResource(R.drawable.name_select)
                     }
                     if (businessItem.busi_logo != "") {
-                        linearLogo!!.visibility = View.VISIBLE
-                        ivframelogo!!.visibility = View.VISIBLE
-                        frameLogo!!.visibility = View.VISIBLE
+                        linearLogo!!.setVisibility(View.VISIBLE)
+                        ivframelogo!!.setVisibility(View.VISIBLE)
+                        frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
-                        framePhone!!.visibility = View.VISIBLE
-                        linearPhone!!.visibility = View.VISIBLE
-                        ivcall!!.visibility = View.VISIBLE
-                        tvframephone!!.visibility = View.VISIBLE
-                        tvframephone!!.text = businessItem.busi_mobile
+                        framePhone!!.setVisibility(View.VISIBLE)
+                        linearPhone!!.setVisibility(View.VISIBLE)
+                        ivcall!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
                     if (businessItem.busi_email != null && businessItem.busi_email != "") {
-                        linearEmail!!.visibility = View.VISIBLE
-                        ivEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.visibility = View.VISIBLE
-                        frameEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.text = businessItem.busi_email
+                        linearEmail!!.setVisibility(View.VISIBLE)
+                        ivEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setVisibility(View.VISIBLE)
+                        frameEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
                 } /*else if (index1 == 5) {
@@ -1717,76 +1226,76 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                     }
                 } */ else {
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
-                        linearLogo!!.visibility = View.VISIBLE
-                        ivframelogo!!.visibility = View.VISIBLE
-                        frameLogo!!.visibility = View.VISIBLE
+                        linearLogo!!.setVisibility(View.VISIBLE)
+                        ivframelogo!!.setVisibility(View.VISIBLE)
+                        frameLogo!!.setVisibility(View.VISIBLE)
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
-                        framePhone!!.visibility = View.VISIBLE
-                        linearPhone!!.visibility = View.VISIBLE
-                        ivcall!!.visibility = View.VISIBLE
-                        tvframephone!!.visibility = View.VISIBLE
-                        tvframephone!!.text = businessItem.busi_mobile
+                        framePhone!!.setVisibility(View.VISIBLE)
+                        linearPhone!!.setVisibility(View.VISIBLE)
+                        ivcall!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setVisibility(View.VISIBLE)
+                        tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
                     if (businessItem.busi_address != null && businessItem.busi_address != "") {
-                        linearAddress!!.visibility = View.VISIBLE
-                        ivLocation!!.visibility = View.VISIBLE
-                        tvframelocation!!.visibility = View.VISIBLE
-                        frameAddress!!.visibility = View.VISIBLE
-                        tvframelocation!!.text = businessItem.busi_address
+                        linearAddress!!.setVisibility(View.VISIBLE)
+                        ivLocation!!.setVisibility(View.VISIBLE)
+                        tvframelocation!!.setVisibility(View.VISIBLE)
+                        frameAddress!!.setVisibility(View.VISIBLE)
+                        tvframelocation!!.setText(businessItem.busi_address)
                         ivaddressselect!!.setImageResource(R.drawable.location_select)
                     }
                     if (businessItem.busi_email != null && businessItem.busi_email != "") {
-                        linearEmail!!.visibility = View.VISIBLE
-                        ivEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.visibility = View.VISIBLE
-                        frameEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.text = businessItem.busi_email
+                        linearEmail!!.setVisibility(View.VISIBLE)
+                        ivEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setVisibility(View.VISIBLE)
+                        frameEmail!!.setVisibility(View.VISIBLE)
+                        tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
                     if (businessItem.busi_website != null && businessItem.busi_website != "") {
-                        linearWebsite!!.visibility = View.VISIBLE
-                        ivWebsite!!.visibility = View.VISIBLE
-                        tvframeweb!!.visibility = View.VISIBLE
-                        frameWebsite!!.visibility = View.VISIBLE
-                        tvframeweb!!.text = businessItem.busi_website
+                        linearWebsite!!.setVisibility(View.VISIBLE)
+                        ivWebsite!!.setVisibility(View.VISIBLE)
+                        tvframeweb!!.setVisibility(View.VISIBLE)
+                        frameWebsite!!.setVisibility(View.VISIBLE)
+                        tvframeweb!!.setText(businessItem.busi_website)
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 }
             } catch (e: Exception) {
             }
             ivphoneclose!!.setOnClickListener(View.OnClickListener {
-                framePhone!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
+                framePhone!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
                 ivphoneselect!!.setImageResource(R.drawable.mobile_select)
             })
             ivphotoclose!!.setOnClickListener(View.OnClickListener {
-                frameLogo!!.visibility = View.GONE
-                ivphotoclose!!.visibility = View.GONE
+                frameLogo!!.setVisibility(View.GONE)
+                ivphotoclose!!.setVisibility(View.GONE)
                 ivlogoselect!!.setImageResource(R.drawable.logo_select)
             })
             ivemailclose!!.setOnClickListener(View.OnClickListener {
-                frameEmail!!.visibility = View.GONE
-                ivemailclose!!.visibility = View.GONE
+                frameEmail!!.setVisibility(View.GONE)
+                ivemailclose!!.setVisibility(View.GONE)
                 ivemailselect!!.setImageResource(R.drawable.email_select)
             })
             ivwebsiteclose!!.setOnClickListener(View.OnClickListener {
-                frameWebsite!!.visibility = View.GONE
-                ivwebsiteclose!!.visibility = View.GONE
+                frameWebsite!!.setVisibility(View.GONE)
+                ivwebsiteclose!!.setVisibility(View.GONE)
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
             })
             ivaddressclose!!.setOnClickListener(View.OnClickListener {
-                frameAddress!!.visibility = View.GONE
-                ivaddressclose!!.visibility = View.GONE
+                frameAddress!!.setVisibility(View.GONE)
+                ivaddressclose!!.setVisibility(View.GONE)
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
             })
             ivnameClose!!.setOnClickListener(View.OnClickListener {
-                frameName!!.visibility = View.GONE
-                ivnameClose!!.visibility = View.GONE
+                frameName!!.setVisibility(View.GONE)
+                ivnameClose!!.setVisibility(View.GONE)
                 ivnameSelect!!.setImageResource(R.drawable.name_select)
             })
         }
@@ -1796,38 +1305,148 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
 
 
+    var tvaction: TextView? = null
+    @SuppressLint("ResourceAsColor")
+    fun setActionbar() {
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+
+        val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
+        tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
+        tvtitle.text = resources.getString(R.string.txt_frame)
+        tvaction!!.text = resources.getString(R.string.txt_next)
+        tvaction!!.setOnClickListener {
+            linearAddress!!.setBackgroundResource(0)
+            linearEmail!!.setBackgroundResource(0)
+            linearPhone!!.setBackgroundResource(0)
+            linearAddress!!.setBackgroundResource(0)
+            linearLogo!!.setBackgroundResource(0)
+            linearName!!.setBackgroundResource(0)
+            ivaddressclose!!.visibility = View.GONE
+            ivphoneclose!!.visibility = View.GONE
+            ivphotoclose!!.visibility = View.GONE
+            ivwebsiteclose!!.visibility = View.GONE
+            ivaddressclose!!.visibility = View.GONE
+            ivnameClose!!.visibility = View.GONE
+
+            val handler = Handler()
+            handler.postDelayed({
+                mPhotoEditor!!.clearHelperBox()
+                showProgress(false)
+                layroot!!.setBackgroundColor(R.color.transparent)
+                layroot!!.isDrawingCacheEnabled = true
+                layroot!!.buildDrawingCache(true)
+                val savedBmp = Bitmap.createBitmap(
+                    layroot!!.drawingCache
+                )
+
+                layroot!!.isDrawingCacheEnabled = false
+                try {
+                    //Write file
+                    val filename = "video_bitmap.png"
+                    val stream = openFileOutput(filename, MODE_PRIVATE)
+                    savedBmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
 
-    override fun onItemClicked(`object`: Any?, index: Int) {
-        Log.d("index123", "" + index)
-        val photoItem=`object` as FramePreview
-            index1 = index
-            setFrameNEW(photoItem)
-            if (index < plus) {
-                if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
-                        "",
-                        ignoreCase = true
-                    )
-                ) {
-                    //setFrameNEW(photoItem);
-                    Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem.dynamic_images)
-                        .placeholder(
-                            R.drawable.placeholder_img
-                        ).error(R.drawable.placeholder_img).into(
-                            ivframebg!!
-                        )
+                    //Cleanup
+                    stream.close()
+                    savedBmp.recycle()
+                    getSharedPrefInstance().setValue("image_name","/data/data/com.app.festivalpost/files/$filename")
+                    download()
+                    //Pop intent
+
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            }
+            }, 1500)
         }
 
+    }
 
+    @SuppressLint("ResourceAsColor")
+    fun showAddTextDialog(text: String?, color: Int) {
+        val dialog = Dialog(
+            this,
+            R.style.DialogAnimation
+        )
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window!!.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT)
+        )
+        dialog.setContentView(R.layout.custom_add_text_dialog)
+        dialog.setCancelable(true)
+        dialog.setCanceledOnTouchOutside(true)
+        val edtext = dialog.findViewById<View>(R.id.edtext) as EditText
+        edtext.setTextColor(R.color.colorBlack)
+        edtext.setText(text)
+        val btndone = dialog.findViewById<View>(R.id.btndone) as TextView
+        val btncancel = dialog.findViewById<View>(R.id.btncancel) as TextView
+        btndone.setOnClickListener {
+            try {
+                if (edtext.text.toString() != "") {
+                    tempEnteredText = edtext.text.toString()
+                    if (mPhotoEditor != null && !tempEnteredText.equals("", ignoreCase = true)) {
+                        if (rootTextView == null) {
+                            rootTextView =
+                                mPhotoEditor!!.addText(null, tempEnteredText, Color.BLACK)
+                            i += 1
+                            selectedPosition = i - 1
+                            views.add(
+                                ViewData(
+                                    rootTextView,
+                                    edtext.text.toString(),
+                                    i,
+                                    Color.BLACK
+                                )
+                            )
+                        } else {
+                            for (p in views.indices) {
+                                if (p == selectedPosition) {
+                                    rootTextView = views[p].view
+                                    views[p] = ViewData(
+                                        views[p].view,
+                                        tempEnteredText,
+                                        views[p].position,
+                                        views[p].color
+                                    )
+                                    if (rootTextView != null) {
+                                        mPhotoEditor!!.editText(
+                                            rootTextView!!,
+                                            null,
+                                            views[p].text,
+                                            views[p].color
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: IndexOutOfBoundsException) {
+                Log.d("IndexArray", "" + e.message)
+            } catch (e: Exception) {
+                Log.d("IndexArray1", "" + e.message)
+            }
 
+            //rootTextView = null;
+            Global.hideSoftKeyboard(this, edtext)
+            emailValue = false
+            addressValue = false
+            phoneValue = false
+            websiteValue = false
+            nameValue = false
+            textallSelected = false
+            dialog.dismiss()
+        }
+        btncancel.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
 
-
-
-
-
-    private fun showPopupBusinessCategoryDialog(context: Context,text:String) {
+    private fun showPopupBusinessCategoryDialog(context: Context, text:String) {
         val layout = LayoutInflater.from(context).inflate(R.layout.layout_font_type, null)
         rcvFont = layout.findViewById<View>(R.id.rcvFontType) as RecyclerView
         val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as AppCompatImageView
@@ -1893,7 +1512,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
-        namecolor=color
+        namecolor=color;
         if (nameValue) {
             namecolor = color
             tvframename!!.setTextColor(namecolor)
@@ -1962,10 +1581,106 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 }
             }
         }
-        Log.d("ColorID", "Dialog id :$dialogId ColorId:$color")
+        Log.d("ColorID", "Dialog id :$dialogId ColorId:$color");
     }
 
     override fun onDialogDismissed(dialogId: Int) {
 
     }
+
+    override fun onItemClicked(`object`: Any?, index: Int) {
+        Log.d("index123", "" + index)
+        val photoItem=`object` as FramePreview
+        index1 = index
+        setFrameNEW(photoItem)
+        if (index >= 19) {
+            if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
+                    "",
+                    ignoreCase = true
+                )
+            ) {
+                //setFrameNEW(photoItem);
+                Glide.with(this).load(framePreview!!.dynamic_images)
+                    .placeholder(
+                        R.drawable.placeholder_img
+                    ).error(R.drawable.placeholder_img).into(
+                        ivframebg!!
+                    )
+            }
+        }
+    }
+
+    private val videoName: String
+        private get() = "video_demo.mp4"
+
+    private fun download() {
+        val DB = DownloadVideo()
+        DB.execute()
+    }
+
+    private inner class DownloadVideo : AsyncTask<String?, String?, String?>() {
+        override fun onPreExecute() {
+            super.onPreExecute()
+            showProgress(true)
+        }
+
+        override fun doInBackground(vararg p0: String?): String? {
+            val vidurl = video_path
+            downloadfile(vidurl!!)
+            return null
+        }
+
+        override fun onPostExecute(s: String?) {
+            showProgress(false)
+            super.onPostExecute(s)
+        }
+    }
+
+
+    private fun downloadfile(vidurl: String) {
+        try {
+            val url = URL(vidurl)
+            val c = url.openConnection() as HttpURLConnection
+            c.requestMethod = "GET"
+            c.doOutput = true
+            c.connect()
+            val videoname = "/data/data/com.app.festivalpost/files/$videoName"
+            val videoname1 = videoName
+            getSharedPrefInstance().setValue("video_name",videoname)
+            val file: File
+            var fileOutputStream: FileOutputStream? = null
+            try {
+                file = filesDir
+                fileOutputStream = openFileOutput(videoName, MODE_PRIVATE) //MODE PRIVATE
+                val `in` = c.inputStream
+                val buffer = ByteArray(1024)
+                var len1 = 0
+                while (`in`.read(buffer).also { len1 = it } > 0) {
+                    fileOutputStream.write(buffer, 0, len1)
+                }
+                fileOutputStream.close()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            } finally {
+                try {
+                    fileOutputStream!!.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+
+            val intent = Intent(this, VideoCreateActivity::class.java)
+            intent.putExtra("video_item", video_item)
+            startActivity(intent)
+            finish()
+
+
+        } catch (e: IOException) {
+            Log.d("Error....", e.toString())
+            showProgress(false)
+        }
+    }
+
+
 }
+

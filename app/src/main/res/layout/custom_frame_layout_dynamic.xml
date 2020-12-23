@@ -9,7 +9,7 @@
         android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:layout_height="@dimen/square_size"
+        android:layout_height="wrap_content"
         android:orientation="vertical" />
 
     <FrameLayout

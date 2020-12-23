@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
+import com.app.festivalpost.models.CustomCategoryPostItem
 import com.app.festivalpost.models.FrameContentItemDetail
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
@@ -15,10 +16,10 @@ import java.util.*
 
 class ChoosePhotoFrameAdapter(
     var context: Context,
-    var originaldata: ArrayList<FrameContentItemDetail>
+    var originaldata: ArrayList<CustomCategoryPostItem>
 ) : RecyclerView.Adapter<ChoosePhotoFrameAdapter.ViewHolder>() {
     var searchCount = 0
-    var onItemClickListener: OnItemClickListener
+    var onItemClickListener: OnItemClickListener = context as OnItemClickListener
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var view: View? = null
         view = LayoutInflater.from(parent.context).inflate(R.layout.custom_choose_photo_item, null)
@@ -37,7 +38,7 @@ class ChoosePhotoFrameAdapter(
                     R.drawable.placeholder_img
                 ).into(holder.ivphoto)
         }
-        if (photoItem.isIs_selected) {
+        if (photoItem.is_selected!!) {
             holder.viewselected.visibility = View.VISIBLE
         } else {
             holder.viewselected.visibility = View.GONE
@@ -49,11 +50,7 @@ class ChoosePhotoFrameAdapter(
             onItemClickListener.onItemClicked(p, index)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
-                if (i != index) {
-                    pp.setIs_selected(false)
-                } else {
-                    pp.setIs_selected(true)
-                }
+                pp.is_selected = i == index
                 originaldata[i] = pp
             }
             notifyDataSetChanged()
@@ -65,18 +62,14 @@ class ChoosePhotoFrameAdapter(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        public val layMain: LinearLayout
-        public  val ivphoto: RoundedImageView
-        public  val viewselected: View
+        val layMain: LinearLayout = itemView.findViewById<View>(R.id.lay_main) as LinearLayout
+        val ivphoto: RoundedImageView =
+            itemView.findViewById<View>(R.id.ivphoto) as RoundedImageView
+        val viewselected: View
 
         init {
-            layMain = itemView.findViewById<View>(R.id.lay_main) as LinearLayout
-            ivphoto = itemView.findViewById<View>(R.id.ivphoto) as RoundedImageView
             viewselected = itemView.findViewById(R.id.viewselected) as View
         }
     }
 
-    init {
-        onItemClickListener = context as OnItemClickListener
-    }
 }

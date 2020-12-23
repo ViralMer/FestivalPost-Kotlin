@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@drawable/edit_text_border"
+    android:layout_margin="@dimen/_5sdp"
     android:layout_height="wrap_content"
 
     >
 
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_10sdp"
-        android:background="@drawable/edit_text_border"
+
         android:orientation="horizontal">
 
         <TextView
@@ -26,7 +28,6 @@
             android:fontFamily="@font/sf_ui_medium"
             android:textSize="@dimen/_16ssp"
             android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_weight="10"
             android:text="@string/hint_business_category"
             android:textColor="@color/colorBlack"
             android:padding="@dimen/_10sdp" />
@@ -38,10 +39,13 @@
             android:tint="@color/teal_500"
             android:src="@drawable/check_mark"
             android:gravity="center"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_gravity="center"
             app:tint="@color/teal_500"
             tools:ignore="UseAppTint" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

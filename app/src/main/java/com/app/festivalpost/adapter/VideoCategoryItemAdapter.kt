@@ -40,8 +40,9 @@ class VideoCategoryItemAdapter(var context: Context, var originaldata: ArrayList
 
         holder.itemView.onClick {
             context.launchActivity<VideoDetailActivity> {
-                putExtra("category_id",videoPageItem.id)
-                putExtra("category_name",videoPageItem.video_name)
+                putExtra("video_id",videoPageItem.id)
+                putExtra("video_name",videoPageItem.video_name)
+                putExtra("video_date",videoPageItem.video_date)
             }
         }
 

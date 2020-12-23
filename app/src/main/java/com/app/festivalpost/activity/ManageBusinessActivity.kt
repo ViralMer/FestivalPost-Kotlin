@@ -5,44 +5,28 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
-import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.BusinessItemAdapter
-import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
-import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
-import com.app.festivalpost.globals.Global
-import com.app.festivalpost.models.BusinessItem
 import com.app.festivalpost.models.CurrentBusinessItem
-import com.app.festivalpost.models.UserItem
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.show
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_account.*
-import org.json.JSONObject
 import java.util.*
 
-class ManageBusinessActivity : AppBaseActivity() {
-    var apiManager: ApiManager? = null
-    var status = false
-    var message = ""
+class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
     private var lvdata: RecyclerView? = null
     var businessItemArrayList = arrayListOf<CurrentBusinessItem?>()
     var businessItemAdapter:BusinessItemAdapter?=null
@@ -71,9 +55,9 @@ class ManageBusinessActivity : AppBaseActivity() {
             getRestApis().getAllMyBusiness(), onApiSuccess = {
                 showProgress(false)
                 lvdata!!.show()
-                businessItemArrayList=it.data
-                businessItemAdapter= BusinessItemAdapter(this,businessItemArrayList)
-                lvdata!!.adapter=businessItemAdapter
+                businessItemArrayList = it.data
+                businessItemAdapter = BusinessItemAdapter(this, businessItemArrayList)
+                lvdata!!.adapter = businessItemAdapter
 
 
             }, onApiError = {
@@ -191,6 +175,27 @@ class ManageBusinessActivity : AppBaseActivity() {
         }
     }
 
+    var currentBusinessID = ""
+    override fun onItemClicked(`object`: Any?, index: Int) {
+        val b = `object` as CurrentBusinessItem?
+        currentBusinessID = "" + b!!.busi_id
+        showProgress(true)
+        callApi(
+
+            getRestApis().markascurrentbusiness(currentBusinessID), onApiSuccess = {
+                showProgress(false)
+                if (it.status!!)
+                {
+                    b.is_current_business=1
+                }
+            }, onApiError = {
+                showProgress(false)
+
+            }, onNetworkError = {
+                showProgress(false)
+
+            })
+    }
 
 
 }

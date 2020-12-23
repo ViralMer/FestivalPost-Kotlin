@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.activity.OnItemClickListener
 
@@ -26,6 +27,18 @@ class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<Categ
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photoItem = originaldata[position]
+
+
+        if (photoItem!!.image_type==0)
+        {
+            holder.tvplan.text=context.getString(R.string.free)
+
+        }
+        else{
+
+            holder.tvplan.text=context.getString(R.string.preimum)
+            holder.tvplan.setBackgroundResource(R.drawable.premium_bg)
+        }
 
 
 
@@ -68,6 +81,7 @@ class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<Categ
         val layMain: LinearLayout = itemView.findViewById<View>(R.id.lay_main) as LinearLayout
         val ivphoto: RoundedImageView = itemView.findViewById<View>(R.id.ivphoto) as RoundedImageView
         val viewselected: View = itemView.findViewById(R.id.viewselected) as View
+        val tvplan: TextView = itemView.findViewById(R.id.tvPlan) as TextView
 
     }
 

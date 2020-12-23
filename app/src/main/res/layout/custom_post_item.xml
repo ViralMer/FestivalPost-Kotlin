@@ -12,10 +12,11 @@
         android:id="@+id/tvname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|left"
+        android:layout_gravity="center"
         android:gravity="center"
         android:padding="10dp"
         android:text="Manthan"
+
         android:visibility="visible"
         android:textColor="@color/colorBlack"
         android:textSize="15dp" />

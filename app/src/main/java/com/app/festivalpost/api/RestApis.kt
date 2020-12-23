@@ -32,6 +32,16 @@ interface RestApis {
     @POST("getmyprofile")
     fun getProfile(@Field("token")token:String= getApiToken()):Call<ProfileResponse>
 
+
+    @FormUrlEncoded
+    @POST("getCustomCategoryPosts")
+    fun getCustomCategoryPosts(@Field("token")token:String= getApiToken()):Call<CustomCategoryResponse>
+
+
+    @FormUrlEncoded
+    @POST("getLanguageCustomeCategoryPost")
+    fun getLanguageCustomeCategoryPost(@Field("catid")catid:String,@Field("token")token:String= getApiToken(),@Field("languageid")languageid:String= "0"):Call<CustomCategoryPostResponse>
+
     @FormUrlEncoded
     @POST("addbusiness")
     fun addBusiness(@Field("token")token:String= getApiToken()):Call<AddBussiensResponse>
@@ -57,6 +67,11 @@ interface RestApis {
     @FormUrlEncoded
     @POST("getBusinessCategory")
     fun getAllBusinessCategory(@Field("token")token:String= getApiToken()):Call<BusinessCategoryResponse>
+
+
+    @FormUrlEncoded
+    @POST("markascurrentbusiness")
+    fun markascurrentbusiness(@Field("business_id")business_id:String= getApiToken(),@Field("token")token:String= getApiToken()):Call<BusinessItemResponse>
 
 
 

@@ -13,11 +13,12 @@ import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.models.FramePreview
 import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.getCustomFrameList
 import java.util.*
 
 class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<FramePreview>) :
     RecyclerView.Adapter<FrameChooseAdapter.ViewHolder>() {
-    var onItemClickListener: OnItemClickListener
+    var onItemClickListener: OnItemClickListener = context as OnItemClickListener
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var view: View? = null
         view = LayoutInflater.from(parent.context)
@@ -27,7 +28,7 @@ class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<Frame
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val framePreview = originaldata[position]
-        if (position >= 19) {
+        if (position < getCustomFrameList().size) {
             Glide.with(context).load(framePreview.dynamic_images)
                 .placeholder(R.drawable.placeholder_img).error(
                     R.drawable.placeholder_img
@@ -85,11 +86,8 @@ class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<Frame
     }
 
     fun getURLForResource(resourceId: Int): String {
-        return Uri.parse("android.resource://" + R::class.java.getPackage().name + "/" + resourceId)
+        return Uri.parse("android.resource://" + R::class.java.getPackage()!!.name + "/" + resourceId)
             .toString()
     }
 
-    init {
-        onItemClickListener = context as OnItemClickListener
-    }
 }

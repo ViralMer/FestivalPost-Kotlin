@@ -13,10 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.app.festivalpost.activity.CustomFrameActivity
 import com.app.festivalpost.R
+import com.app.festivalpost.models.CustomCategoryItem
 import com.app.festivalpost.models.FrameContentListItem
+import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.launchActivity
+import com.emegamart.lelys.utils.extensions.onClick
+import com.makeramen.roundedimageview.RoundedImageView
 import java.util.*
 
-class CustomFrameAdapter(var context: Context, var originaldata: ArrayList<FrameContentListItem>?) :
+class CustomFrameAdapter(var context: Context, var originaldata: ArrayList<CustomCategoryItem>?) :
     RecyclerView.Adapter<CustomFrameAdapter.ViewHolder>() {
     var searchCount = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,33 +32,16 @@ class CustomFrameAdapter(var context: Context, var originaldata: ArrayList<Frame
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val frameContentItem = originaldata!![position]
-        Log.d("imageNameimageName", "" + frameContentItem.name + "Size" + originaldata!!.size)
         holder.tvTitle.text = frameContentItem.name
-        if (frameContentItem.contentItemArrayList!!.size > 3) {
-            holder.imageView.visibility = View.VISIBLE
-        } else {
-            holder.imageView.visibility = View.GONE
+        Glide.with(context).load(frameContentItem.custom_image).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(holder.ivphoto)
+
+        holder.itemView.onClick {
+            context.launchActivity<CustomFrameActivity> {
+                putExtra("custom_category_id",frameContentItem.custom_cateogry_id)
+            }
         }
-        val customFestivalListAdapter = CustomFrameListAdapter(
-            context,
-            frameContentItem.contentItemArrayList,
-            frameContentItem.name!!
-        )
-        val linearLayoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        holder.ivphoto.layoutManager = linearLayoutManager
-        holder.ivphoto.adapter = customFestivalListAdapter
-        holder.imageView.setOnClickListener { holder.ivphoto.smoothScrollBy(300, 0) }
-        holder.tvviewall.tag = position
-        holder.tvviewall.setOnClickListener { view ->
-            val index = view.tag as Int
-            val f = originaldata!![index]
-            val detailact = Intent(context, CustomFrameActivity::class.java)
-            detailact.putExtra("custom_category_name", f.name)
-            detailact.putExtra("object_post", f)
-            detailact.putExtra("index", 0)
-            context.startActivity(detailact)
-        }
+
+
     }
 
     override fun getItemCount(): Int {
@@ -61,10 +49,9 @@ class CustomFrameAdapter(var context: Context, var originaldata: ArrayList<Frame
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val ivphoto: RecyclerView = view.findViewById<View>(R.id.rvdatanew) as RecyclerView
+        val ivphoto: RoundedImageView = view.findViewById<View>(R.id.ivphoto) as RoundedImageView
         val tvTitle: TextView = view.findViewById<View>(R.id.tvTitle) as TextView
-        val tvviewall: TextView = view.findViewById<View>(R.id.tvviewall) as TextView
-        val imageView: ImageView = view.findViewById<View>(R.id.ivNext) as ImageView
+
 
     }
 }
