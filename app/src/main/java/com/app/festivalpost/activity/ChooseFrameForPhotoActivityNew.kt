@@ -460,10 +460,26 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
-                phoneLine!!.visibility=View.VISIBLE
+                if (index1==0+plus)
+                {
+                    ivEmail!!.visibility = View.GONE
+                    phoneLine!!.visibility = View.GONE
+                }
+                else if (index1 == 1+plus) {
+                    phoneLine!!.setVisibility(View.VISIBLE);
+                    ivEmail!!.visibility = View.VISIBLE
+
+                } else if (index1 == 2+plus) {
+                    phoneLine!!.setVisibility(View.VISIBLE);
+                    ivEmail!!.visibility = View.VISIBLE
+
+                } else {
+                    phoneLine!!.visibility = View.GONE
+                    ivEmail!!.visibility = View.VISIBLE
+                }
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.VISIBLE
-                ivEmail!!.visibility = View.VISIBLE
+
                 tvframeemail!!.visibility = View.VISIBLE
                 frameEmail!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -491,6 +507,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivemailclose!!.visibility = View.GONE
                 ivnameClose!!.visibility = View.GONE
             } else {
+
                 ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                 linearPhone!!.visibility = View.VISIBLE
                 linearPhone!!.setBackgroundResource(0)
@@ -524,8 +541,35 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
-                websiteLine!!.visibility = View.VISIBLE
-                ivWebsite!!.visibility = View.VISIBLE
+                if (index1==0+plus)
+                {
+                    ivWebsite!!.visibility = View.GONE
+                    websiteLine!!.hide()
+                }
+                else if (index1 == 1+plus) {
+
+                    websiteLine!!.setVisibility(View.VISIBLE);
+                    ivWebsite!!.visibility = View.VISIBLE
+                } else if (index1 == 2+plus) {
+
+                    websiteLine!!.setVisibility(View.VISIBLE);
+                    ivWebsite!!.visibility = View.VISIBLE
+                }
+                else if (index1 == 3+plus) {
+
+                    websiteLine!!.visibility = View.GONE
+                    ivWebsite!!.visibility = View.GONE
+                }
+                else if (index1 == 3+plus) {
+
+                    websiteLine!!.visibility = View.GONE
+                    ivWebsite!!.visibility = View.GONE
+                }
+                else {
+                    websiteLine!!.visibility = View.GONE
+                    ivWebsite!!.visibility = View.VISIBLE
+                }
+                //ivWebsite!!.visibility = View.VISIBLE
                 tvframeweb!!.visibility = View.VISIBLE
                 frameWebsite!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -553,10 +597,17 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-
+                if (index1==0+plus)
+                {
+                    linearAddress!!.hide()
+                    ivLocation!!.visibility = View.GONE
+                }
+                else{
+                    ivLocation!!.visibility = View.VISIBLE
+                }
                 linearAddress!!.setBackgroundResource(0)
                 linearAddress!!.visibility = View.VISIBLE
-                ivLocation!!.visibility = View.VISIBLE
+
                 tvframelocation!!.visibility = View.VISIBLE
                 frameAddress!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -1276,10 +1327,11 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
         if (businessItem != null) {
             try {
-                linearWebsite!!.hide()
-                linearEmail!!.hide()
-                linearAddress!!.hide()
+
                 if (index1 == 0+plus) {
+                    linearWebsite!!.hide()
+                    linearEmail!!.hide()
+                    linearAddress!!.hide()
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.visibility = View.VISIBLE
                         frameName!!.visibility = View.VISIBLE

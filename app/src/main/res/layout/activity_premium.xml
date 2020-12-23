@@ -9,7 +9,6 @@
     >
 
     <androidx.appcompat.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -53,7 +52,7 @@
 
 
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -61,14 +60,17 @@
 
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/planviewPager"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_50sdp"
+                    android:layout_width="wrap_content"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingLeft="@dimen/spacing_xxlarge"
+                    android:paddingRight="@dimen/spacing_xxlarge"
+                    android:layout_height="wrap_content"
+
                     />
 
-            </LinearLayout>
+            </RelativeLayout>
 
 
 

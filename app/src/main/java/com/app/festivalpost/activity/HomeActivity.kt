@@ -3,6 +3,7 @@ package com.app.festivalpost.activity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -11,13 +12,20 @@ import com.app.festivalpost.R
 import com.app.festivalpost.fragment.AccountFragment
 import com.app.festivalpost.fragment.CustomFragment
 import com.app.festivalpost.fragment.HomeFragment
+import com.app.festivalpost.fragment.HomeFragment.Companion.alertDialog
 import com.app.festivalpost.fragment.VideoFragment
+import com.app.festivalpost.models.CurrentBusinessItem
+import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.extensions.callApi
+import com.app.festivalpost.utils.extensions.getRestApis
+import com.emegamart.lelys.utils.extensions.get
 import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.put
 import com.emegamart.lelys.utils.extensions.show
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_home.*
 
-class HomeActivity : AppBaseActivity() {
+class HomeActivity : AppBaseActivity(),OnItemClickListener {
     var tvaction: TextView? = null
     var tvtitle: TextView? = null
     var mBottomNavigationView: BottomNavigationView? = null
@@ -71,8 +79,7 @@ class HomeActivity : AppBaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        toolbar.show()
-        //tvtitle!!.text = resources.getString(R.string.txt_home)
+         //tvtitle!!.text = resources.getString(R.string.txt_home)
     }
 
 
@@ -81,7 +88,7 @@ class HomeActivity : AppBaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        toolbar.show()
+
 
     }
 
@@ -90,7 +97,7 @@ class HomeActivity : AppBaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        toolbar.hide()
+
 
     }
 
@@ -99,7 +106,7 @@ class HomeActivity : AppBaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        toolbar.show()
+
 
     }
 
@@ -117,5 +124,31 @@ class HomeActivity : AppBaseActivity() {
 
     companion object {
         var instance: HomeActivity? = null
+    }
+
+    var currentBusinessID = ""
+    override fun onItemClicked(`object`: Any?, index: Int) {
+        val b = `object` as CurrentBusinessItem?
+        currentBusinessID = "" + b!!.busi_id
+        put(b, Constants.SharedPref.KEY_CURRENT_BUSINESS)
+        val b1=get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+        Log.d("dsdsd",""+b1!!.busi_logo)
+        showProgress(true)
+        callApi(
+
+            getRestApis().markascurrentbusiness(currentBusinessID), onApiSuccess = {
+                showProgress(false)
+                if (it.status!!)
+                {
+                    b.is_current_business=1
+                }
+                alertDialog!!.dismiss()
+            }, onApiError = {
+                showProgress(false)
+
+            }, onNetworkError = {
+                showProgress(false)
+
+            })
     }
 }

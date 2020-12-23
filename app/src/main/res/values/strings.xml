@@ -587,5 +587,6 @@
     <string name="hint_choose_font">Choose your Font</string>
     <string name="free">Free</string>
     <string name="preimum">Premium</string>
+    <string name="hint_manage_business">Manage Business</string>
 
 </resources>

@@ -6,21 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +43,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.ArrayList
+import java.util.*
 
 class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnItemClickListener,ColorPickerDialogListener {
     private var photoEditorView: PhotoEditorView? = null
@@ -73,6 +70,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
 
     var index1: Int? = 0
     var i = 0
+    var plus = 0
     var backpressed = true
     var storeValue: String? = null
     var framePreview: FramePreview? = null
@@ -162,13 +160,10 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         llframe = findViewById<View>(R.id.llframe) as LinearLayout
         recyclerView = findViewById(R.id.rvdata)
         ivvideo!!.setSource(video_path)
-        try {
-            framePreviewArrayList = Global.newFrames
-        } catch (e: OutOfMemoryError) {
-        } catch (e: Exception) {
-        }
+
         var frameListItems1 = arrayListOf<FrameListItem1>()
         frameListItems1 = getCustomFrameList()
+        plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
                 FramePreview(
@@ -176,6 +171,11 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                     frameListItems1[i].frame_url
                 )
             )
+        }
+        try {
+            framePreviewArrayList.addAll(Global.newFrames)
+        } catch (e: OutOfMemoryError) {
+        } catch (e: Exception) {
         }
 
 
@@ -212,7 +212,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             showPopupBusinessCategoryDialog(this,storeValue!!)
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
-            if (ivlogoselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
+            if (ivlogoselect!!.drawable.constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
                 ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
                 linearLogo!!.setBackgroundResource(0)
                 linearLogo!!.visibility = View.GONE
@@ -239,12 +239,13 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             }
         })
         ivemailselect!!.setOnClickListener(View.OnClickListener {
-            if (ivemailselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.email_select).constantState) {
+            if (ivemailselect!!.drawable.constantState === resources.getDrawable(R.drawable.email_select).constantState) {
                 ivemailselect!!.setImageResource(R.drawable.email_deselect)
 
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.GONE
                 ivEmail!!.visibility = View.GONE
+                phoneLine!!.visibility = View.GONE
                 tvframeemail!!.visibility = View.GONE
                 frameEmail!!.visibility = View.GONE
                 ivphotoclose!!.visibility = View.GONE
@@ -255,10 +256,26 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
+                if (index1==0+plus)
+                {
+                    ivEmail!!.visibility = View.GONE
+                    phoneLine!!.visibility = View.GONE
+                }
+                else if (index1 == 1+plus) {
+                    phoneLine!!.setVisibility(View.VISIBLE);
+                    ivEmail!!.visibility = View.VISIBLE
 
+                } else if (index1 == 2+plus) {
+                    phoneLine!!.setVisibility(View.VISIBLE);
+                    ivEmail!!.visibility = View.VISIBLE
+
+                } else {
+                    phoneLine!!.visibility = View.GONE
+                    ivEmail!!.visibility = View.VISIBLE
+                }
                 linearEmail!!.setBackgroundResource(0)
                 linearEmail!!.visibility = View.VISIBLE
-                ivEmail!!.visibility = View.VISIBLE
+
                 tvframeemail!!.visibility = View.VISIBLE
                 frameEmail!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -270,7 +287,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             }
         })
         ivphoneselect!!.setOnClickListener(View.OnClickListener {
-            if (ivphoneselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
+            if (ivphoneselect!!.drawable.constantState === resources.getDrawable(R.drawable.mobile_select).constantState) {
                 ivphoneselect!!.setImageResource(R.drawable.mobile_deselect)
 
                 linearPhone!!.visibility = View.GONE
@@ -278,7 +295,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivcall!!.visibility = View.GONE
                 tvframephone!!.visibility = View.GONE
                 framePhone!!.visibility = View.GONE
-                phoneLine!!.visibility = View.GONE
+
                 ivphotoclose!!.visibility = View.GONE
                 ivaddressclose!!.visibility = View.GONE
                 ivphoneclose!!.visibility = View.GONE
@@ -286,12 +303,11 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivemailclose!!.visibility = View.GONE
                 ivnameClose!!.visibility = View.GONE
             } else {
-                ivphoneselect!!.setImageResource(R.drawable.mobile_select)
 
+                ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                 linearPhone!!.visibility = View.VISIBLE
                 linearPhone!!.setBackgroundResource(0)
                 ivcall!!.visibility = View.VISIBLE
-                phoneLine!!.visibility = View.VISIBLE
                 tvframephone!!.visibility = View.VISIBLE
                 framePhone!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -303,9 +319,8 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             }
         })
         ivwebsiteselect!!.setOnClickListener(View.OnClickListener {
-            if (ivwebsiteselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.website_select).constantState) {
+            if (ivwebsiteselect!!.drawable.constantState === resources.getDrawable(R.drawable.website_select).constantState) {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_deselect)
-
                 linearWebsite!!.visibility = View.GONE
                 linearWebsite!!.setBackgroundResource(0)
                 ivWebsite!!.visibility = View.GONE
@@ -320,11 +335,37 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
-
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
-                websiteLine!!.visibility = View.VISIBLE
-                ivWebsite!!.visibility = View.VISIBLE
+                if (index1==0+plus)
+                {
+                    ivWebsite!!.visibility = View.GONE
+                    websiteLine!!.hide()
+                }
+                else if (index1 == 1+plus) {
+
+                    websiteLine!!.setVisibility(View.VISIBLE);
+                    ivWebsite!!.visibility = View.VISIBLE
+                } else if (index1 == 2+plus) {
+
+                    websiteLine!!.setVisibility(View.VISIBLE);
+                    ivWebsite!!.visibility = View.VISIBLE
+                }
+                else if (index1 == 3+plus) {
+
+                    websiteLine!!.visibility = View.GONE
+                    ivWebsite!!.visibility = View.GONE
+                }
+                else if (index1 == 3+plus) {
+
+                    websiteLine!!.visibility = View.GONE
+                    ivWebsite!!.visibility = View.GONE
+                }
+                else {
+                    websiteLine!!.visibility = View.GONE
+                    ivWebsite!!.visibility = View.VISIBLE
+                }
+                //ivWebsite!!.visibility = View.VISIBLE
                 tvframeweb!!.visibility = View.VISIBLE
                 frameWebsite!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -336,7 +377,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             }
         })
         ivaddressselect!!.setOnClickListener(View.OnClickListener {
-            if (ivaddressselect!!.getDrawable().constantState === resources.getDrawable(R.drawable.location_select).constantState) {
+            if (ivaddressselect!!.drawable.constantState === resources.getDrawable(R.drawable.location_select).constantState) {
                 ivaddressselect!!.setImageResource(R.drawable.location_deselect)
 
                 linearAddress!!.visibility = View.GONE
@@ -352,10 +393,17 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-
+                if (index1==0+plus)
+                {
+                    linearAddress!!.hide()
+                    ivLocation!!.visibility = View.GONE
+                }
+                else{
+                    ivLocation!!.visibility = View.VISIBLE
+                }
                 linearAddress!!.setBackgroundResource(0)
                 linearAddress!!.visibility = View.VISIBLE
-                ivLocation!!.visibility = View.VISIBLE
+
                 tvframelocation!!.visibility = View.VISIBLE
                 frameAddress!!.visibility = View.VISIBLE
                 ivphotoclose!!.visibility = View.GONE
@@ -367,7 +415,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             }
         })
         ivnameSelect!!.setOnClickListener(View.OnClickListener {
-            if (ivnameSelect!!.getDrawable().constantState === resources.getDrawable(R.drawable.name_select).constantState) {
+            if (ivnameSelect!!.drawable.constantState === resources.getDrawable(R.drawable.name_select).constantState) {
                 ivnameSelect!!.setImageResource(R.drawable.name_deselect)
 
                 frameName!!.visibility = View.GONE
@@ -788,7 +836,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
 
         if (businessItem != null) {
             try {
-                if (index1 == 0) {
+                if (index1 == 0 + plus) {
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.setVisibility(View.VISIBLE)
                         frameName!!.setVisibility(View.VISIBLE)
@@ -812,7 +860,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                         tvframephone!!.setText(businessItem.busi_mobile)
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                } else if (index1 == 2) {
+                } else if (index1 == 2 + plus) {
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.setVisibility(View.VISIBLE)
                         frameName!!.setVisibility(View.VISIBLE)
@@ -860,7 +908,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                         tvframeweb!!.setText(businessItem.busi_address)
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
-                } else if (index1 == 3) {
+                } else if (index1 == 3 + plus) {
                     if (businessItem.busi_logo != "") {
                         linearLogo!!.setVisibility(View.VISIBLE)
                         ivframelogo!!.setVisibility(View.VISIBLE)
@@ -885,7 +933,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                         tvframeemail!!.setText(businessItem.busi_email)
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                } else if (index1 == 4) {
+                } else if (index1 == 4 + plus) {
                     if (businessItem.busi_name != "") {
                         linearName!!.setVisibility(View.VISIBLE)
                         frameName!!.setVisibility(View.VISIBLE)

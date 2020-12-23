@@ -35,6 +35,7 @@ import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.onClick
+import com.emegamart.lelys.utils.extensions.onPageSelected
 import com.emegamart.lelys.utils.extensions.toast
 import com.google.gson.Gson
 import org.json.JSONObject
@@ -78,6 +79,17 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         viewPager = findViewById(R.id.planviewPager)
         viewPager!!.adapter = PagerAdapter()
 
+        viewPager.apply {
+            this!!.clipChildren = false
+            pageMargin = resources.getDimensionPixelOffset(R.dimen.spacing_small)
+            offscreenPageLimit = 3
+            setPageTransformer(false, CarouselEffectTransformer(this@PremiumActivity))
+            offscreenPageLimit = 0
+
+            onPageSelected { position: Int ->
+                val animFadeIn = android.view.animation.AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in)
+            }
+        }
 
 
 

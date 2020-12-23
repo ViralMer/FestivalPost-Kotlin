@@ -1,6 +1,7 @@
 package com.app.festivalpost.fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -12,15 +13,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.LoginActivity
-import com.app.festivalpost.adapter.CategoryItemAdapter
-import com.app.festivalpost.adapter.CustomFestivalItemAdapter
+import com.app.festivalpost.activity.OnItemClickListener
+import com.app.festivalpost.activity.PremiumActivity
+import com.app.festivalpost.adapter.*
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
@@ -53,6 +59,15 @@ class HomeFragment : BaseFragment() {
     private var viewPager: ViewPager? = null
     private var rcvCustomFestival: RecyclerView? = null
     private var rcvCustomCategory: RecyclerView? = null
+    private var imageLogo: AppCompatImageView? = null
+    private var tvPremium: TextView? = null
+
+    var businessDialogItemAdapter: BusinessDialogItemAdapter? = null
+    var currentBusinessItemList = arrayListOf<CurrentBusinessItem?>()
+    var rcvBusinessItem: RecyclerView? = null
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,8 +85,25 @@ class HomeFragment : BaseFragment() {
         rcvCustomFestival = view.findViewById(R.id.customFestival)
 
         viewPager = view.findViewById(R.id.sliderviewPager)
+        tvPremium = view.findViewById(R.id.tvPremium)
+        imageLogo = view.findViewById(R.id.imageLogo)
 
 
+        if (getSharedPrefInstance().getBooleanValue(IS_PREMIUM))
+        {
+            tvPremium!!.hide()
+        }
+        else{
+            tvPremium!!.show()
+        }
+
+        tvPremium!!.onClick {
+            activity!!.launchActivity<PremiumActivity> {  }
+        }
+
+        imageLogo!!.onClick {
+            loadManageBusinessAllData()
+        }
 
         val mainHandler = Handler(getMainLooper())
         val runnable= Runnable { loadHomePageData() }
@@ -259,6 +291,50 @@ class HomeFragment : BaseFragment() {
                 hideProgress()
             })
     }
+
+    private fun loadManageBusinessAllData()
+    {
+        showProgress()
+        callApi(
+            getRestApis().getAllMyBusiness(), onApiSuccess = {
+                hideProgress()
+                currentBusinessItemList=it.data
+                showBusinessCategoryDialog(activity!!)
+
+
+
+            }, onApiError = {
+                hideProgress()
+
+
+            }, onNetworkError = {
+                hideProgress()
+
+
+            })
+    }
+
+    private fun showBusinessCategoryDialog(context: Context) {
+        val layout = LayoutInflater.from(context).inflate(R.layout.layout_business_dialog, null)
+        rcvBusinessItem = layout.findViewById<View>(R.id.rcvManageBusiness) as RecyclerView
+
+        businessDialogItemAdapter= BusinessDialogItemAdapter(activity!!,currentBusinessItemList)
+        rcvBusinessItem!!.adapter=businessDialogItemAdapter
+        val builder = AlertDialog.Builder(context)
+            .setView(layout)
+            .setCancelable(true)
+        alertDialog = builder.create()
+        alertDialog!!.show()
+
+
+
+    }
+
+    companion object{
+        var alertDialog: AlertDialog? = null
+    }
+
+
 
 
 }
