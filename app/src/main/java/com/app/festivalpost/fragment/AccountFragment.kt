@@ -43,6 +43,8 @@ class AccountFragment : BaseFragment() {
         val tvlogout=view.findViewById<View>(R.id.tvLogout) as TextView
         val tvusername=view.findViewById<View>(R.id.tvUserName) as TextView
         val tvusernaumber=view.findViewById<View>(R.id.tvUserNumber) as TextView
+        val iv_edit=view.findViewById<View>(R.id.iv_edit) as AppCompatImageView
+
 
 
         linearShareus.onClick {
@@ -121,6 +123,8 @@ class AccountFragment : BaseFragment() {
 
             }
         }
+
+        iv_edit.onClick { activity!!.launchActivity<EditProfileActivity> {  } }
 
         linearMyPost.onClick {
             activity!!.launchActivity<MyPostActivity> {

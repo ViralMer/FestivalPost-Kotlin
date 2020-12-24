@@ -174,6 +174,7 @@ class RegisterActivity : AppBaseActivity() {
                     {
                         getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME,it.data[i]!!.name)
                         getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, it.data[i]!!.mobile)
+                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_EMAIL, it.data[i]!!.email)
                     }
 
 

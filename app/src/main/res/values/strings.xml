@@ -589,5 +589,6 @@
     <string name="preimum">Premium</string>
     <string name="hint_manage_business">Manage Business</string>
     <string name="lbl_festival">Festivals</string>
+    <string name="lbl_edit_profile">Edit Profile</string>
 
 </resources>
