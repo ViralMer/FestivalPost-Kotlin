@@ -32,6 +32,10 @@ interface RestApis {
     @POST("getmyprofile")
     fun getProfile(@Field("token")token:String= getApiToken()):Call<ProfileResponse>
 
+    @FormUrlEncoded
+    @POST("editmyprofile")
+    fun editmyprofile(@Field("name")name:String, @Field("email")email:String,@Field("token")token:String= getApiToken()):Call<ProfileResponse>
+
 
     @FormUrlEncoded
     @POST("getCustomCategoryPosts")

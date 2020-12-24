@@ -33,14 +33,11 @@ class AccountFragment : BaseFragment() {
         val tvlogout=view.findViewById<View>(R.id.tvLogout) as TextView
         val tvusername=view.findViewById<View>(R.id.tvUserName) as TextView
         val tvusernaumber=view.findViewById<View>(R.id.tvUserNumber) as TextView
+        val iv_edit=view.findViewById<View>(R.id.iv_edit) as AppCompatImageView
 
 
 
-        for (i in 0 until getUserData().size )
-        {
-            getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME, getUserData()[i].name)
-            getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, getUserData()[i].mobile)
-        }
+
 
         tvusername.text = getUserName()
         tvusernaumber.text = getMobileNumber()
@@ -53,6 +50,8 @@ class AccountFragment : BaseFragment() {
 
             }
         }
+
+        iv_edit.onClick { activity!!.launchActivity<EditProfileActivity> {  } }
 
         linearMyPost.onClick {
             activity!!.launchActivity<MyPostActivity> {
