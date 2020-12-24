@@ -38,10 +38,12 @@ import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.onPageSelected
 import com.emegamart.lelys.utils.extensions.toast
 import com.google.gson.Gson
+import com.razorpay.Checkout
+import com.razorpay.PaymentResultListener
 import org.json.JSONObject
 import java.util.*
 
-class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandler {
+class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandler,PaymentResultListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -78,6 +80,9 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         planItemArrayList!!.add(PlanItemDetails("1","Basic Plan","1299"))
         viewPager = findViewById(R.id.planviewPager)
         viewPager!!.adapter = PagerAdapter()
+
+
+        Checkout.preload(this)
 
         viewPager.apply {
             this!!.clipChildren = false
@@ -326,6 +331,36 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
 
     override fun onBackPressed() {
         super.onBackPressed()
+    }
+
+    override fun onPaymentSuccess(p0: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onPaymentError(p0: Int, p1: String?) {
+        Log.d(this.localClassName, p0.toString())
+        //toast(response!!)
+        Log.d(this.localClassName, p1.toString())
+    }
+
+    private fun handleRazorPay() {
+        val checkout = Checkout()
+        checkout.setImage(R.mipmap.ic_launcher_new)
+
+        try {
+            val options = JSONObject()
+            options.put("name", "Iqonic")
+            options.put("description", "")
+            options.put("currency", "INR")
+            //options.put("order_id", orderData?.id)
+            options.put("amount", (1000 * 100).toDouble())
+            options.put("image", "https://rzp-mobile.s3.amazonaws.com/images/rzp.png")
+
+            Log.d(this.localClassName, options.toString())
+            checkout.open(this, options)
+        } catch (e: Exception) {
+            Log.e(this.localClassName, "Error in starting Razorpay Checkout", e)
+        }
     }
 
 
