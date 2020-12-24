@@ -18,11 +18,11 @@ import com.app.festivalpost.adapter.BusinessItemAdapter
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.models.CurrentBusinessItem
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.hide
-import com.emegamart.lelys.utils.extensions.onClick
-import com.emegamart.lelys.utils.extensions.show
+import com.emegamart.lelys.utils.extensions.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_account.*
 import java.util.*
 
@@ -183,6 +183,8 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
         callApi(
 
             getRestApis().markascurrentbusiness(currentBusinessID), onApiSuccess = {
+                getSharedPrefInstance().setValue(Constants.SharedPref.KEY_FRAME_LIST, Gson().toJson(it.frameList))
+                put(it.current_business, Constants.SharedPref.KEY_CURRENT_BUSINESS)
                 showProgress(false)
                 if (it.status!!)
                 {

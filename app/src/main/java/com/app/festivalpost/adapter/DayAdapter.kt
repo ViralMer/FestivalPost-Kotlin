@@ -14,13 +14,14 @@ import com.app.festivalpost.R
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.FestivalItem
+import com.app.festivalpost.models.HomePageItem
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DayAdapter(var context: Context, var originaldata: ArrayList<FestivalItem>) :
+class DayAdapter(var context: Context, var originaldata: ArrayList<HomePageItem?>) :
     RecyclerView.Adapter<DayAdapter.ViewHolder>() {
     var searchCount = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,18 +32,18 @@ class DayAdapter(var context: Context, var originaldata: ArrayList<FestivalItem>
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val festivalItem = originaldata[position]
-        if (!festivalItem.festImage.equals(
+        if (!festivalItem!!.fest_image.equals(
                 "",
                 ignoreCase = true
             )
         ) {
-            Glide.with(context).load(festivalItem.festImage).placeholder(R.drawable.placeholder_img)
+            Glide.with(context).load(festivalItem.fest_image).placeholder(R.drawable.placeholder_img)
                 .error(
                     R.drawable.placeholder_img
                 ).into(holder.ivphoto)
         }
-        holder.tvname.text = festivalItem.festDate
-        holder.tvdate.text = festivalItem.festDay
+        holder.tvname.text = festivalItem.fest_date
+        holder.tvdate.text = festivalItem.fest_day
         holder.layMain.tag = position
         holder.layMain.setOnClickListener { view ->
             val c = Calendar.getInstance()
@@ -50,14 +51,14 @@ class DayAdapter(var context: Context, var originaldata: ArrayList<FestivalItem>
             val date = Global.getPreference(Constant.PREF_CURRRENT_DATE, "")
             val df = SimpleDateFormat("dd-MM-yyyy")
             val formattedDate = df.format(c.time)
-            val day = getCountOfDays(date, festivalItem.festDate)
+            val day = getCountOfDays(date, festivalItem.fest_date)
             Log.d("CountOfDayas", "" + day)
             /* if (day <= 1 && day>=0) {
     */
             val index = view.tag as Int
             val f = originaldata[index]
             val detailact = Intent(context, ChoosePhotoActivity::class.java)
-            Global.storePreference("category_name", f.festName)
+            Global.storePreference("category_name", f!!.fest_name)
             detailact.putExtra("object", f)
             context.startActivity(detailact)
             /*                  }

@@ -23,11 +23,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.LoginActivity
-import com.app.festivalpost.activity.OnItemClickListener
-import com.app.festivalpost.activity.PremiumActivity
+import com.app.festivalpost.activity.*
 import com.app.festivalpost.adapter.*
 import com.app.festivalpost.models.*
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
@@ -59,8 +58,8 @@ class HomeFragment : BaseFragment() {
     private var viewPager: ViewPager? = null
     private var rcvCustomFestival: RecyclerView? = null
     private var rcvCustomCategory: RecyclerView? = null
-    private var imageLogo: AppCompatImageView? = null
     private var tvPremium: TextView? = null
+    private var tvCustom: TextView? = null
 
     var businessDialogItemAdapter: BusinessDialogItemAdapter? = null
     var currentBusinessItemList = arrayListOf<CurrentBusinessItem?>()
@@ -86,23 +85,22 @@ class HomeFragment : BaseFragment() {
 
         viewPager = view.findViewById(R.id.sliderviewPager)
         tvPremium = view.findViewById(R.id.tvPremium)
-        imageLogo = view.findViewById(R.id.imageLogo)
+        tvCustom = view.findViewById(R.id.tvCustom)
+        imageLogo1 = view.findViewById(R.id.imageLogo)
 
-
-        if (getSharedPrefInstance().getBooleanValue(IS_PREMIUM))
-        {
-            tvPremium!!.hide()
-        }
-        else{
-            tvPremium!!.show()
-        }
 
         tvPremium!!.onClick {
             activity!!.launchActivity<PremiumActivity> {  }
         }
 
         imageLogo!!.onClick {
-            loadManageBusinessAllData()
+            activity!!.launchActivity<ManageBusinessActivity> {
+
+            }
+        }
+
+        tvCustom!!.onClick {
+            activity!!.launchActivity<ChooseFrameActivityNew> {  }
         }
 
         val mainHandler = Handler(getMainLooper())
@@ -185,17 +183,30 @@ class HomeFragment : BaseFragment() {
                     put(res.current_business,KEY_CURRENT_BUSINESS)
 
 
+                    val currentBusinessItem=get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+                    if (currentBusinessItem!!.plan_name=="Free")
+                    {
+                        tvPremium!!.show()
+                    }
+                    else{
+                        tvPremium!!.hide()
+                    }
+
+                    Glide.with(this).load(currentBusinessItem!!.busi_logo).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(imageLogo!!)
+
+
+
+
+
+
                     Log.d("GetApiToken", getApiToken() + "    122"+  res.frameList.size + " 123"+ getCustomFrameList().size)
+
 
                     sliderArrayList = res.slider
                     festivalArrayList = res.festival
                     categoryArrayList = res.cateogry
 
-                    rcvCustomFestival!!.layoutManager = LinearLayoutManager(
-                        activity,
-                        LinearLayoutManager.HORIZONTAL,
-                        true
-                    )
+                    rcvCustomFestival!!.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL,false)
                     val customFestivalAdapter =
                         CustomFestivalItemAdapter(activity!!, festivalArrayList)
                     rcvCustomFestival!!.adapter = customFestivalAdapter
@@ -328,10 +339,26 @@ class HomeFragment : BaseFragment() {
 
 
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val currentBusinessItem=get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+        Glide.with(this).load(currentBusinessItem!!.busi_logo).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(
+            imageLogo1!!)
+        if (currentBusinessItem.plan_name=="Free")
+        {
+            tvPremium!!.show()
+        }
+        else{
+            tvPremium!!.hide()
+        }
     }
 
     companion object{
         var alertDialog: AlertDialog? = null
+        var imageLogo1: AppCompatImageView? = null
     }
 
 

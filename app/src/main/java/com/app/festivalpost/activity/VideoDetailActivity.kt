@@ -223,6 +223,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         tvaction.setOnClickListener {
             launchActivity<ChooseVideoFrameActivity> {
                 putExtra("video_path",video_path)
+                putExtra("video_type",video_type)
             }
         }
     }
@@ -237,6 +238,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
 
 
     var video_path = ""
+    var video_type = ""
     override fun onItemClicked(`object`: Any?, index: Int) {
         videoListItem = `object` as VideoLanguageItem
         //setVideoData(videoListItem)
@@ -245,6 +247,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                 ignoreCase = true
             )
         ) {
+            video_type=videoListItem!!.type!!
             video_path = videoListItem!!.video!!
             videoView!!.setSource(video_path)
             frameLayout1!!.visibility = View.VISIBLE
@@ -395,6 +398,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                 videoListItemArrayList=it.data
                 //new PlayVideo().execute();
                 videoListItem = videoListItemArrayList[0]
+                videoListItem!!.isIs_selected=true
                 //setVideoData(videoListItem)
                 if (videoListItem!!.image != null && !videoListItem!!.image.equals(
                         "",
@@ -409,9 +413,9 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             }, onApiError = {
                 showProgress(false)
 
-            }, onNetworkError = {
-                showProgress(false)
 
+                            }, onNetworkError = {
+                showProgress(false)
             })
     }
 }

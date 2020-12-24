@@ -115,6 +115,7 @@ private fun performLogin() {
                         getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, it.data[i]!!.mobile)
                     }
                 }
+                finish()
 
 
             },

@@ -25,6 +25,15 @@ data class HomePageResponse(
     val message: String? = null,
 )
 
+
+data class DaysPageResponse(
+    val festival: ArrayList<HomePageItem?>,
+    val status: Boolean? = null,
+    val message: String? = null,
+)
+
+
+
 data class VideoPageResponse(
     val festival: ArrayList<VideoPageItem?>,
     val category: ArrayList<VideoPageItem?>,
@@ -42,7 +51,7 @@ data class HomePageItem(
     val current_date: String? = null,
     val fest_day: String? = null,
     val fest_is_delete: String? = null
-)
+) : Serializable
 
 data class VideoPageItem(
     val id: String? = null,
@@ -193,6 +202,8 @@ data class BusinessItemResponse(
     val data: ArrayList<CurrentBusinessItem?>,
     val status: Boolean? = false,
     val message: String? = null,
+    val frameList: ArrayList<FrameListItem1>,
+    val current_business: CurrentBusinessItem,
 
     )
 

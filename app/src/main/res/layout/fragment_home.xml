@@ -24,6 +24,7 @@
             android:orientation="horizontal"
             android:layout_gravity="start"
             android:gravity="start"
+            android:layout_weight="10"
             android:layout_marginLeft="@dimen/_10sdp"
             android:padding="@dimen/_2sdp">
 
@@ -48,7 +49,6 @@
                     android:layout_height="@dimen/_30sdp"
                     android:gravity="center|start"
                     android:layout_gravity="start|center"
-                    android:background="@color/gray"
                     />
 
             </LinearLayout>
@@ -70,6 +70,21 @@
         </LinearLayout>
 
 
+        <TextView
+            android:id="@+id/tvCustom"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="center|start"
+            android:layout_gravity="start|center"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/bg_gradient"
+            android:text="@string/txt_custom"
+            android:textStyle="bold"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textSize="14dp" />
 
     </LinearLayout>
 
@@ -191,7 +206,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone"
+                    android:visibility="visible"
+                    android:layout_marginTop="@dimen/_5sdp"
+
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
                     android:layout_marginTop="@dimen/_5sdp"
 
                     >
@@ -202,8 +226,22 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="start"
+                        android:layout_weight="10"
                         android:text="@string/head_festivals" />
 
+                    <TextView
+                        android:id="@+id/tvviewall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_5sdp"
+                        android:background="@drawable/bg_gradient"
+                        android:text="@string/view_all"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="12dp"
+
+                        android:layout_margin="@dimen/_4sdp"
+                        android:textStyle="bold" />
+                    </LinearLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/customFestival"
                         android:layout_marginTop="@dimen/_5sdp"

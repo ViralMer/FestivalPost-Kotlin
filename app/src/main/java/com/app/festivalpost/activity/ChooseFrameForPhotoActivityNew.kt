@@ -1,6 +1,5 @@
 package com.app.festivalpost.activity
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
@@ -11,10 +10,8 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.DisplayMetrics
@@ -23,9 +20,7 @@ import android.util.TypedValue
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,19 +29,12 @@ import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.PickerBuilder.onImageReceivedListener
 import com.app.festivalpost.activity.PickerBuilder.onPermissionRefusedListener
+import com.app.festivalpost.adapter.FontTypeAdapter
 import com.app.festivalpost.adapter.FrameChooseAdapter
-import com.app.festivalpost.apifunctions.ApiEndpoints
-import com.app.festivalpost.apifunctions.ApiManager
-import com.app.festivalpost.apifunctions.ApiResponseListener
-import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.*
 import com.app.festivalpost.photoeditor.OnPhotoEditorListener
 import com.app.festivalpost.photoeditor.PhotoEditor
-import com.app.festivalpost.activity.OnItemClickListener
-import com.app.festivalpost.adapter.BusinessCategoryItemAdapter
-import com.app.festivalpost.adapter.FontTypeAdapter
-import com.app.festivalpost.models.*
-
 import com.app.festivalpost.photoeditor.PhotoEditorView
 import com.app.festivalpost.photoeditor.ViewType
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
@@ -54,17 +42,8 @@ import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import org.json.JSONObject
-import top.defaults.colorpicker.ColorPickerView
 import java.io.IOException
 import java.util.*
 
@@ -100,6 +79,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
     private var storeValue: String? = ""
     var i = 0
     var backpressed = true
+    var background = false
     var ivframelogo: ImageView? = null
     var ivframebg: ImageView? = null
     var ivcall: ImageView? = null
@@ -244,6 +224,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             ivnameClose!!.visibility = View.GONE
             emailValue = false
             phoneValue = false
+            background =false
             websiteValue = false
             addressValue = false
             textallSelected = true
@@ -258,7 +239,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
         var frameListItems1 = arrayListOf<FrameListItem1>()
         frameListItems1 = getCustomFrameList()
-        Log.d("framesize",""+ getCustomFrameList().size)
+        Log.d("framesize", "" + getCustomFrameList().size)
         plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
@@ -268,7 +249,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 )
             )
         }
-        Log.d("FrmaeSize",""+framePreviewArrayList.size)
+        Log.d("FrmaeSize", "" + framePreviewArrayList.size)
         try {
             framePreviewArrayList.addAll(Global.newFrames)
         } catch (e: OutOfMemoryError) {
@@ -295,7 +276,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 )
             ) {
                 //setFrameNEW(photoItem);
-                Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem!!.dynamic_images)
+                Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem.dynamic_images)
                     .placeholder(
                         R.drawable.placeholder_img
                     ).error(R.drawable.placeholder_img).into(
@@ -305,9 +286,15 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
         }
         else{
-            setFrameNEW(framePreviewArrayList[0])
+            try {
+                setFrameNEW(framePreviewArrayList[0])
+            }catch (e: OutOfMemoryError) {
+            alertDialog!!.show()
+        } catch (e: Exception) {
+        }
 
         }
+        framePreviewArrayList[0].isIs_selected=true
 
         mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
@@ -358,7 +345,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             ) {
             }
         })
-        findViewById<View>(R.id.linearbackgroundcolor).setOnClickListener {
+        /*findViewById<View>(R.id.linearbackgroundcolor).setOnClickListener {
             val dialog = Dialog(
                 this@ChooseFrameForPhotoActivityNew,
                 R.style.DialogAnimation
@@ -392,13 +379,17 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 dialog.dismiss()
             }
             dialog.show()
-        }
+        }*/
 
         linearAddText!!.setOnClickListener {
             rootTextView = null
             showAddTextDialog("", selected_color)
         }
         linearTextcolor!!.setOnClickListener {
+            ColorPickerDialog.newBuilder().show(this)
+        }
+        linearbackgroundcolor!!.setOnClickListener {
+            background=true;
             ColorPickerDialog.newBuilder().show(this)
         }
         linearfonttype!!.setOnClickListener {
@@ -413,7 +404,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             fontTypeList.add(FontTypeList("fonts/armopb.ttf"))
             fontTypeList.add(FontTypeList("fonts/corbel.ttf"))
             storeValue="Festival Post"
-            showPopupBusinessCategoryDialog(this,storeValue!!)
+            showPopupBusinessCategoryDialog(this, storeValue!!)
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
             if (ivlogoselect!!.drawable.constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
@@ -460,16 +451,14 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     ivEmail!!.visibility = View.GONE
                     phoneLine!!.visibility = View.GONE
-                }
-                else if (index1 == 1+plus) {
+                } else if (index1 == 1 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
@@ -541,31 +530,26 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     ivWebsite!!.visibility = View.GONE
                     websiteLine!!.hide()
-                }
-                else if (index1 == 1+plus) {
+                } else if (index1 == 1 + plus) {
 
                     websiteLine!!.setVisibility(View.VISIBLE);
                     ivWebsite!!.visibility = View.VISIBLE
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2 + plus) {
 
                     websiteLine!!.setVisibility(View.VISIBLE);
                     ivWebsite!!.visibility = View.VISIBLE
-                }
-                else if (index1 == 3+plus) {
+                } else if (index1 == 3 + plus) {
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
-                }
-                else if (index1 == 3+plus) {
+                } else if (index1 == 3 + plus) {
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
-                }
-                else {
+                } else {
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.VISIBLE
                 }
@@ -597,12 +581,10 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     linearAddress!!.hide()
                     ivLocation!!.visibility = View.GONE
-                }
-                else{
+                } else {
                     ivLocation!!.visibility = View.VISIBLE
                 }
                 linearAddress!!.setBackgroundResource(0)
@@ -726,8 +708,10 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             emailValue = false
             addressValue = false
             phoneValue = false
+            background =false
             websiteValue = false
             nameValue = false
+            background =false
             textallSelected = false
             dialog.dismiss()
         }
@@ -826,7 +810,26 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             ivnameClose!!.visibility = View.GONE
             mPhotoEditor!!.clearHelperBox()
             if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
-                llwatermark!!.visibility = View.VISIBLE
+                if (image_type!! == 0) {
+                    llwatermark!!.visibility = View.VISIBLE
+                }else{
+                    AlertDialog.Builder(this)
+                        .setTitle("Sorry!!")
+                        .setMessage("Please buy premium plan and save image.")
+                        .setPositiveButton("Buy Premium") { dialog, which ->
+                            val intent = Intent(
+                                this,
+                                PremiumActivity::class.java
+                            )
+                            /*val businessItem: BusinessItem = Global.getCurrentBusinessNEW()
+                            intent.putExtra("videoData", businessItem)
+                            startActivity(intent)*/
+                        }
+                        .setNegativeButton(
+                            "Cancel"
+                        ) { dialog, _ -> dialog.dismiss() }
+                        .show()
+                }
             } else {
                 llwatermark!!.visibility = View.GONE
             }
@@ -834,13 +837,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             val handler = Handler()
             handler.postDelayed({
                 Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
-                val params=ivframebg!!.layoutParams
-                params.width=width
-                params.height=width
+                val params = ivframebg!!.layoutParams
+                params.width = width
+                params.height = width
                 layroot!!.isDrawingCacheEnabled = true
                 layroot!!.buildDrawingCache(true)
                 val savedBmp = Bitmap.createBitmap(
-                    layroot!!.drawingCache,0,0,width,width
+                    layroot!!.drawingCache, 0, 0, width, width
                 )
                 layroot!!.isDrawingCacheEnabled = false
                 try {
@@ -1045,6 +1048,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = false
+                background =false
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
@@ -1067,6 +1071,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivemailclose!!.visibility = View.GONE
                 ivnameClose!!.visibility = View.GONE
                 emailValue = false
+                background =false
                 phoneValue = false
                 websiteValue = false
                 addressValue = false
@@ -1097,6 +1102,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background =false
             }
 
             override fun onLongClick() {}
@@ -1120,6 +1126,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
+                background =false
                 nameValue = false
             }
         })
@@ -1144,6 +1151,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
+                background =false
                 nameValue = false
             }
 
@@ -1165,6 +1173,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
                 emailValue = true
                 phoneValue = false
+                background =false
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
@@ -1192,6 +1201,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 phoneValue = false
                 websiteValue = true
                 addressValue = false
+                background =false
                 textallSelected = false
                 nameValue = false
             }
@@ -1215,6 +1225,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 emailValue = false
                 phoneValue = false
                 websiteValue = true
+                background =false
                 addressValue = false
                 textallSelected = false
                 nameValue = false
@@ -1235,6 +1246,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 addressValue = true
                 textallSelected = false
                 nameValue = false
+                background =false
                 linearLogo!!.setBackgroundResource(0)
                 frameAddress!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.VISIBLE
@@ -1259,6 +1271,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = true
                 textallSelected = false
+                background =false
                 nameValue = false
                 frameAddress!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.VISIBLE
@@ -1281,6 +1294,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearLogo!!.setBackgroundResource(0)
                 emailValue = false
                 phoneValue = false
+                background =false
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
@@ -1308,6 +1322,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
+                background =false
                 nameValue = true
                 frameName!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.GONE
@@ -1879,11 +1894,11 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
 
 
-    private fun showPopupBusinessCategoryDialog(context: Context,text:String) {
+    private fun showPopupBusinessCategoryDialog(context: Context, text: String) {
         val layout = LayoutInflater.from(context).inflate(R.layout.layout_font_type, null)
         rcvFont = layout.findViewById<View>(R.id.rcvFontType) as RecyclerView
         val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as AppCompatImageView
-        fontTypeAdapter= FontTypeAdapter(this,fontTypeList,text)
+        fontTypeAdapter= FontTypeAdapter(this, fontTypeList, text)
         rcvFont!!.adapter=fontTypeAdapter
         val builder = AlertDialog.Builder(context)
             .setView(layout)
@@ -1901,7 +1916,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         alertDialog!!.dismiss()
         val fontItem1=`object` as FontTypeList
         val path=fontItem1.name
-        Log.d("Abcd",""+path)
+        Log.d("Abcd", "" + path)
         if (nameValue) {
             nametypeface = Typeface.createFromAsset(assets, path)
             tvframename!!.typeface = nametypeface
@@ -1950,18 +1965,22 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             namecolor = color
             tvframename!!.setTextColor(namecolor)
         } else if (textallSelected) {
-            allselectedcolor = color
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                ivcall!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                ivEmail!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                ivWebsite!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                ivLocation!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+            if (background) {
+                layroot!!.setBackgroundColor(color)
+            } else {
+                allselectedcolor = color
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    ivcall!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    ivEmail!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    ivWebsite!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    ivLocation!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                }
+                tvframephone!!.setTextColor(allselectedcolor)
+                tvframeemail!!.setTextColor(allselectedcolor)
+                tvframeweb!!.setTextColor(allselectedcolor)
+                tvframelocation!!.setTextColor(allselectedcolor)
+                tvframename!!.setTextColor(allselectedcolor)
             }
-            tvframephone!!.setTextColor(allselectedcolor)
-            tvframeemail!!.setTextColor(allselectedcolor)
-            tvframeweb!!.setTextColor(allselectedcolor)
-            tvframelocation!!.setTextColor(allselectedcolor)
-            tvframename!!.setTextColor(allselectedcolor)
         } else if (phoneValue) {
             phoneselected_color = color
             tvframephone!!.setTextColor(phoneselected_color)

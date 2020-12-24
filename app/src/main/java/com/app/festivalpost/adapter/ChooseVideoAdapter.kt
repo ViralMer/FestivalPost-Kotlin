@@ -33,6 +33,16 @@ class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<Video
                 ).into(holder.ivphoto)
         }
 
+        if (photoItem!!.type=="0")
+        {
+            holder.tvplan.text=context.getString(R.string.free)
+            holder.tvplan.setBackgroundResource(R.drawable.bg_gradient)
+        }
+        else{
+            holder.tvplan.text=context.getString(R.string.preimum)
+            holder.tvplan.setBackgroundResource(R.drawable.premium_bg)
+        }
+
        if (photoItem.isIs_selected) {
             holder.viewselected.visibility = View.VISIBLE
         } else {
@@ -60,6 +70,7 @@ class ChooseVideoAdapter(var context: Context, var originaldata: ArrayList<Video
         val layMain: LinearLayout
         val ivphoto: RoundedImageView
         val viewselected: View
+        val tvplan: TextView = itemView.findViewById(R.id.tvPlan) as TextView
 
 
         init {

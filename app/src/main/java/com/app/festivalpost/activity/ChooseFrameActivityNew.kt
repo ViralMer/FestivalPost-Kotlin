@@ -14,27 +14,18 @@ import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.util.Log
-import android.util.TypedValue
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
-
-import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.SaveAndShareActivity
 import com.app.festivalpost.adapter.FontTypeAdapter
 import com.app.festivalpost.adapter.FrameChooseAdapter
-import com.app.festivalpost.apifunctions.ApiEndpoints
-import com.app.festivalpost.apifunctions.ApiManager
-import com.app.festivalpost.apifunctions.ApiResponseListener
-import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
 import com.app.festivalpost.photoeditor.OnPhotoEditorListener
@@ -44,14 +35,13 @@ import com.app.festivalpost.photoeditor.ViewType
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.getError
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.getFilePath
 import com.github.dhaval2404.imagepicker.ImagePicker.Companion.with
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.karumi.dexter.Dexter
@@ -59,7 +49,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import org.json.JSONObject
 import top.defaults.colorpicker.ColorPickerView
 import java.util.*
 
@@ -141,6 +130,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
     var websiteValue = false
     var addressValue = false
     var textallSelected = false
+    var background = false
     var nameValue = false
     var phoneTypeface: Typeface? = null
     var emailTypeface: Typeface? = null
@@ -198,7 +188,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         ivlogoselect = findViewById(R.id.ivLogoSelected)
         ivnameSelect = findViewById(R.id.ivNameSelected)
         recyclerView = findViewById(R.id.rvdata)
-        if (Global.getPreference(Constant.PREF_CURRENT_BUSINESS, "") == "") {
+        if (get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS) == null) {
             val intent = Intent(this, AddBusinessActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -232,6 +222,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             ivnameClose!!.visibility = View.GONE
             emailValue = false
             phoneValue = false
+            background = false
             websiteValue = false
             addressValue = false
             textallSelected = true
@@ -275,8 +266,8 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             LinearLayoutManager(this@ChooseFrameActivityNew, LinearLayoutManager.HORIZONTAL, false)
         recyclerView!!.layoutManager = horizontalLayoutManagaer
         recyclerView!!.adapter = frameChooseAdapter
+        framePreviewArrayList[0].isIs_selected = true
         setFrameNEW(framePreviewArrayList[0])
-
         mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
                 rootView: View?,
@@ -334,7 +325,9 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             showAddTextDialog("", selected_color)
         }
         linearTextcolor!!.setOnClickListener { ColorPickerDialog.newBuilder().show(this) }
-        linearbackgroundcolor!!.setOnClickListener { ColorPickerDialog.newBuilder().show(this) }
+        linearbackgroundcolor!!.setOnClickListener {
+            background = true;ColorPickerDialog.newBuilder().show(this)
+        }
         linearfonttype!!.setOnClickListener {
             fontTypeList.clear()
             fontTypeList.add(FontTypeList("fonts/museomoderno_regular.ttf"))
@@ -345,6 +338,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             storeValue = "Festival Post"
             showPopupBusinessCategoryDialog(this, storeValue!!)
         }
+
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
             if (ivlogoselect!!.drawable.constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
                 ivlogoselect!!.setImageResource(R.drawable.logo_deselect)
@@ -390,16 +384,14 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     ivEmail!!.visibility = View.GONE
                     phoneLine!!.visibility = View.GONE
-                }
-                else if (index1 == 1+plus) {
+                } else if (index1 == 1 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
@@ -471,31 +463,26 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     ivWebsite!!.visibility = View.GONE
                     websiteLine!!.hide()
-                }
-                else if (index1 == 1+plus) {
+                } else if (index1 == 1 + plus) {
 
                     websiteLine!!.setVisibility(View.VISIBLE);
                     ivWebsite!!.visibility = View.VISIBLE
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2 + plus) {
 
                     websiteLine!!.setVisibility(View.VISIBLE);
                     ivWebsite!!.visibility = View.VISIBLE
-                }
-                else if (index1 == 3+plus) {
+                } else if (index1 == 3 + plus) {
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
-                }
-                else if (index1 == 3+plus) {
+                } else if (index1 == 3 + plus) {
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
-                }
-                else {
+                } else {
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.VISIBLE
                 }
@@ -527,12 +514,10 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     linearAddress!!.hide()
                     ivLocation!!.visibility = View.GONE
-                }
-                else{
+                } else {
                     ivLocation!!.visibility = View.VISIBLE
                 }
                 linearAddress!!.setBackgroundResource(0)
@@ -688,6 +673,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background = false
             }
 
             override fun onLongClick() {}
@@ -711,6 +697,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 nameValue = false
                 textallSelected = false
+                background = false
             }
         })
         phonemultiTouchListenerNew.setOnGestureControl(object :
@@ -735,6 +722,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background = false
             }
 
             override fun onLongClick() {}
@@ -758,6 +746,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background = false
             }
         })
         emailmultiTouchListenerNew.setOnGestureControl(object :
@@ -782,6 +771,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background = false
             }
 
             override fun onLongClick() {}
@@ -805,6 +795,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background = false
             }
         })
         websitemultiTouchListenerNew.setOnGestureControl(object :
@@ -829,6 +820,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background = false
             }
 
             override fun onLongClick() {}
@@ -852,6 +844,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = false
+                background = false
             }
         })
         addressmultiTouchListenerNew.setOnGestureControl(object :
@@ -868,6 +861,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = true
                 textallSelected = false
                 nameValue = false
+                background = false
                 linearLogo!!.setBackgroundResource(0)
                 frameAddress!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.VISIBLE
@@ -892,6 +886,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = true
                 textallSelected = false
                 nameValue = false
+                background = false
                 frameAddress!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.VISIBLE
                 ivphoneclose!!.visibility = View.GONE
@@ -916,6 +911,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = true
+                background = false
                 frameName!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.GONE
                 ivphoneclose!!.visibility = View.GONE
@@ -939,6 +935,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 addressValue = false
                 textallSelected = false
                 nameValue = true
+                background = false
                 frameName!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.GONE
                 ivphoneclose!!.visibility = View.GONE
@@ -957,7 +954,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
         if (businessItem != null) {
             try {
-                if (index1 == 0+plus) {
+                if (index1 == 0 + plus) {
                     linearWebsite!!.hide()
                     linearEmail!!.hide()
                     linearAddress!!.hide()
@@ -984,7 +981,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                         tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2 + plus) {
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.visibility = View.VISIBLE
                         frameName!!.visibility = View.VISIBLE
@@ -1032,7 +1029,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                         tvframeweb!!.text = businessItem.busi_address
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
-                } else if (index1 == 3+plus) {
+                } else if (index1 == 3 + plus) {
                     linearAddress!!.hide()
                     linearWebsite!!.hide()
                     if (businessItem.busi_logo != "") {
@@ -1059,7 +1056,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                         tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                } else if (index1 == 4+plus) {
+                } else if (index1 == 4 + plus) {
                     linearWebsite!!.hide()
                     linearAddress!!.hide()
                     if (businessItem.busi_name != "") {
@@ -1696,17 +1693,14 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                     if (report.areAllPermissionsGranted()) {
                         val builder = AlertDialog.Builder(this@ChooseFrameActivityNew)
                         builder.setTitle("Choose")
-                        val animals = arrayOf("Camera", "Gallery")
+                        val animals = arrayOf("Gallery")
                         builder.setItems(animals) { dialog, which ->
                             when (which) {
                                 0 -> with(this@ChooseFrameActivityNew)
-                                    .cameraOnly()
-                                    .crop()
-                                    .start()
-                                1 -> with(this@ChooseFrameActivityNew)
                                     .galleryOnly()
                                     .crop()
                                     .start()
+
                             }
                         }
                         val dialog = builder.create()
@@ -1846,18 +1840,22 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             namecolor = color
             tvframename!!.setTextColor(namecolor)
         } else if (textallSelected) {
-            allselectedcolor = color
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ivcall!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                ivEmail!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                ivWebsite!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
-                ivLocation!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+            if (background) {
+                layroot!!.setBackgroundColor(color)
+            } else {
+                allselectedcolor = color
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ivcall!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    ivEmail!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    ivWebsite!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    ivLocation!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                }
+                tvframephone!!.setTextColor(allselectedcolor)
+                tvframeemail!!.setTextColor(allselectedcolor)
+                tvframeweb!!.setTextColor(allselectedcolor)
+                tvframelocation!!.setTextColor(allselectedcolor)
+                tvframename!!.setTextColor(allselectedcolor)
             }
-            tvframephone!!.setTextColor(allselectedcolor)
-            tvframeemail!!.setTextColor(allselectedcolor)
-            tvframeweb!!.setTextColor(allselectedcolor)
-            tvframelocation!!.setTextColor(allselectedcolor)
-            tvframename!!.setTextColor(allselectedcolor)
         } else if (phoneValue) {
             phoneselected_color = color
             tvframephone!!.setTextColor(phoneselected_color)
@@ -1909,7 +1907,9 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                     }
                 }
             }
+
         }
+
         Log.d("ColorID", "Dialog id :$dialogId ColorId:$color")
     }
 

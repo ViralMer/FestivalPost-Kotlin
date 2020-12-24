@@ -73,6 +73,10 @@ interface RestApis {
     @POST("markascurrentbusiness")
     fun markascurrentbusiness(@Field("business_id")business_id:String= getApiToken(),@Field("token")token:String= getApiToken()):Call<BusinessItemResponse>
 
+    @FormUrlEncoded
+    @POST("getdays")
+    fun getdays(@Field("date")date:String,@Field("token")token:String= getApiToken()):Call<DaysPageResponse>
+
 
 
 }

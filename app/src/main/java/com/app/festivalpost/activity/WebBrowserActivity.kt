@@ -17,7 +17,7 @@ import com.app.festivalpost.R
 
 class WebBrowserActivity : AppCompatActivity() {
     var webView: WebView? = null
-    var myWebClient: MyWebClient? = null
+
     var url: String? = null
     var title: String? = null
     var pd: ProgressDialog? = null
@@ -27,8 +27,8 @@ class WebBrowserActivity : AppCompatActivity() {
         setContentView(R.layout.activity_web_browser)
         val b = intent.extras
         if (b != null) {
-            url = b["url"] as String?
-            title = b["title"] as String?
+            url = b.getString("url") as String?
+            title = b.getString("title")
         }
         pd = ProgressDialog(this@WebBrowserActivity)
         pd!!.setMessage("Please wait.")
@@ -47,21 +47,18 @@ class WebBrowserActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        myWebClient = MyWebClient()
         webView = findViewById<View>(R.id.webView) as WebView
-        webView!!.webViewClient = myWebClient!!
         webView!!.settings.domStorageEnabled = true
         webView!!.settings.javaScriptEnabled = true
         webView!!.settings.builtInZoomControls = true
         //        webView.getSettings().set
         webView!!.setInitialScale(0)
-        if (url!!.startsWith("http://") == true
-            || url!!.startsWith("https://") == true
+        if (url!!.startsWith("http://") || url!!.startsWith("https://")
         ) {
             webView!!.loadUrl(url!!)
-        } else if (url!!.startsWith("www") == true) {
+        } else if (url!!.startsWith("www")) {
             webView!!.loadUrl("http://$url")
-        } else if (url!!.startsWith("file:///") == true) {
+        } else if (url!!.startsWith("file:///")) {
             webView!!.loadUrl(url!!)
         } else {
             webView!!.settings.minimumFontSize = 22

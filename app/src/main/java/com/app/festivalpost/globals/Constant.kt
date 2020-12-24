@@ -4,7 +4,7 @@ object Constant {
     const val PREF_TOKEN = "PREF_TOKEN"
     const val PREF_DEVICE_TOKEN = "PREF_DEVICE_TOKEN"
     const val ADMIN_MAIL = "info.festivalpost@gmail.com"
-    const val ADMIN_PHONE = "+917686894444"
+    const val ADMIN_PHONE = "+918070794444"
     const val ADMIN_WEBSITE = "http://www.festivalpost.com"
     const val FOLDER_NAME = "FestivalPost"
     const val PREF_LOGIN = "PREF_LOGIN"

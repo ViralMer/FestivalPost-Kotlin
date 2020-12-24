@@ -3,6 +3,7 @@ package com.app.festivalpost.activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -124,8 +125,10 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
                     rvdata!!.adapter = adapter
 
                     val photoItem = customCategoryPostItem[0]
-
                     photo_path = photoItem.image!!
+                    photoItem.is_selected=true
+
+                    Log.d("photo_path",""+photo_path)
                     Glide.with(this).load(photoItem.image)
                         .placeholder(R.drawable.placeholder_img).error(
                             R.drawable.placeholder_img

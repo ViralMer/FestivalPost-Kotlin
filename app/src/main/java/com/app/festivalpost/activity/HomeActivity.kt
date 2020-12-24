@@ -13,17 +13,18 @@ import com.app.festivalpost.fragment.AccountFragment
 import com.app.festivalpost.fragment.CustomFragment
 import com.app.festivalpost.fragment.HomeFragment
 import com.app.festivalpost.fragment.HomeFragment.Companion.alertDialog
+import com.app.festivalpost.fragment.HomeFragment.Companion.imageLogo1
 import com.app.festivalpost.fragment.VideoFragment
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.get
-import com.emegamart.lelys.utils.extensions.hide
-import com.emegamart.lelys.utils.extensions.put
-import com.emegamart.lelys.utils.extensions.show
+import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeActivity : AppBaseActivity(),OnItemClickListener {
     var tvaction: TextView? = null
@@ -137,12 +138,17 @@ class HomeActivity : AppBaseActivity(),OnItemClickListener {
         callApi(
 
             getRestApis().markascurrentbusiness(currentBusinessID), onApiSuccess = {
+                getSharedPrefInstance().setValue(Constants.SharedPref.KEY_FRAME_LIST, Gson().toJson(it.frameList))
+                put(it.current_business, Constants.SharedPref.KEY_CURRENT_BUSINESS)
                 showProgress(false)
                 if (it.status!!)
                 {
                     b.is_current_business=1
                 }
                 alertDialog!!.dismiss()
+                val currentBusinessItem=get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                Glide.with(this).load(currentBusinessItem!!.busi_logo).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(
+                    imageLogo1!!)
             }, onApiError = {
                 showProgress(false)
 

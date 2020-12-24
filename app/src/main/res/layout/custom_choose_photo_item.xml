@@ -31,12 +31,12 @@
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_5sdp"
-            android:background="@drawable/bg_cateroy_new"
+            android:background="@drawable/bg_gradient"
             android:gravity="center"
             android:fontFamily="@font/sf_ui_medium"
             android:padding="@dimen/_2sdp"
             android:text="@string/lbl_new"
-            android:textColor="@color/teal_500"
+            android:textColor="@color/white"
             android:textStyle="bold"
             />
 

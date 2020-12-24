@@ -54,6 +54,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
 
 
     var video_path: String? = null
+    var video_type: String? = null
     var video_item: VideoListItem? = null
 
     var recyclerView: RecyclerView? = null
@@ -145,6 +146,9 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         if (bundle != null) {
             if (bundle.containsKey("video_path")) {
                 video_path = intent.getStringExtra("video_path")
+            }
+            if (bundle.containsKey("video_type")) {
+                video_type = bundle["video_type"] as String?
             }
         }
         Log.d("video_path",""+video_path)
@@ -450,6 +454,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         showProgress(false)
         if (llframe!!.childCount > 0) llframe!!.removeAllViews()
         framePreview = localFrameItem
+
         textallSelected = true
         val frame_view = LayoutInflater.from(this).inflate(
             localFrameItem!!.layout_id,
@@ -1401,8 +1406,35 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                     //Cleanup
                     stream.close()
                     savedBmp.recycle()
-                    getSharedPrefInstance().setValue("image_name","/data/data/com.app.festivalpost/files/$filename")
-                    download()
+
+                    if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+                        if (video_type!! == "0") {
+                            getSharedPrefInstance().setValue("image_name","/data/data/com.app.festivalpost/files/$filename")
+                            download()
+                        }else{
+                            AlertDialog.Builder(this)
+                                .setTitle("Sorry!!")
+                                .setMessage("Please buy premium plan and save video.")
+                                .setPositiveButton("Buy Premium") { dialog, which ->
+                                    val intent = Intent(
+                                        this,
+                                        PremiumActivity::class.java
+                                    )
+                                    /*val businessItem: BusinessItem = Global.getCurrentBusinessNEW()
+                                    intent.putExtra("videoData", businessItem)
+                                    startActivity(intent)*/
+
+                                }
+                                .setNegativeButton(
+                                    "Cancel"
+                                ) { dialog, _ -> dialog.dismiss() }
+                                .show()
+                        }
+                    } else {
+                        getSharedPrefInstance().setValue("image_name","/data/data/com.app.festivalpost/files/$filename")
+                        download()
+                    }
+
                     //Pop intent
 
 

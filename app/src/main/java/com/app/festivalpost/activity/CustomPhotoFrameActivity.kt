@@ -365,7 +365,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             override fun onTouch() {}
         })
         mMovImage!!.setOnTouchListener(multiTouchListenerNew)
-
+        framePreviewArrayList[0].isIs_selected=true
         mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
                 rootView: View?,

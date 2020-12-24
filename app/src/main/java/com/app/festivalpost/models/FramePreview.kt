@@ -7,12 +7,12 @@ class FramePreview : Serializable {
     var layout_id = R.layout.custom_frame_1
     var images: Int? = null
     var dynamic_images: String? = null
-    fun setIs_selected(is_selected: Boolean) {
+      fun setIs_selected(is_selected: Boolean) {
         isIs_selected = is_selected
     }
 
-    var isIs_selected = false
-        private set
+    public var isIs_selected = false
+        internal set
 
     constructor(layout_id: Int, images: Int?) {
         this.layout_id = layout_id
