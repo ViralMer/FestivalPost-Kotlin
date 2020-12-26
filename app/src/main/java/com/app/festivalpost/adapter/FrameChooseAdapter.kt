@@ -1,8 +1,9 @@
 package com.app.festivalpost.adapter
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.content.res.AssetManager
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.models.FramePreview
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.getCustomFrameList
+import java.io.InputStream
 import java.util.*
 
 class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<FramePreview>) :
@@ -36,11 +38,16 @@ class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<Frame
                     R.drawable.placeholder_img
                 ).into(holder.layMain)
         } else {
-            val icon: Bitmap = BitmapFactory.decodeResource(
-                context.resources,
-                framePreview.images!!
-            )
-            holder.layMain.setImageBitmap(icon)
+            val res=context.resources
+            val amanager: AssetManager = res.getAssets()
+            try {
+                val imageStream: InputStream = amanager.open(framePreview.dynamic_images!!)
+                val drawable: Drawable = BitmapDrawable(res, imageStream)
+                holder.layMain.setImageDrawable(drawable)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            //holder.layMain.setImageBitmap(icon)
             //holder.layMain.setImageResource(framePreview.images!!)
         }
         holder.layMain.tag = position

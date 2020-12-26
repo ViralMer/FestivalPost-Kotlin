@@ -11,7 +11,7 @@ import java.io.Serializable
 
 
 data class HomePageResponse(
-    val slider: ArrayList<HomePageItem?>,
+    val slider: ArrayList<AdvertsieItem?>,
     val festival: ArrayList<HomePageItem?>,
     val cateogry: ArrayList<HomePageItem?>,
     val frameList: ArrayList<FrameListItem1>,
@@ -51,6 +51,14 @@ data class HomePageItem(
     val current_date: String? = null,
     val fest_day: String? = null,
     val fest_is_delete: String? = null
+) : Serializable
+
+data class AdvertsieItem(
+    val adv_image: String? = null,
+    val adv_link: String? = null,
+    val adv_number: String? = null,
+    val id: String? = null,
+
 ) : Serializable
 
 data class VideoPageItem(

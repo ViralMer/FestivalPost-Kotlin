@@ -40,11 +40,18 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".activity.FestivalViewAllActivitty"></activity>
-        <activity android:name=".activity.ChooseVideoFrameActivity" />
+        <activity android:name=".activity.FestivalViewAllActivitty"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            ></activity>
+        <activity android:name=".activity.ChooseVideoFrameActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.VideoCreateActivity"
-            android:screenOrientation="portrait" />
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".activity.VideoDetailActivity"
             android:hardwareAccelerated="false"
@@ -53,12 +60,19 @@
             android:name=".activity.CustomPhotoFrameActivity"
             android:configChanges="fontScale"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.CustomFrameActivity" />
-        <activity android:name=".activity.MyPostActivity" />
-        <activity android:name=".activity.SampleActivity" />
-        <activity
-            android:name=".activity.RegisterActivity"
+        <activity android:name=".activity.CustomFrameActivity"
             android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.MyPostActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.SampleActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,8 +81,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.RegisterActivity"
             android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.HelpandSupportActivity"
@@ -134,10 +149,7 @@
             android:name=".activity.VerificationActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.ImageTextEditorActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.ImagePickerActivity"
             android:configChanges="orientation|screenSize"
@@ -147,10 +159,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".activity.AddTextActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.WebBrowserActivity"
             android:configChanges="orientation|screenSize"

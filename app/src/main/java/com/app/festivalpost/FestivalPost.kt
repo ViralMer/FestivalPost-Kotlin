@@ -2,6 +2,7 @@ package com.app.festivalpost
 
 import android.app.Dialog
 import android.content.Context
+import android.util.Log
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import com.app.festivalpost.models.DeviceInfo1
@@ -31,6 +32,7 @@ class FestivalPost : MultiDexApplication() {
         getSharedPrefInstance().setValue(DEVICE_TYPE, "Android")
 
         getSharedPrefInstance().setValue(DEVICE_ID, deviceInfo.deviceUDID)
+
 
 
 

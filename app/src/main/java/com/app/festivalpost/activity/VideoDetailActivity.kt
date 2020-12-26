@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.*
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -72,7 +73,10 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     var ivlogo1: ImageView? = null
     var frameLayout: FrameLayout? = null
     var frameLayout1: FrameLayout? = null
+    var frameMain: FrameLayout? = null
     var videoid: String? = null
+    var width = 0
+    var height = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_detail)
@@ -86,6 +90,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
 
         rvdata = findViewById<View>(R.id.rvdata) as RecyclerView
         frameLayout1 = findViewById<View>(R.id.frame) as FrameLayout
+        frameMain = findViewById<View>(R.id.frameMain) as FrameLayout
         videoView = findViewById<View>(R.id.ivvideo) as AndExoPlayerView
         horizontalLayoutManagaer = GridLayoutManager(this@VideoDetailActivity, 4)
         rvdata!!.layoutManager = horizontalLayoutManagaer
@@ -113,6 +118,23 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
 
 
         loadAccoutData()
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        height = displayMetrics.heightPixels
+        width = displayMetrics.widthPixels
+        if (width>1080)
+        {
+            val params=frameMain!!.layoutParams
+            params.height=1080
+            params.width=1080
+        }
+        else{
+            val params=frameMain!!.layoutParams
+                params.height=width
+            params.width=width
+        }
+
+
         p = ProgressDialog(this@VideoDetailActivity)
 
 
@@ -215,12 +237,14 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         val ivBack = toolbar.findViewById<View>(R.id.ivBack) as AppCompatImageView
         val tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
 
-            tvtitle.text = resources.getString(R.string.txt_add_business)
+            tvtitle.text = resources.getString(R.string.txt_choose_video_post)
 
         ivBack.onClick {
             onBackPressed()
         }
+
         tvaction.setOnClickListener {
+            videoView!!.stopPlayer()
             launchActivity<ChooseVideoFrameActivity> {
                 putExtra("video_path",video_path)
                 putExtra("video_type",video_type)
@@ -418,4 +442,5 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                 showProgress(false)
             })
     }
+
 }

@@ -16,10 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import com.app.festivalpost.BuildConfig
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.LoginActivity
-import com.app.festivalpost.activity.ManageBusinessActivity
-import com.app.festivalpost.activity.MyPostActivity
-import com.app.festivalpost.activity.WebBrowserActivity
+import com.app.festivalpost.activity.*
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
@@ -127,9 +124,9 @@ class AccountFragment : BaseFragment() {
         iv_edit.onClick { activity!!.launchActivity<EditProfileActivity> {  } }
 
         linearMyPost.onClick {
-            activity!!.launchActivity<MyPostActivity> {
+            /*activity!!.launchActivity<MyPostActivity> {
 
-            }
+            }*/
         }
 
 

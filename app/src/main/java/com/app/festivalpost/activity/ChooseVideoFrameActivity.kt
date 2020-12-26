@@ -7,13 +7,16 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -137,6 +140,8 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
     var fontTypeList = arrayListOf<FontTypeList?>()
     var rcvFont: RecyclerView? = null
     var alertDialog: AlertDialog? = null
+    var width = 0
+    var height = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,7 +156,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 video_type = bundle["video_type"] as String?
             }
         }
-        Log.d("video_path",""+video_path)
+        Log.d("video_path", "" + video_path)
         setActionbar()
         photoEditorView = findViewById<View>(R.id.photoEditorView) as PhotoEditorView
         mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
@@ -165,8 +170,16 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         recyclerView = findViewById(R.id.rvdata)
         ivvideo!!.setSource(video_path)
 
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        height = displayMetrics.heightPixels
+        width = displayMetrics.widthPixels
+
+
+
         var frameListItems1 = arrayListOf<FrameListItem1>()
         frameListItems1 = getCustomFrameList()
+        Log.d("framesize", "" + getCustomFrameList().size)
         plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
@@ -176,9 +189,31 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 )
             )
         }
+        Log.d("FrmaeSize", "" + framePreviewArrayList.size)
         try {
-            framePreviewArrayList.addAll(Global.newFrames)
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17, "frame_17.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18, "frame_18.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_19, "frame_19.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_20, "frame_20.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_21, "frame_21.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_1, "frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_3, "frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_4, "frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_5, "frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_6, "frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_7, "frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_8, "frame_08.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9, "frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11, "frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12, "frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_13, "frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_14, "frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_15, "frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16, "frame_08.png"))
+
         } catch (e: OutOfMemoryError) {
+
+
         } catch (e: Exception) {
         }
 
@@ -189,6 +224,9 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             LinearLayoutManager.HORIZONTAL,
             false
         )
+
+        framePreviewArrayList[0].isIs_selected=true
+
         recyclerView!!.setLayoutManager(horizontalLayoutManagaer)
         recyclerView!!.setAdapter(frameChooseAdapter)
         setFrameNEW(framePreviewArrayList[0])
@@ -213,7 +251,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             fontTypeList.add(FontTypeList("fonts/armopb.ttf"))
             fontTypeList.add(FontTypeList("fonts/corbel.ttf"))
             storeValue="Festival Post"
-            showPopupBusinessCategoryDialog(this,storeValue!!)
+            showPopupBusinessCategoryDialog(this, storeValue!!)
         }
         ivlogoselect!!.setOnClickListener(View.OnClickListener {
             if (ivlogoselect!!.drawable.constantState === resources.getDrawable(R.drawable.logo_select).constantState) {
@@ -260,16 +298,14 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     ivEmail!!.visibility = View.GONE
                     phoneLine!!.visibility = View.GONE
-                }
-                else if (index1 == 1+plus) {
+                } else if (index1 == 1 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
@@ -341,31 +377,26 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     ivWebsite!!.visibility = View.GONE
                     websiteLine!!.hide()
-                }
-                else if (index1 == 1+plus) {
+                } else if (index1 == 1 + plus) {
 
                     websiteLine!!.setVisibility(View.VISIBLE);
                     ivWebsite!!.visibility = View.VISIBLE
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 2 + plus) {
 
                     websiteLine!!.setVisibility(View.VISIBLE);
                     ivWebsite!!.visibility = View.VISIBLE
-                }
-                else if (index1 == 3+plus) {
+                } else if (index1 == 3 + plus) {
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
-                }
-                else if (index1 == 3+plus) {
+                } else if (index1 == 3 + plus) {
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
-                }
-                else {
+                } else {
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.VISIBLE
                 }
@@ -397,12 +428,10 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-                if (index1==0+plus)
-                {
+                if (index1 == 0 + plus) {
                     linearAddress!!.hide()
                     ivLocation!!.visibility = View.GONE
-                }
-                else{
+                } else {
                     ivLocation!!.visibility = View.VISIBLE
                 }
                 linearAddress!!.setBackgroundResource(0)
@@ -910,7 +939,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                         ivWebsite!!.setVisibility(View.VISIBLE)
                         tvframeweb!!.setVisibility(View.VISIBLE)
                         frameWebsite!!.setVisibility(View.VISIBLE)
-                        tvframeweb!!.setText(businessItem.busi_address)
+                        tvframeweb!!.setText(businessItem.busi_website)
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 } else if (index1 == 3 + plus) {
@@ -1365,10 +1394,10 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
-        tvtitle.text = resources.getString(R.string.txt_frame)
+        tvtitle.text = resources.getString(R.string.lbl_create_video)
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.setOnClickListener {
             linearAddress!!.setBackgroundResource(0)
@@ -1386,32 +1415,42 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
 
             val handler = Handler()
             handler.postDelayed({
+
                 mPhotoEditor!!.clearHelperBox()
+
                 showProgress(false)
                 layroot!!.setBackgroundColor(R.color.transparent)
                 layroot!!.isDrawingCacheEnabled = true
                 layroot!!.buildDrawingCache(true)
+
                 val savedBmp = Bitmap.createBitmap(
                     layroot!!.drawingCache
                 )
-
                 layroot!!.isDrawingCacheEnabled = false
+                val newsaveBmp=getResizedBitmap(savedBmp,1080,1080)
                 try {
                     //Write file
                     val filename = "video_bitmap.png"
                     val stream = openFileOutput(filename, MODE_PRIVATE)
-                    savedBmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
 
                     //Cleanup
                     stream.close()
-                    savedBmp.recycle()
+                    newsaveBmp!!.recycle()
 
-                    if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+                    if (!getSharedPrefInstance().getBooleanValue(
+                            Constants.KeyIntent.IS_PREMIUM,
+                            false
+                        )
+                    ) {
                         if (video_type!! == "0") {
-                            getSharedPrefInstance().setValue("image_name","/data/data/com.app.festivalpost/files/$filename")
+                            getSharedPrefInstance().setValue(
+                                "image_name",
+                                "/data/data/com.app.festivalpost/files/$filename"
+                            )
                             download()
-                        }else{
+                        } else {
                             AlertDialog.Builder(this)
                                 .setTitle("Sorry!!")
                                 .setMessage("Please buy premium plan and save video.")
@@ -1431,7 +1470,10 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                                 .show()
                         }
                     } else {
-                        getSharedPrefInstance().setValue("image_name","/data/data/com.app.festivalpost/files/$filename")
+                        getSharedPrefInstance().setValue(
+                            "image_name",
+                            "/data/data/com.app.festivalpost/files/$filename"
+                        )
                         download()
                     }
 
@@ -1526,11 +1568,11 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         dialog.show()
     }
 
-    private fun showPopupBusinessCategoryDialog(context: Context, text:String) {
+    private fun showPopupBusinessCategoryDialog(context: Context, text: String) {
         val layout = LayoutInflater.from(context).inflate(R.layout.layout_font_type, null)
         rcvFont = layout.findViewById<View>(R.id.rcvFontType) as RecyclerView
         val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as AppCompatImageView
-        fontTypeAdapter= FontTypeAdapter(this,fontTypeList,text)
+        fontTypeAdapter= FontTypeAdapter(this, fontTypeList, text)
         rcvFont!!.adapter=fontTypeAdapter
         val builder = AlertDialog.Builder(context)
             .setView(layout)
@@ -1548,7 +1590,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         alertDialog!!.dismiss()
         val fontItem1=`object` as FontTypeList
         val path=fontItem1.name
-        Log.d("Abcd",""+path)
+        Log.d("Abcd", "" + path)
         if (nameValue) {
             nametypeface = Typeface.createFromAsset(assets, path)
             tvframename!!.typeface = nametypeface
@@ -1673,7 +1715,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         val photoItem=`object` as FramePreview
         index1 = index
         setFrameNEW(photoItem)
-        if (index >= 19) {
+        if (index < plus) {
             if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
                     "",
                     ignoreCase = true
@@ -1726,7 +1768,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             c.connect()
             val videoname = "/data/data/com.app.festivalpost/files/$videoName"
             val videoname1 = videoName
-            getSharedPrefInstance().setValue("video_name",videoname)
+            getSharedPrefInstance().setValue("video_name", videoname)
             val file: File
             var fileOutputStream: FileOutputStream? = null
             try {
@@ -1761,6 +1803,41 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         }
     }
 
+    fun getResizedBitmap(bm: Bitmap, newHeight: Int, newWidth: Int): Bitmap? {
+        // GET CURRENT SIZE
+        val width = bm.width
+        val height = bm.height
+        // GET SCALE SIZE
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+        // CREATE A MATRIX FOR THE MANIPULATION
+        val matrix = Matrix()
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight)
+        // "RECREATE" THE NEW BITMAP
+        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            android.R.id.home -> if (backpressed) {
+                onBackPressed()
+            } else {
+                AlertDialog.Builder(this)
+                    .setTitle("Exit")
+                    .setMessage("If you are back your changes will be lost?")
+                    .setPositiveButton("Ok") { _, _ -> finish() }
+                    .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+            else -> {
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 }
 

@@ -290,6 +290,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             style="@style/Heading"
+            android:visibility="gone"
             android:text="@string/txt_choose_photo_frame"
              />
 

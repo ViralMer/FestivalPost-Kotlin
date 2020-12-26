@@ -19,56 +19,33 @@ import com.app.festivalpost.GridSpacingItemDecoration
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.PostAdapter
 import com.app.festivalpost.apifunctions.ApiResponseListener
+import com.app.festivalpost.fragment.HomeFragment
+import com.app.festivalpost.fragment.MyPostFragment
+import com.app.festivalpost.fragment.MyVideoFragment
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.FileListItem
 import com.app.festivalpost.models.PostItem
+import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.show
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.io.File
 import java.util.*
 
 class MyPostActivity : AppBaseActivity() {
 
-    var dataArrayList = ArrayList<FileListItem>()
-    var adapter: PostAdapter? = null
-    var linearLayout: LinearLayout? = null
-    var rvdata: RecyclerView? = null
-    var btnCreatePost: Button? = null
+    var tvaction: TextView? = null
+    var tvtitle: TextView? = null
+    var mBottomNavigationView: BottomNavigationView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_post)
         setActionbar()
 
-        rvdata = findViewById<View>(R.id.rvdata) as RecyclerView
-        val mLayoutManager = GridLayoutManager(this@MyPostActivity, 3)
-        rvdata!!.layoutManager = mLayoutManager
-
-        linearLayout = findViewById(R.id.rlNoData)
-        btnCreatePost = findViewById(R.id.btnCreatePost)
+        loadPostFragment()
+        setupBottomNavigation()
 
 
-
-        Log.d("data arraylist", "" + dataArrayList.size)
-        val path: String =
-            Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
-        Log.d("Files", "Path: $path")
-        val directory = File(path)
-        val files: Array<File> = directory.listFiles()
-
-        Log.d("Files", "Size: " + files.size)
-        val filenames = ArrayList<String>()
-        for (i in files.indices) {
-            val file=files[i]
-            if (file.isFile && file.path.endsWith(".jpg"))
-            {
-                Log.d("Files", "FileName:" + files[i].name)
-                filenames.add(files[i].name)
-                dataArrayList.add(FileListItem(files[i].name))
-
-            }
-
-            adapter = PostAdapter(applicationContext, dataArrayList)
-            rvdata!!.adapter = adapter
-        }
 
     }
 
@@ -94,6 +71,37 @@ class MyPostActivity : AppBaseActivity() {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvtitle.text = resources.getString(R.string.txt_my_posts)
+    }
+    private fun setupBottomNavigation() {
+        mBottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
+        mBottomNavigationView!!.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_images -> {
+                    loadPostFragment()
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.nav_video -> {
+                    loadVideoFragment()
+                    return@OnNavigationItemSelectedListener true
+                }
+
+            }
+            false
+        })
+    }
+
+    private fun loadPostFragment() {
+        val fragment = MyPostFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+    }
+
+    private fun loadVideoFragment() {
+        val fragment = MyVideoFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
     }
 
 

@@ -13,13 +13,13 @@ import com.app.festivalpost.activity.ChoosePhotoActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
-import com.app.festivalpost.models.FestivalItem
 import com.app.festivalpost.models.HomePageItem
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class DayAdapter(var context: Context, var originaldata: ArrayList<HomePageItem?>) :
     RecyclerView.Adapter<DayAdapter.ViewHolder>() {

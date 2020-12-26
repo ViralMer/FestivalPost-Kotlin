@@ -95,7 +95,7 @@
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:layout_weight="1"
                 android:fillViewport="true"
                 android:scrollbars="none">
@@ -111,6 +111,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                     style="@style/Heading"
+                    android:visibility="gone"
                 android:text="@string/txt_choose_photo_post"
 
                  />
@@ -126,7 +127,7 @@
                 android:paddingRight="6dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
+                 />
 
             <Button
                 android:visibility="gone"

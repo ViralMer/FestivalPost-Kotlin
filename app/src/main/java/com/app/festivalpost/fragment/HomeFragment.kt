@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -13,7 +14,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -26,18 +26,16 @@ import com.app.festivalpost.R
 import com.app.festivalpost.activity.*
 import com.app.festivalpost.adapter.*
 import com.app.festivalpost.models.*
-import com.app.festivalpost.utils.Constants
-import com.app.festivalpost.utils.extensions.callApi
-import com.app.festivalpost.utils.extensions.getRestApis
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
 import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
 import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
-
+import com.app.festivalpost.utils.extensions.callApi
+import com.app.festivalpost.utils.extensions.getRestApis
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.emegamart.lelys.utils.extensions.*
 import com.google.gson.Gson
 import com.karumi.dexter.Dexter
@@ -52,7 +50,7 @@ import java.io.FileOutputStream
 @Suppress("DEPRECATION")
 class HomeFragment : BaseFragment() {
 
-    private var sliderArrayList = arrayListOf<HomePageItem?>()
+    private var sliderArrayList = arrayListOf<AdvertsieItem?>()
     private var festivalArrayList = arrayListOf<HomePageItem?>()
     private var categoryArrayList = arrayListOf<HomePageItem?>()
     private var viewPager: ViewPager? = null
@@ -60,6 +58,7 @@ class HomeFragment : BaseFragment() {
     private var rcvCustomCategory: RecyclerView? = null
     private var tvPremium: TextView? = null
     private var tvCustom: TextView? = null
+    private var tvviewall: TextView? = null
 
     var businessDialogItemAdapter: BusinessDialogItemAdapter? = null
     var currentBusinessItemList = arrayListOf<CurrentBusinessItem?>()
@@ -87,6 +86,7 @@ class HomeFragment : BaseFragment() {
         tvPremium = view.findViewById(R.id.tvPremium)
         tvCustom = view.findViewById(R.id.tvCustom)
         imageLogo1 = view.findViewById(R.id.imageLogo)
+        tvviewall = view.findViewById(R.id.tvviewall)
 
 
         tvPremium!!.onClick {
@@ -97,6 +97,10 @@ class HomeFragment : BaseFragment() {
             activity!!.launchActivity<ManageBusinessActivity> {
 
             }
+        }
+
+        tvviewall!!.onClick {
+            activity!!.launchActivity<FestivalViewAllActivitty> {  }
         }
 
         tvCustom!!.onClick {
@@ -127,14 +131,23 @@ class HomeFragment : BaseFragment() {
             val view = LayoutInflater.from(activity).inflate(R.layout.item_slider, container, false)
             val ivphoto = view.findViewById<ImageView>(R.id.imgSlider)
             val festivalItem = sliderArrayList[position]
-            if (festivalItem!!.fest_image != null && !festivalItem.fest_image.equals(
+            if (festivalItem!!.adv_image != null && !festivalItem.adv_image.equals(
                     "",
                     ignoreCase = true
                 )
             ) {
-                Glide.with(activity!!).load(festivalItem.fest_image).error(R.drawable.placeholder_img).placeholder(R.drawable.placeholder_img).into(ivphoto)
+                Glide.with(activity!!).load(festivalItem.adv_image).error(R.drawable.placeholder_img).placeholder(
+                    R.drawable.placeholder_img
+                ).into(ivphoto)
 
             }
+            ivphoto.onClick {
+
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(festivalItem.adv_link)
+                activity!!.startActivity(i)
+            }
+
 
             container.addView(view)
             return view
@@ -180,33 +193,41 @@ class HomeFragment : BaseFragment() {
                     getSharedPrefInstance().setValue(IS_PREMIUM, res.premium)
                     getSharedPrefInstance().setValue(CURRENT_DATE, res.current_date)
                     getSharedPrefInstance().setValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
-                    put(res.current_business,KEY_CURRENT_BUSINESS)
+                    put(res.current_business, KEY_CURRENT_BUSINESS)
 
 
-                    val currentBusinessItem=get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
-                    if (currentBusinessItem!!.plan_name=="Free")
-                    {
+                    val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+                    if (currentBusinessItem!!.plan_name == "Free") {
                         tvPremium!!.show()
-                    }
-                    else{
+                    } else {
                         tvPremium!!.hide()
                     }
 
-                    Glide.with(this).load(currentBusinessItem!!.busi_logo).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(imageLogo!!)
+                    Glide.with(this).load(currentBusinessItem!!.busi_logo)
+                        .placeholder(R.drawable.placeholder_img).error(
+                        R.drawable.placeholder_img
+                    ).into(imageLogo!!)
 
 
 
 
 
 
-                    Log.d("GetApiToken", getApiToken() + "    122"+  res.frameList.size + " 123"+ getCustomFrameList().size)
+                    Log.d(
+                        "GetApiToken",
+                        getApiToken() + "    122" + res.frameList.size + " 123" + getCustomFrameList().size
+                    )
 
 
                     sliderArrayList = res.slider
                     festivalArrayList = res.festival
                     categoryArrayList = res.cateogry
 
-                    rcvCustomFestival!!.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL,false)
+                    rcvCustomFestival!!.layoutManager = LinearLayoutManager(
+                        activity,
+                        LinearLayoutManager.HORIZONTAL,
+                        false
+                    )
                     val customFestivalAdapter =
                         CustomFestivalItemAdapter(activity!!, festivalArrayList)
                     rcvCustomFestival!!.adapter = customFestivalAdapter
@@ -309,9 +330,8 @@ class HomeFragment : BaseFragment() {
         callApi(
             getRestApis().getAllMyBusiness(), onApiSuccess = {
                 hideProgress()
-                currentBusinessItemList=it.data
+                currentBusinessItemList = it.data
                 showBusinessCategoryDialog(activity!!)
-
 
 
             }, onApiError = {
@@ -329,7 +349,7 @@ class HomeFragment : BaseFragment() {
         val layout = LayoutInflater.from(context).inflate(R.layout.layout_business_dialog, null)
         rcvBusinessItem = layout.findViewById<View>(R.id.rcvManageBusiness) as RecyclerView
 
-        businessDialogItemAdapter= BusinessDialogItemAdapter(activity!!,currentBusinessItemList)
+        businessDialogItemAdapter= BusinessDialogItemAdapter(activity!!, currentBusinessItemList)
         rcvBusinessItem!!.adapter=businessDialogItemAdapter
         val builder = AlertDialog.Builder(context)
             .setView(layout)
@@ -344,16 +364,18 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        val currentBusinessItem=get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
-        Glide.with(this).load(currentBusinessItem!!.busi_logo).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(
-            imageLogo1!!)
-        if (currentBusinessItem.plan_name=="Free")
-        {
-            tvPremium!!.show()
-        }
-        else{
-            tvPremium!!.hide()
-        }
+        /*val currentBusinessItem=get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+        if(currentBusinessItem!!.busi_logo!=null) {
+            Glide.with(this).load(currentBusinessItem!!.busi_logo)
+                .placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(
+                imageLogo1!!
+            )
+            if (currentBusinessItem.plan_name == "Free") {
+                tvPremium!!.show()
+            } else {
+                tvPremium!!.hide()
+            }
+        }*/
     }
 
     companion object{

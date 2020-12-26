@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/_85sdp"
-        android:layout_marginBottom="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:orientation="vertical">
 
 

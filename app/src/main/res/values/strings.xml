@@ -528,7 +528,7 @@
     <string name="profile">Profile Image</string>
     <string name="txt_your_mobile_number">Your Mobile Number</string>
     <string name="txt_greetings">Video Greetings</string>
-    <string name="txt_choose_video_post">Choose Video Post</string>
+    <string name="txt_choose_video_post">Choose Video</string>
     <string name="txt_sign_up"><font color='#48A8BC'>S</font>ignup</string>
     <string name="hint_name">Enter your name</string>
     <string name="hint_number">Enter your number</string>
@@ -590,5 +590,10 @@
     <string name="hint_manage_business">Manage Business</string>
     <string name="lbl_festival">Festivals</string>
     <string name="lbl_edit_profile">Edit Profile</string>
+    <string name="lbl_video">Video</string>
+    <string name="lbl_create_video">Create Video</string>
+    <string name="lbl_choose_video">Choose Video</string>
+    <string name="txt_custom_frame">Custom Frame</string>
+    <string name="txt_images">Images</string>
 
 </resources>

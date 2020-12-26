@@ -24,10 +24,10 @@ import com.app.festivalpost.adapter.DayAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
-import com.app.festivalpost.fragment.DaysFragment
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.FestivalItem
+import com.app.festivalpost.models.HomePageItem
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -41,7 +41,7 @@ class DaysFragment : Fragment(), ApiResponseListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
-    var dataArrayList: ArrayList<FestivalItem>? = null
+    var dataArrayList: ArrayList<HomePageItem>? = null
     var btnchoosedate: Button? = null
     var rvdata: RecyclerView? = null
     var picker: DatePickerDialog? = null
@@ -164,8 +164,8 @@ class DaysFragment : Fragment(), ApiResponseListener {
     private fun filldata() {
         if (dataArrayList!!.size > 0) {
             rvdata!!.visibility = View.VISIBLE
-            val adapter = DayAdapter(activity!!, dataArrayList!!)
-            rvdata!!.adapter = adapter
+            //val adapter = DayAdapter(activity!!, dataArrayList!!)
+            //rvdata!!.adapter = adapter
         } else {
             rvdata!!.visibility = View.GONE
             Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
@@ -245,7 +245,7 @@ class DaysFragment : Fragment(), ApiResponseListener {
                     for (i in 0 until jsonArray.length()) {
                         val j = jsonArray.getJSONObject(i)
                         val f = Gson().fromJson(j.toString(), FestivalItem::class.java)
-                        dataArrayList!!.add(f)
+                        //dataArrayList!!.add(f)
                     }
                 }
             }

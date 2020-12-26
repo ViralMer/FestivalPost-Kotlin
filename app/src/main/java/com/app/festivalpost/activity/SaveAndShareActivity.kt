@@ -27,8 +27,12 @@ import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.CurrentBusinessItem
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.emegamart.lelys.utils.extensions.get
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.emegamart.lelys.utils.extensions.onClick
+import com.emegamart.lelys.utils.extensions.toast
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -78,40 +82,35 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
         findViewById<View>(R.id.btnsubmit).setOnClickListener(
             View.OnClickListener {
                 sharePhoto = false
-                if (!Global.getPreference(Constant.PREF_PREMIUM, false)) {
+                if (!getSharedPrefInstance().getBooleanValue(
+                        Constants.KeyIntent.IS_PREMIUM,
+                        false
+                    )
+                ) {
                     val intent = Intent(this@SaveAndShareActivity, PremiumActivity::class.java)
-                    intent.putExtra("businessdetails", businessItem)
-                    intent.putExtra("saveImage", 0)
-                    intent.putExtra("premium", 1)
-                    Global.storePreference("premium_data", 2)
                     startActivity(intent)
                 } else {
                     savePhoto()
-                    Global.storePreference("premium_data", 0)
+
                 }
             })
-        findViewById<View>(R.id.btnshare).setOnClickListener(object : View.OnClickListener {
-            override fun onClick(view: View) {
+        val btnshare=findViewById<View>(R.id.btnshare)
+        btnshare.onClick {
+            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+                val intent = Intent(this@SaveAndShareActivity, PremiumActivity::class.java)
+                startActivity(intent)
+            } else {
                 sharePhoto = true
-                if (!Global.getPreference(Constant.PREF_PREMIUM, false)) {
-                    val intent = Intent(this@SaveAndShareActivity, PremiumActivity::class.java)
-                    intent.putExtra("businessdetails", businessItem)
-                    intent.putExtra("saveImage", 1)
-                    intent.putExtra("premium", 1)
-                    Global.storePreference("premium_data", 3)
-                    startActivity(intent)
-                } else {
-                    savePhoto()
-                    Global.storePreference("premium_data", 0)
-                }
+                savePhoto()
+
             }
-        })
+        }
     }
 
     var sharePhoto = false
     var imagePath: String? = ""
-    fun savePhoto() {
-        Dexter.withActivity(this@SaveAndShareActivity)
+    private fun savePhoto() {
+        Dexter.withContext(this@SaveAndShareActivity)
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
@@ -120,9 +119,36 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
                         if (bmp != null) {
                             imagePath = SaveImage(bmp!!)
                             Log.d("Stored", imagePath!!)
-                            if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
+                           /* if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
                                 SavePhotoAsync(imagePath!!).execute()
+                            }*/
+                            if (sharePhoto) {
+                                if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
+                                    val uri = Uri.parse(imagePath)
+                                    val share = Intent(Intent.ACTION_SEND)
+                                    share.type = "image/*"
+                                    share.putExtra(Intent.EXTRA_STREAM, uri)
+                                    startActivity(Intent.createChooser(share, "Share Design!"))
+                                    /*toast("Image Saved Successfully1")
+                                    val detailAct =
+                                        Intent(this@SaveAndShareActivity, HomeActivity::class.java)
+                                    detailAct.flags =
+                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(detailAct)
+                                    finish()*/
+                                }
+
                             }
+                            else{
+                                toast("Image Saved Successfully")
+                                val detailAct =
+                                    Intent(this@SaveAndShareActivity, HomeActivity::class.java)
+                                detailAct.flags =
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(detailAct)
+                                finish()
+                            }
+
                         }
                     } else {
                         Toast.makeText(
@@ -230,8 +256,12 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
                 arrayOf("image/*"),
                 null
             )
+
+
+
             scanner(filePath)
-            Global.storePreference("premium_data", 0)
+            //Global.storePreference("premium_data", 0)
+
             return filePath
         } catch (e: Exception) {
             e.printStackTrace()
@@ -359,7 +389,7 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
         })
     }
 
-    
+
     fun processResponse(responseString: String?) {
         status = false
         message = ""
@@ -382,7 +412,8 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
     }
 
     private fun scanner(path: String) {
-        MediaScannerConnection.scanFile(this@SaveAndShareActivity, arrayOf(path), null
+        MediaScannerConnection.scanFile(
+            this@SaveAndShareActivity, arrayOf(path), null
         ) { path, uri -> Log.i("TAG", "Finished scanning $path") }
     }
 

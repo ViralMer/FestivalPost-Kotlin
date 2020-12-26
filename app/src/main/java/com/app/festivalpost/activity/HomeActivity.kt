@@ -37,9 +37,7 @@ class HomeActivity : AppBaseActivity(),OnItemClickListener {
         instance = this
 
         val mainHandler = Handler(Looper.getMainLooper())
-        val runnable = Runnable { loadHomeFragment() }
-
-        mainHandler.postDelayed(runnable, 0)
+        loadHomeFragment()
         setupBottomNavigation()
 
 

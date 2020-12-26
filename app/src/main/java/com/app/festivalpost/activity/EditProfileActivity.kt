@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
@@ -52,10 +53,13 @@ class EditProfileActivity : AppBaseActivity() {
     fun setActionbar() {
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
+        val ivBack = toolbar.findViewById<View>(R.id.ivBack) as AppCompatImageView
         tvtitle.text = resources.getString(R.string.txt_edit_profile)
+        ivBack.onClick {
+            onBackPressed()
+        }
     }
 
     override fun onBackPressed() {

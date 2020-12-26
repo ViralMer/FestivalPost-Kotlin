@@ -43,6 +43,7 @@ open class AppBaseActivity : AppCompatActivity(),View.OnFocusChangeListener {
             progressDialog = Dialog(this)
             progressDialog!!.window?.setBackgroundDrawable(ColorDrawable(0))
             progressDialog!!.setContentView(R.layout.custom_dialog)
+
         }
 
     }

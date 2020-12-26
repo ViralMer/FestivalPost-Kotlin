@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
     android:orientation="vertical"
-
-    tools:context=".LoginActivity">
+    >
 
     <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -68,20 +67,32 @@
 
 
         <FrameLayout
+            android:id="@+id/frameMain"
             android:layout_width="1080px"
             android:layout_height="1080px"
-            android:background="@color/colorWhite">
+            android:layout_gravity="center"
+            >
+
 
 
 
         <com.potyvideo.library.AndExoPlayerView
             android:id="@+id/ivvideo"
-            android:layout_width="1080px"
-            android:layout_height="1080px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_share_new"
+                />
 
         <FrameLayout
             android:id="@+id/frame"
+            android:visibility="gone"
             android:layout_width="1080px"
             android:layout_height="1080px">
 
@@ -380,23 +391,33 @@
 
         </FrameLayout>
 
-        <Button
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:id="@+id/btnsubmit"
-            android:textSize="16dp"
-            android:text="@string/txt_save"
-            style="@style/buttonStyle"/>
-        <Button
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:textColor="@color/colorWhite"
-            android:id="@+id/btnshare"
-            android:textSize="16dp"
-            android:visibility="visible"
-            android:background="@drawable/large_blue_button_bg"
-            android:text="@string/txt_share_on_social"
-            style="@style/buttonStyle"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_40sdp"
+            android:orientation="horizontal"
+            >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btnsubmit"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:src="@drawable/ic_save"
+                android:layout_weight="1"
+                android:padding="@dimen/_10sdp"
+
+                />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btnshare"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:src="@drawable/ic_share_new"
+                android:layout_weight="1"
+                android:padding="@dimen/_10sdp"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 

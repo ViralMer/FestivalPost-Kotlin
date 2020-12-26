@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#A4009688</color>
+    <color name="colorPrimary">#30BA9E</color>
     <color name="colorPrimaryDark">#00897B</color>
     <color name="colorAccent">#30BA9E</color>
     <color name="colorBorder">#00796B</color>
@@ -15,10 +15,10 @@
     <color name="colorLightGrey">#8B8B8B</color>
     <color name="colorDivider">#F4F4F4</color>
     <color name="colorDarkGrey">#585858</color>
-    <color name="colorWatermark">#70FFFFFF</color>
+    <color name="colorWatermark">#FFFFFF</color>
     <color name="addTextBackgroundColor">#FFFFFF</color>
-    <color name="frame_border">#9A5E5E5E</color>
-    <color name="teal_500">#A4009688</color>
+    <color name="frame_border">#5E5E5E</color>
+    <color name="teal_500">#009688</color>
     <color name="teal_600">#00897B</color>
     <color name="teal_700">#00796B</color>
 

@@ -17,7 +17,7 @@
         android:padding="10dp"
         android:text="Manthan"
 
-        android:visibility="visible"
+        android:visibility="gone"
         android:textColor="@color/colorBlack"
         android:textSize="15dp" />
 

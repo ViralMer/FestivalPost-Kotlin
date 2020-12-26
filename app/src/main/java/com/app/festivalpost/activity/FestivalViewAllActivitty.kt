@@ -52,7 +52,7 @@ class FestivalViewAllActivitty : AppBaseActivity() {
                     if (monthOfYear + 1 < 12) {
                         strMonth = (monthOfYear + 1).toString()
                     }
-                    dateVal = "$year-$strMonth-$strDay"
+                    dateVal = "$strDay-$strMonth-$year"
                     loadgetDaysAllData()
                 }, year, month, day
             )

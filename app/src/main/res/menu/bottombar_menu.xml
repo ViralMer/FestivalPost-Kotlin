@@ -8,6 +8,7 @@
         android:icon="@drawable/video_deselect" />
     <item android:id="@+id/nav_digitalcard"
         android:title="@string/txt_digitalcard"
+        android:visible="false"
         android:icon="@drawable/digitalcard_deselect" />
     <item android:id="@+id/nav_post"
         android:title="@string/txt_my_posts"

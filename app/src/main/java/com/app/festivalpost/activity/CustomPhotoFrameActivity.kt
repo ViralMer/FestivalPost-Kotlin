@@ -288,10 +288,12 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             textviewSelected = false
         })
 
-        var frameListItems1 = ArrayList<FrameListItem1>()
+
+
+        var frameListItems1 = arrayListOf<FrameListItem1>()
         frameListItems1 = getCustomFrameList()
-        plus=plus+frameListItems1.size
-        Log.d("FrameListSize1", "" + frameListItems1.size)
+        Log.d("framesize", "" + getCustomFrameList().size)
+        plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
                 FramePreview(
@@ -300,9 +302,31 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 )
             )
         }
+        Log.d("FrmaeSize", "" + framePreviewArrayList.size)
         try {
-            framePreviewArrayList.addAll(Global.newFrames)
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17,"frame_17.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18,"frame_18.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_19,"frame_19.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_20,"frame_20.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_21,"frame_21.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_1,"frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_3,"frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_4,"frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_5,"frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_6,"frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_7,"frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_8,"frame_08.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9,"frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11,"frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12,"frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_13,"frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_14,"frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_15,"frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16,"frame_08.png"))
+
         } catch (e: OutOfMemoryError) {
+
+
         } catch (e: Exception) {
         }
         val frameChooseAdapter = FrameChooseAdapter(this, framePreviewArrayList)
@@ -777,15 +801,16 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                     frameLayout!!.drawingCache
                 )
                 frameLayout!!.isDrawingCacheEnabled = false
+                val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
                 try {
                     //Write file
                     val filename = "bitmap.png"
                     val stream = openFileOutput(filename, MODE_PRIVATE)
-                    savedBmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                     //Cleanup
                     stream.close()
-                    savedBmp.recycle()
+                    newsaveBmp.recycle()
 
                     //Pop intent
                     val in1 =
@@ -2101,6 +2126,21 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
 
     override fun onDialogDismissed(dialogId: Int) {
 
+    }
+
+    fun getResizedBitmap(bm: Bitmap, newHeight: Int, newWidth: Int): Bitmap? {
+        // GET CURRENT SIZE
+        val width = bm.width
+        val height = bm.height
+        // GET SCALE SIZE
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+        // CREATE A MATRIX FOR THE MANIPULATION
+        val matrix = Matrix()
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight)
+        // "RECREATE" THE NEW BITMAP
+        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false)
     }
 
     companion object {

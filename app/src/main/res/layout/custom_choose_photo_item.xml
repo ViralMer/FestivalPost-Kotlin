@@ -34,10 +34,10 @@
             android:background="@drawable/bg_gradient"
             android:gravity="center"
             android:fontFamily="@font/sf_ui_medium"
-            android:padding="@dimen/_2sdp"
+            android:padding="@dimen/_3sdp"
             android:text="@string/lbl_new"
             android:textColor="@color/white"
-            android:textStyle="bold"
+            android:textSize="@dimen/_8sdp"
             />
 
         <View

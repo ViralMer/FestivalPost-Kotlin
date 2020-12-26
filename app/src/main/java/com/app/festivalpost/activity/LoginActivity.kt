@@ -65,6 +65,13 @@ class LoginActivity : AppBaseActivity(),View.OnFocusChangeListener{
             getSharedPrefInstance().setValue(Constants.KeyIntent.DEVICE_TOKEN,token)
             // send it to server
         }
+        if (isLoggedIn())
+        {
+            launchActivity<HomeActivity> {  }
+            finish()
+        }
+
+
         linearLogin.onClick {
             performLogin()
         }
@@ -113,6 +120,7 @@ private fun performLogin() {
                     {
                         getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME,it.data[i]!!.name)
                         getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, it.data[i]!!.mobile)
+                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_EMAIL, it.data[i]!!.email)
                     }
                 }
                 finish()

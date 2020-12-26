@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/lay_main"
     android:layout_width="match_parent"
+    android:layout_margin="@dimen/_5sdp"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -9,6 +10,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_88sdp"
+        android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/contact_white_bg_new"
         android:orientation="vertical">
 
@@ -32,8 +34,8 @@
             android:padding="@dimen/_4sdp"
             android:layout_marginLeft="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_8sdp"
-            android:background="@drawable/small_button_bg_black"
-            android:textColor="@color/colorBlack"
+            android:background="@drawable/bg_gradient"
+            android:textColor="@color/colorWhite"
             android:textStyle="bold"
             android:textSize="9dp" />
         <LinearLayout

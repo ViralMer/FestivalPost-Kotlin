@@ -141,7 +141,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
             }
 
             tvPurchase.onClick {
-                toast("Plan Purchase")
+                handleRazorPay()
             }
 
 
