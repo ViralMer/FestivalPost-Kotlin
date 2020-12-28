@@ -1825,6 +1825,8 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         when (item.itemId) {
             android.R.id.home -> if (backpressed) {
                 onBackPressed()
+                ivvideo!!.stopPlayer()
+
             } else {
                 AlertDialog.Builder(this)
                     .setTitle("Exit")

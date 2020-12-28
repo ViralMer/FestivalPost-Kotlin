@@ -114,9 +114,10 @@
                     android:layout_height="1dp"
                     android:background="@color/colorDivider" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_140sdp" android:orientation="vertical"
+                    android:layout_height="@dimen/_140sdp"
+                    android:orientation="vertical"
 
                     >
 
@@ -128,7 +129,17 @@
 
                         />
 
-                </LinearLayout>
+                    <com.app.festivalpost.utils.dotsindicator.DotsIndicator
+                        android:id="@+id/dots"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_margin="@dimen/spacing_standard"
+                        app:dot_height="@dimen/spacing_control"
+                        app:dot_width="@dimen/spacing_control" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/layincidents"

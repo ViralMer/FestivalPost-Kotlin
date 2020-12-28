@@ -81,6 +81,10 @@ interface RestApis {
     @POST("getdays")
     fun getdays(@Field("date")date:String,@Field("token")token:String= getApiToken()):Call<DaysPageResponse>
 
+    @FormUrlEncoded
+    @POST("GetAllFestivalVideo")
+    fun getAllFestivalVideo(@Field("date")date:String,@Field("token")token:String= getApiToken()):Call<VideoItemResponse>
+
 
 
 }

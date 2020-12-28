@@ -78,7 +78,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
         }
         tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
-        animateButton()
+        //animateButton()
         tvaction!!.setOnClickListener {
             if (day in 0..1) {
                 val detailact = Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)

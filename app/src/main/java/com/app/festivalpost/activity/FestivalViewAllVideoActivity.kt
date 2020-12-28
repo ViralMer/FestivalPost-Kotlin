@@ -2,7 +2,6 @@ package com.app.festivalpost.activity
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -11,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.DayAdapter
-import com.app.festivalpost.models.HomePageItem
+import com.app.festivalpost.adapter.DayVideoAdapter
+import com.app.festivalpost.models.VideoItem
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.hide
@@ -19,25 +19,24 @@ import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.show
 import java.util.*
 
-class FestivalViewAllActivitty : AppBaseActivity() {
+class FestivalViewAllVideoActivity : AppBaseActivity() {
     private var lvdata: RecyclerView? = null
     private var btnchoosedate: Button? = null
-    private var daylist = arrayListOf<HomePageItem?>()
-    private var dayAdapter: DayAdapter? = null
+    private var videoitemList= arrayListOf<VideoItem?>()
+    private var dayVideoAdapter:DayVideoAdapter?=null
     var picker: DatePickerDialog? = null
     var dateVal = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_festival_view_all_activitty)
+        setContentView(R.layout.activity_festival_view_all_activity_video)
         setActionbar()
         lvdata = findViewById<View>(R.id.lvdata) as RecyclerView
         btnchoosedate = findViewById<View>(R.id.btnchoosedate) as Button
         loadgetDaysAllData()
-        dayAdapter= DayAdapter(this, daylist)
-        lvdata!!.adapter = dayAdapter
-
+        dayVideoAdapter= DayVideoAdapter(this, videoitemList)
+        lvdata!!.adapter = dayVideoAdapter
 
         btnchoosedate!!.onClick {
             val cldr = Calendar.getInstance()
@@ -47,10 +46,10 @@ class FestivalViewAllActivitty : AppBaseActivity() {
             // date picker dialog
             // date picker dialog
             picker = DatePickerDialog(
-                this@FestivalViewAllActivitty,
+                this@FestivalViewAllVideoActivity,
                 { view, year, monthOfYear, dayOfMonth ->
                     btnchoosedate!!.text =
-                        dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year
+                        dayOfMonth.toString() + "/" + (monthOfYear + 1) + "/" + year
                     var strDay = dayOfMonth.toString()
                     var strMonth = ""
                     if (dayOfMonth < 12) {
@@ -59,9 +58,7 @@ class FestivalViewAllActivitty : AppBaseActivity() {
                     if (monthOfYear + 1 < 12) {
                         strMonth = (monthOfYear + 1).toString()
                     }
-                    Log.d("strMonth",""+strMonth+  " 13" +  monthOfYear)
                     dateVal = dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year
-
                     loadgetDaysAllData()
                 }, year, month, day
             )
@@ -83,16 +80,14 @@ class FestivalViewAllActivitty : AppBaseActivity() {
     {
         showProgress(true)
         callApi(
-            getRestApis().getdays(dateVal), onApiSuccess = {
+            getRestApis().getAllFestivalVideo(dateVal), onApiSuccess = {
                 showProgress(false)
                 lvdata!!.show()
-                dayAdapter=null
-                daylist=it.festival
-                dayAdapter= DayAdapter(this,it.festival)
-                lvdata!!.adapter = dayAdapter
-                dayAdapter!!.notifyDataSetChanged()
-
-
+                dayVideoAdapter=null
+                videoitemList=it.video
+                dayVideoAdapter=DayVideoAdapter(this,it.video)
+                lvdata!!.adapter = dayVideoAdapter
+                dayVideoAdapter!!.notifyDataSetChanged()
 
             }, onApiError = {
                 showProgress(false)

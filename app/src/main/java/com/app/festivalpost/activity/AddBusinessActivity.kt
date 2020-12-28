@@ -235,7 +235,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
         else if (edWebsite!!.text.toString() != "" && !validWebsite(edWebsite!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
         }
-        else if (category_value!=null) {
+        else if (category_value==null) {
             Global.getAlertDialog(this, "Opps..!", "Please Select Category")
         }
         else {
@@ -472,9 +472,10 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
 
     override fun onItemClicked(`object`: Any?, index: Int) {
         val photoItem = `object` as BusinessCategory
+        Log.d("Item Cliked",""+index);
         category_value = photoItem.category_name
-        alertDialog!!.dismiss()
         edCategory!!.text=category_value
+        alertDialog!!.dismiss()
 
 
     }
@@ -533,7 +534,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
         rcvCategory = layout.findViewById<View>(R.id.rcvBusinessCategory) as RecyclerView
         val builder = AlertDialog.Builder(context)
             .setView(layout)
-            .setCancelable(false)
+            .setCancelable(true)
         alertDialog = builder.create()
         alertDialog!!.show()
 

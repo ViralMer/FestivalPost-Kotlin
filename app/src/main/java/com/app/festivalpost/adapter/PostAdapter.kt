@@ -56,7 +56,7 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem
         holder.ivphoto.setImageBitmap(bitmap)
         holder.layMain.tag = festivalItem
         holder.layMain.setOnClickListener { view ->
-            showFullScreenImage(path)
+            showFullScreenImage(path+ "/" + festivalItem.path)
         }
     }
 

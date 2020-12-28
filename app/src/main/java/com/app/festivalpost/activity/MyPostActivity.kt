@@ -10,13 +10,16 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.GridSpacingItemDecoration
 import com.app.festivalpost.R
+import com.app.festivalpost.adapter.MyAdapter
 import com.app.festivalpost.adapter.PostAdapter
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.fragment.HomeFragment
@@ -29,6 +32,7 @@ import com.app.festivalpost.models.PostItem
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.show
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
 import java.io.File
 import java.util.*
 
@@ -36,14 +40,42 @@ class MyPostActivity : AppBaseActivity() {
 
     var tvaction: TextView? = null
     var tvtitle: TextView? = null
-    var mBottomNavigationView: BottomNavigationView? = null
+
+
+    var tabLayout: TabLayout? = null
+    var viewPager: ViewPager? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_post)
         setActionbar()
 
-        loadPostFragment()
-        setupBottomNavigation()
+
+        tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+        viewPager = findViewById<ViewPager>(R.id.viewPager)
+
+        tabLayout!!.addTab(tabLayout!!.newTab().setText("Images"))
+        tabLayout!!.addTab(tabLayout!!.newTab().setText("Videos"))
+
+        val adapter = MyAdapter(this, supportFragmentManager, tabLayout!!.tabCount)
+        viewPager!!.adapter = adapter
+
+        viewPager!!.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+
+        tabLayout!!.addOnTabSelectedListener(
+            object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    viewPager!!.currentItem = tab.position
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab) {
+
+                }
+            })
 
 
 
@@ -72,23 +104,7 @@ class MyPostActivity : AppBaseActivity() {
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvtitle.text = resources.getString(R.string.txt_my_posts)
     }
-    private fun setupBottomNavigation() {
-        mBottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
-        mBottomNavigationView!!.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_images -> {
-                    loadPostFragment()
-                    return@OnNavigationItemSelectedListener true
-                }
-                R.id.nav_video -> {
-                    loadVideoFragment()
-                    return@OnNavigationItemSelectedListener true
-                }
 
-            }
-            false
-        })
-    }
 
     private fun loadPostFragment() {
         val fragment = MyPostFragment()
@@ -97,12 +113,16 @@ class MyPostActivity : AppBaseActivity() {
             .commit()
     }
 
+
+
     private fun loadVideoFragment() {
         val fragment = MyVideoFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
     }
+
+
 
 
 

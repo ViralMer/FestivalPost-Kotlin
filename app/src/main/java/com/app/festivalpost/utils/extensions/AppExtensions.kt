@@ -64,6 +64,7 @@ fun clearLoginPref() {
     getSharedPrefInstance().removeKey(KEY_USER_DATA)
     getSharedPrefInstance().removeKey(USER_EMAIL)
     getSharedPrefInstance().removeKey(USER_TOKEN)
+    getSharedPrefInstance().removeKey(USER_NUMBER)
 
 }
 

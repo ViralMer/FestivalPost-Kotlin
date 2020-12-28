@@ -83,6 +83,20 @@ data class VideoLanguageItem(
     var isIs_selected: Boolean = false
 ) : Serializable
 
+
+data class VideoItemResponse(
+    val video: ArrayList<VideoItem?>,
+    val status: Boolean? = false,
+    val message: String? = null
+)
+
+data class VideoItem(
+    val video_id: String? = null,
+    val video_name: String? = null,
+    val video_image: String? = null,
+    val video_date: String? = null,
+    ) : Serializable
+
 data class CurrentBusinessItem(
     val busi_id: Int? = 0,
     val user_id: Int? = 0,

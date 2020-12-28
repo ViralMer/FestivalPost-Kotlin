@@ -840,6 +840,40 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
                 if (image_type!! == 0) {
                     llwatermark!!.visibility = View.VISIBLE
+                    val handler = Handler()
+                    handler.postDelayed({
+                        Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
+                        val params = ivframebg!!.layoutParams
+                        params.width = width
+                        params.height = width
+                        layroot!!.isDrawingCacheEnabled = true
+                        layroot!!.buildDrawingCache(true)
+                        val savedBmp = Bitmap.createBitmap(
+                            layroot!!.drawingCache, 0, 0, width, width
+                        )
+                        layroot!!.isDrawingCacheEnabled = false
+                        //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                        try {
+                            //Write file
+                            val filename = "bitmap.png"
+                            val stream = openFileOutput(filename, MODE_PRIVATE)
+                            savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                            //Cleanup
+                            stream.close()
+                            savedBmp.recycle()
+
+                            //Pop intent
+                            val in1 = Intent(
+                                this@ChooseFrameForPhotoActivityNew,
+                                SaveAndShareActivity::class.java
+                            )
+                            in1.putExtra("image", filename)
+                            startActivity(in1)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }, 1500)
                 }else{
                     AlertDialog.Builder(this)
                         .setTitle("Sorry!!")
@@ -860,44 +894,45 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 }
             } else {
                 llwatermark!!.visibility = View.GONE
+                val handler = Handler()
+                handler.postDelayed({
+                    Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
+                    val params = ivframebg!!.layoutParams
+                    params.width = width
+                    params.height = width
+                    layroot!!.isDrawingCacheEnabled = true
+                    layroot!!.buildDrawingCache(true)
+                    val savedBmp = Bitmap.createBitmap(
+                        layroot!!.drawingCache, 0, 0, width, width
+                    )
+                    layroot!!.isDrawingCacheEnabled = false
+                    //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                    try {
+                        //Write file
+                        val filename = "bitmap.png"
+                        val stream = openFileOutput(filename, MODE_PRIVATE)
+                        savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                        //Cleanup
+                        stream.close()
+                        savedBmp.recycle()
+
+                        //Pop intent
+                        val in1 = Intent(
+                            this@ChooseFrameForPhotoActivityNew,
+                            SaveAndShareActivity::class.java
+                        )
+                        in1.putExtra("image", filename)
+                        startActivity(in1)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }, 1500)
             }
 
-            val handler = Handler()
-            handler.postDelayed({
-                Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
-                val params = ivframebg!!.layoutParams
-                params.width = width
-                params.height = width
-                layroot!!.isDrawingCacheEnabled = true
-                layroot!!.buildDrawingCache(true)
-                val savedBmp = Bitmap.createBitmap(
-                    layroot!!.drawingCache, 0, 0, width, width
-                )
-                layroot!!.isDrawingCacheEnabled = false
-                //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
-                try {
-                    //Write file
-                    val filename = "bitmap.png"
-                    val stream = openFileOutput(filename, MODE_PRIVATE)
-                    savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
-                    //Cleanup
-                    stream.close()
-                    savedBmp.recycle()
-
-                    //Pop intent
-                    val in1 = Intent(
-                        this@ChooseFrameForPhotoActivityNew,
-                        SaveAndShareActivity::class.java
-                    )
-                    in1.putExtra("image", filename)
-                    startActivity(in1)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }, 1500)
         }
-        animateButton()
+        //animateButton()
     }
 
     fun animateButton() {

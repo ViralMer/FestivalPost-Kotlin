@@ -44,11 +44,11 @@ class BusinessCategoryItemAdapter(var context: Context, var originaldata: ArrayL
         }
 
 
-        holder.ivSelected.tag = position
-        holder.ivSelected.setOnClickListener { view ->
+        holder.itemView.tag = position
+        holder.itemView.setOnClickListener { view ->
             val index = view.tag as Int
             val p = originaldata[index]
-            onItemClickListener.onItemClicked(p, 0)
+            onItemClickListener.onItemClicked(p, index)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
                 pp!!.is_selected = i == index

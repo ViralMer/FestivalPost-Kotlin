@@ -74,21 +74,22 @@
             >
 
 
-
-
-        <com.potyvideo.library.AndExoPlayerView
-            android:id="@+id/ivvideo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_share_new"
                 />
+
+
+
+            <com.potyvideo.library.AndExoPlayerView
+            android:id="@+id/ivvideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+
 
         <FrameLayout
             android:id="@+id/frame"

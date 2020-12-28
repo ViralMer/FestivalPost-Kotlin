@@ -195,19 +195,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             startActivity(intent)
             finish()
         }
-        val t: Thread = object : Thread() {
-            override fun run() {
-                while (!isInterrupted) {
-                    try {
-                        sleep(5000) //1000ms = 1 sec
-                        runOnUiThread { animateButton() }
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
-                }
-            }
-        }
-        t.start()
+
         frameLayout!!.setOnClickListener {
             linearLogo!!.setBackgroundResource(0)
             linearEmail!!.setBackgroundResource(0)
@@ -1640,7 +1628,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 }
             }, 1500)
         }
-        animateButton()
+        //animateButton()
     }
 
     fun animateButton() {

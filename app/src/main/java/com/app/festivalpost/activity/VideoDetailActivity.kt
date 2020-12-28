@@ -26,6 +26,7 @@ import com.app.festivalpost.adapter.ChooseVideoAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.VideoItem
 import com.app.festivalpost.models.VideoLanguageItem
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
@@ -75,6 +76,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     var frameLayout1: FrameLayout? = null
     var frameMain: FrameLayout? = null
     var videoid: String? = null
+    var videoTitle: VideoItem? = null
     var width = 0
     var height = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +88,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         )
         openAddImageDialog()
         setActionbar()
+
 
 
         rvdata = findViewById<View>(R.id.rvdata) as RecyclerView
@@ -114,7 +117,15 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         ivlogo = frame_view.findViewById(R.id.ivframelogo1)
         ivlogo1 = findViewById(R.id.ivframelogo1)
 
-        videoid = intent.getStringExtra("video_id")
+        val bundle=intent.extras
+        if (bundle!!.containsKey("object")) {
+            videoid = bundle.getString("video_id")
+            videoTitle = bundle.getSerializable("object") as VideoItem?
+        }
+        else if (bundle!!.containsKey("video_id")) {
+            videoid = bundle.getString("video_id")
+        }
+
 
 
         loadAccoutData()
@@ -134,7 +145,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             params.width=width
         }
 
-
+        videoView!!.setShowController(true)
         p = ProgressDialog(this@VideoDetailActivity)
 
 
@@ -237,7 +248,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         val ivBack = toolbar.findViewById<View>(R.id.ivBack) as AppCompatImageView
         val tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
 
-            tvtitle.text = resources.getString(R.string.txt_choose_video_post)
+        tvtitle.text = resources.getString(R.string.txt_choose_video_post)
 
         ivBack.onClick {
             onBackPressed()

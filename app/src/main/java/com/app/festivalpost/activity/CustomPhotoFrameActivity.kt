@@ -792,25 +792,49 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             Global.showProgressDialog(this@CustomPhotoFrameActivity)
             val handler = Handler()
             handler.postDelayed({
+                if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+                    if (frameContentItemDetail!!.type!! == "0") {
+                        llwatermark!!.visibility = View.VISIBLE
+                    }else{
+                        AlertDialog.Builder(this)
+                            .setTitle("Sorry!!")
+                            .setMessage("Please buy premium plan and save image.")
+                            .setPositiveButton("Buy Premium") { dialog, which ->
+                                val intent = Intent(
+                                    this,
+                                    PremiumActivity::class.java
+                                )
+                                /*val businessItem: BusinessItem = Global.getCurrentBusinessNEW()
+                                intent.putExtra("videoData", businessItem)
+                                startActivity(intent)*/
+                            }
+                            .setNegativeButton(
+                                "Cancel"
+                            ) { dialog, _ -> dialog.dismiss() }
+                            .show()
+                    }
+                } else {
+                    llwatermark!!.visibility = View.GONE
+                }
                 Global.dismissProgressDialog(this@CustomPhotoFrameActivity)
                 frameLayout!!.isDrawingCacheEnabled = true
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
                     frameLayout!!.buildDrawingCache(true)
                 }
                 val savedBmp = Bitmap.createBitmap(
-                    frameLayout!!.drawingCache
+                    frameLayout!!.drawingCache,0,0,1080,1080
                 )
                 frameLayout!!.isDrawingCacheEnabled = false
-                val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
                 try {
                     //Write file
                     val filename = "bitmap.png"
                     val stream = openFileOutput(filename, MODE_PRIVATE)
-                    newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                     //Cleanup
                     stream.close()
-                    newsaveBmp.recycle()
+                    savedBmp.recycle()
 
                     //Pop intent
                     val in1 =
@@ -822,7 +846,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 }
             }, 1500)
         }
-        animateButton()
+        //animateButton()
     }
 
     fun setFrameNEW(localFrameItem: FramePreview?) {

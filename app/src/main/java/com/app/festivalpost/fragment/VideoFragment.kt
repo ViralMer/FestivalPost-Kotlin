@@ -13,12 +13,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
+import com.app.festivalpost.activity.FestivalViewAllActivitty
+import com.app.festivalpost.activity.FestivalViewAllVideoActivity
 import com.app.festivalpost.activity.LoginActivity
 import com.app.festivalpost.adapter.CategoryItemAdapter
 import com.app.festivalpost.adapter.CustomFestivalItemAdapter
@@ -28,6 +31,8 @@ import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.launchActivity
+import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.show
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -44,6 +49,7 @@ class VideoFragment : BaseFragment() {
     private var rcvCustomFestivalVideo: RecyclerView? = null
     private var rcvCustomCategoryVideo: RecyclerView? = null
 
+    private var tvviewall: TextView? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,12 +64,15 @@ class VideoFragment : BaseFragment() {
 
         rcvCustomCategoryVideo = view.findViewById(R.id.customCategoryVideo)
         rcvCustomFestivalVideo = view.findViewById(R.id.customFestivalVideo)
+        tvviewall = view.findViewById(R.id.tvviewall)
                 val mainHandler = Handler(getMainLooper())
         var runnable: Runnable = Runnable { loadVideoPageData() }
 
         if(savedInstanceState==null) mainHandler.postDelayed(runnable, 0)
 
-
+        tvviewall!!.onClick {
+            activity!!.launchActivity<FestivalViewAllVideoActivity> {  }
+        }
 
 
     }

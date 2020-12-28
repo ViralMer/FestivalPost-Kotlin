@@ -32,6 +32,7 @@ class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<Categ
         if (photoItem!!.image_type==0)
         {
             holder.tvplan.text=context.getString(R.string.free)
+            holder.tvplan.setBackgroundResource(R.drawable.bg_gradient)
 
         }
         else{

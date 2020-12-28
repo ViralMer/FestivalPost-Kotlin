@@ -75,9 +75,8 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         )
         billingProcessor!!.initialize()
         setActionbar()
-        planItemArrayList!!.add(PlanItemDetails("1","Basic Plan","1299"))
-        planItemArrayList!!.add(PlanItemDetails("1","Basic Plan","1299"))
-        planItemArrayList!!.add(PlanItemDetails("1","Basic Plan","1299"))
+        planItemArrayList!!.add(PlanItemDetails("1","Basic Plan","1199"))
+
         viewPager = findViewById(R.id.planviewPager)
         viewPager!!.adapter = PagerAdapter()
 

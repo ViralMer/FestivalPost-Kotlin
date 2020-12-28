@@ -84,10 +84,9 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
         holder.itemView.setOnClickListener { view ->
             val index = view.tag as Int
             val p = originaldata[index]
-            onItemClickListener.onItemClicked(p, 0)
+            onItemClickListener.onItemClicked(p, index)
             for (i in originaldata.indices) {
                 val pp = originaldata[i]
-                //pp!!.is_current_business=1
                 originaldata[i] = pp
             }
             notifyDataSetChanged()

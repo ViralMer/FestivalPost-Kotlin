@@ -83,6 +83,7 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
+
             else -> {
             }
         }
@@ -125,7 +126,7 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
                     rvdata!!.adapter = adapter
 
                     val photoItem = customCategoryPostItem[0]
-                    photo_path = photoItem.image!!
+                    photo_path = photoItem.banner_image!!
                     photoItem.is_selected=true
 
                     Log.d("photo_path",""+photo_path)

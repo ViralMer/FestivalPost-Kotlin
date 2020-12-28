@@ -190,6 +190,8 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
                 {
                     b.is_current_business=1
                 }
+                loadManageBusinessAllData()
+                businessItemAdapter!!.notifyDataSetChanged()
             }, onApiError = {
                 showProgress(false)
 

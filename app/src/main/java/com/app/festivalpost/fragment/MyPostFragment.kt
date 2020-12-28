@@ -46,7 +46,7 @@ class MyPostFragment : BaseFragment() {
         rvdata!!.layoutManager = mLayoutManager
 
         linearLayout = view.findViewById(R.id.rlNoData)
-        btnCreatePost = view.findViewById(R.id.btnCreatePost)
+
 
 
 
@@ -104,7 +104,8 @@ class MyPostFragment : BaseFragment() {
             val filenames = java.util.ArrayList<String>()
             for (i in files.indices) {
                 val file = files[i]
-                if (filenames.isNotEmpty()) {
+                    if (files.isNotEmpty())
+                    {
                     linearLayout!!.hide()
                     if (file.isFile && file.path!!.endsWith(".jpg")) {
                         Log.d("Files", "FileName:" + files[i].name)

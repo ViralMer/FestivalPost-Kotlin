@@ -124,9 +124,9 @@ class AccountFragment : BaseFragment() {
         iv_edit.onClick { activity!!.launchActivity<EditProfileActivity> {  } }
 
         linearMyPost.onClick {
-            /*activity!!.launchActivity<MyPostActivity> {
+            activity!!.launchActivity<MyPostActivity> {
 
-            }*/
+            }
         }
 
 

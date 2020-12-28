@@ -46,6 +46,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
+
 
 @Suppress("DEPRECATION")
 class HomeFragment : BaseFragment() {
@@ -64,7 +66,8 @@ class HomeFragment : BaseFragment() {
     var currentBusinessItemList = arrayListOf<CurrentBusinessItem?>()
     var rcvBusinessItem: RecyclerView? = null
 
-
+    private var currentPage = 0
+    private var NUM_PAGES = 0
 
 
     override fun onCreateView(
@@ -113,9 +116,31 @@ class HomeFragment : BaseFragment() {
         mainHandler.postDelayed(runnable, 0)
 
 
+        NUM_PAGES = sliderArrayList.size
+
+        // Auto start of viewpager
+
+        // Auto start of viewpager
+        val handler = Handler()
+        val Update = Runnable {
+            if (currentPage === NUM_PAGES) {
+                currentPage = 0
+                
+            }
+            viewPager!!.setCurrentItem(currentPage++, true)
+        }
+        val swipeTimer = Timer()
+        swipeTimer.schedule(object : TimerTask() {
+            override fun run() {
+                handler.post(Update)
+            }
+        }, 3000, 3000)
 
 
     }
+
+
+
 
 
     inner class PagerAdapter : androidx.viewpager.widget.PagerAdapter() {
@@ -205,8 +230,8 @@ class HomeFragment : BaseFragment() {
 
                     Glide.with(this).load(currentBusinessItem!!.busi_logo)
                         .placeholder(R.drawable.placeholder_img).error(
-                        R.drawable.placeholder_img
-                    ).into(imageLogo!!)
+                            R.drawable.placeholder_img
+                        ).into(imageLogo!!)
 
 
 
@@ -239,6 +264,9 @@ class HomeFragment : BaseFragment() {
 
                     if (sliderArrayList.size > 0) {
                         viewPager!!.adapter = PagerAdapter()
+                        dots.attachViewPager(viewPager)
+                        dots.setDotDrawable(R.drawable.bg_circle_primary, R.drawable.black_dot)
+                        PagerAdapter().notifyDataSetChanged()
                     }
 
                     if (festivalArrayList.size > 0) {
@@ -285,8 +313,7 @@ class HomeFragment : BaseFragment() {
                         })
 
 
-
-                    if (res.logout!!) {
+                    /* if (res.logout!!) {
                         val detailAct = Intent(
                             activity, LoginActivity::class.java
                         )
@@ -294,7 +321,7 @@ class HomeFragment : BaseFragment() {
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         activity!!.startActivity(detailAct)
                         activity!!.finish()
-                    }
+                    }*/
 
 
                 } else {
@@ -377,6 +404,13 @@ class HomeFragment : BaseFragment() {
             }
         }*/
     }
+
+
+
+
+
+
+
 
     companion object{
         var alertDialog: AlertDialog? = null

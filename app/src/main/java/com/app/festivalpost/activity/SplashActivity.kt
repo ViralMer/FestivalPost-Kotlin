@@ -50,7 +50,7 @@ class SplashActivity : AppCompatActivity() {
         } catch (e: NoSuchAlgorithmException) {
         }
         HomeActivityAsync().execute()
-        animateButton()
+        //animateButton()
     }
 
     fun animateButton() {

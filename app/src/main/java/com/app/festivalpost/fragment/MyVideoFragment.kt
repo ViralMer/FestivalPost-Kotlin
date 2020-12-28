@@ -42,7 +42,6 @@ class MyVideoFragment : BaseFragment() {
         rvdata!!.layoutManager = mLayoutManager
 
         linearLayout = view.findViewById(R.id.rlNoData)
-        btnCreatePost = view.findViewById(R.id.btnCreatePost)
 
 
 
@@ -57,7 +56,7 @@ class MyVideoFragment : BaseFragment() {
         val filenames = ArrayList<String>()
         for (i in files.indices) {
             val file=files[i]
-            if (filenames.isNotEmpty()) {
+            if (files.isNotEmpty()) {
                 linearLayout!!.hide()
                 if (file.isFile && file.path.endsWith(".mp4")) {
                     Log.d("Files", "FileName:" + files[i].name)
