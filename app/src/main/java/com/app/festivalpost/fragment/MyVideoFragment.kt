@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.PostAdapter
+import com.app.festivalpost.adapter.VideoPostAdapter
 import com.app.festivalpost.models.FileListItem
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.show
@@ -21,7 +22,7 @@ import java.util.ArrayList
 
 class MyVideoFragment : BaseFragment() {
     var dataArrayList = ArrayList<FileListItem>()
-    var adapter: PostAdapter? = null
+    var adapter: VideoPostAdapter? = null
     var linearLayout: LinearLayout? = null
     var rvdata: RecyclerView? = null
     var btnCreatePost: Button? = null
@@ -69,7 +70,7 @@ class MyVideoFragment : BaseFragment() {
                 linearLayout!!.show()
             }
 
-            adapter = PostAdapter(activity!!, dataArrayList)
+            adapter = VideoPostAdapter(activity!!, dataArrayList)
             rvdata!!.adapter = adapter
         }
         return view

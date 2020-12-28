@@ -32,6 +32,7 @@ class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<Frame
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val framePreview = originaldata[position]
+
         if (position < getCustomFrameList().size) {
             Glide.with(context).load(framePreview.dynamic_images)
                 .placeholder(R.drawable.placeholder_img).error(

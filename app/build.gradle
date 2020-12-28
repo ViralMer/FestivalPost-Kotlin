@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.app.festivalpost"
-        minSdkVersion 24
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -155,7 +155,7 @@ dependencies {
     implementation 'io.github.inflationx:viewpump:2.0.3'
     implementation 'com.airbnb.android:lottie:3.0.7'
     implementation 'com.razorpay:checkout:1.5.16'
-    implementation 'com.arthenica:mobile-ffmpeg-full-gpl:4.4'
+    implementation 'com.arthenica:mobile-ffmpeg-full-gpl:4.4.LTS'
 
     implementation 'com.github.HamidrezaAmz:MagicalExoPlayer:1.0.16'
     testImplementation 'junit:junit:4.+'

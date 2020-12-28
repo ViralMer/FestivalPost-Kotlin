@@ -43,7 +43,7 @@
                 android:gravity="center"
                 android:fontFamily="@font/antipastopro_medium_trial"
                 android:textColor="@color/colorBlack"
-                android:text="@string/lbl_choose_video"
+                android:text="@string/lbl_select_video"
                 android:textSize="@dimen/_18ssp"/>
 
             <TextView

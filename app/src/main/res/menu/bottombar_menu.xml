@@ -11,7 +11,7 @@
         android:visible="false"
         android:icon="@drawable/digitalcard_deselect" />
     <item android:id="@+id/nav_post"
-        android:title="@string/txt_my_posts"
+        android:title="@string/txt_greetings"
         android:icon="@drawable/post_deselect" />
     <item android:id="@+id/nav_profile"
         android:title="@string/txt_account"

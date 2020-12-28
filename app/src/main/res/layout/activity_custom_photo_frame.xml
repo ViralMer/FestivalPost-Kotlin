@@ -229,62 +229,60 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_30sdp"
-                android:orientation="horizontal"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_2sdp"
-                android:weightSum="6"
-                >
+                android:orientation="horizontal"
+                android:weightSum="6">
+
+                <ImageView
+                    android:id="@+id/ivNameSelected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/name_select" />
+
+                <ImageView
+                    android:id="@+id/ivLogoSelected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/logo_select" />
+
+                <ImageView
+                    android:id="@+id/ivMobileSelected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/mobile_select" />
+
+                <ImageView
+                    android:id="@+id/ivEmailSelected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/email_select" />
+
+
+                <ImageView
+                    android:id="@+id/ivWebsiteSelected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/website_select" />
 
                 <ImageView
                     android:id="@+id/ivAddressSelected"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/location_select"
                     android:layout_weight="1"
-                    />
-                <ImageView
-                    android:id="@+id/ivEmailSelected"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/email_select"
-                    android:layout_weight="1"
-                    />
-                <ImageView
-                    android:id="@+id/ivMobileSelected"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/mobile_select"
-                    android:layout_weight="1"
-                    />
-                <ImageView
-                    android:id="@+id/ivWebsiteSelected"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/website_select"
-                    android:layout_weight="1"
-                    />
-                <ImageView
-                    android:id="@+id/ivLogoSelected"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/location_select"
-                    android:layout_weight="1"
-                    />
-                <ImageView
-                    android:id="@+id/ivNameSelected"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/name_select"
-                    android:layout_weight="1"
-                    />
-
+                    android:src="@drawable/location_select" />
 
 
             </LinearLayout>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

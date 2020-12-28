@@ -515,9 +515,8 @@ class ApiManager {
                 multipart.addFormField("id", id)
                 multipart.addFormField("name", name)
                 multipart.addFormField("email", email)
-                multipart.addFormField("mobile_second", mobile2)
                 multipart.addFormField("mobile", mobile)
-                Log.d("IDNAME", "ID :$id NAme:$mobile2")
+                multipart.addFormField("mobile_second", mobile2)
                 multipart.addFormField("website", website)
                 multipart.addFormField("address", address)
                 multipart.addFormField("business_category", category)
@@ -525,6 +524,7 @@ class ApiManager {
                 if (profilePath != "") {
                     multipart.addFilePart("logo", File(profilePath))
                 }
+                Log.d("IDNAME", "ID :$id NAme:$mobile2" + "toekn:"+ getApiToken())
                 result = multipart.finish()
                 acListener.onSuccessResponse(servicename, result, ApiEndpoints.ResultCodes.ResultOk)
             } catch (ex: IOException) {

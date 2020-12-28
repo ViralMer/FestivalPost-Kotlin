@@ -229,7 +229,6 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
 
         recyclerView!!.setLayoutManager(horizontalLayoutManagaer)
         recyclerView!!.setAdapter(frameChooseAdapter)
-        setFrameNEW(framePreviewArrayList[0])
         ivphoneselect = findViewById(R.id.ivMobileSelected)
         ivemailselect = findViewById(R.id.ivEmailSelected)
         ivaddressselect = findViewById(R.id.ivAddressSelected)
@@ -240,6 +239,34 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             rootTextView = null
             showAddTextDialog("", selected_color)
         }
+        if (getCustomFrameList().isNotEmpty()) {
+            val photoItem=framePreviewArrayList[0]
+            setFrameNEW(framePreviewArrayList[0])
+            if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
+                    "",
+                    ignoreCase = true
+                )
+            ) {
+                //setFrameNEW(photoItem);
+                Glide.with(this).load(photoItem.dynamic_images)
+                    .placeholder(
+                        R.drawable.placeholder_img
+                    ).error(R.drawable.placeholder_img).into(
+                        ivframebg!!
+                    )
+            }
+
+        }
+        else{
+            try {
+                setFrameNEW(framePreviewArrayList[0])
+            }catch (e: OutOfMemoryError) {
+                alertDialog!!.show()
+            } catch (e: Exception) {
+            }
+
+        }
+        //setFrameNEW(framePreviewArrayList[0])
         linearTextcolor!!.setOnClickListener {
             ColorPickerDialog.newBuilder().show(this)
         }
@@ -1397,7 +1424,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
-        tvtitle.text = resources.getString(R.string.lbl_create_video)
+        tvtitle.text = resources.getString(R.string.txt_select_frame)
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.setOnClickListener {
             linearAddress!!.setBackgroundResource(0)
@@ -1459,6 +1486,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                                         this,
                                         PremiumActivity::class.java
                                     )
+                                    startActivity(intent)
                                     /*val businessItem: BusinessItem = Global.getCurrentBusinessNEW()
                                     intent.putExtra("videoData", businessItem)
                                     startActivity(intent)*/

@@ -246,11 +246,7 @@ class RegisterVerificationActivity : AppBaseActivity(),
                             this@RegisterVerificationActivity,
                             AddFirstBusinessActivity::class.java
                         )
-                        Global.storePreference(Constant.PREF_LOGIN, true)
-                        Global.storePreference("pref_mobile", "")
-                        Global.storePreference("pref_email", "")
-                        Global.storePreference("pref_name", "")
-                        Global.storePreference("pref_referal", "")
+
                         intent.flags =
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)

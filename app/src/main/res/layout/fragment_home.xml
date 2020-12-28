@@ -18,7 +18,7 @@
         android:background="@color/colorBackground"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -29,6 +29,35 @@
             android:padding="@dimen/_2sdp">
 
             <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:layout_weight="10"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:padding="@dimen/_2sdp">
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPremium"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center|start"
+                android:layout_gravity="start|center"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:layout_marginLeft="@dimen/_25sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/premium_bg"
+                android:text="@string/txt_buy_premium"
+                android:textStyle="bold"
+                android:textColor="@color/colorBlack"
+                android:textSize="14dp" />
+        <LinearLayout
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -42,6 +71,12 @@
                     android:layout_gravity="end|center"
 
                     />
+                <FrameLayout
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
+                    android:background="@drawable/contact_photo_bg"
+                    android:orientation="vertical">
+
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imageLogo"
@@ -50,25 +85,10 @@
                     android:gravity="center|start"
                     android:layout_gravity="start|center"
                     />
+                </FrameLayout>
 
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvPremium"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:gravity="center|start"
-                android:layout_gravity="start|center"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/premium_bg"
-                android:text="@string/txt_buy_premium"
-                android:textStyle="bold"
-                android:textColor="@color/colorBlack"
-                android:textSize="14dp" />
         </LinearLayout>
-
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tvCustom"

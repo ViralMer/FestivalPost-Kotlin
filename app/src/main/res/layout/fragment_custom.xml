@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center|start"
                 android:layout_gravity="start|center"
-                android:text="@string/txt_custom"
+                android:text="@string/txt_greetings"
                 android:textStyle="bold"
                 android:padding="@dimen/_10sdp"
                 android:textColor="@color/colorBlack"

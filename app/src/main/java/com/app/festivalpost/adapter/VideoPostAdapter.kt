@@ -4,10 +4,10 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -33,11 +33,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.potyvideo.library.AndExoPlayerView
 import java.util.*
 import java.util.function.Consumer
 
-class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem>) :
-    RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+class VideoPostAdapter(var context: Context, var originaldata: ArrayList<FileListItem>) :
+    RecyclerView.Adapter<VideoPostAdapter.ViewHolder>() {
     var searchCount = 0
     private var isLoaderVisible = false
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -52,11 +53,14 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem
         holder.tvname.text = getSharedPrefInstance().getStringValue(USER_NAME)
         val path: String =
             Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
-        val bitmap = BitmapFactory.decodeFile(path + "/" + festivalItem.path)
-        holder.ivphoto.setImageBitmap(bitmap)
+        val thumb: Bitmap = ThumbnailUtils.createVideoThumbnail(
+            path+ "/" + festivalItem.path,
+            MediaStore.Images.Thumbnails.MINI_KIND
+        )!!
+        holder.ivphoto.setImageBitmap(thumb)
         holder.layMain.tag = festivalItem
         holder.layMain.setOnClickListener { view ->
-            showFullScreenImage(path+ "/" + festivalItem.path)
+            showFullScreenImage(path + "/" + festivalItem.path)
         }
     }
 
@@ -70,14 +74,11 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem
         dialog.window!!.setBackgroundDrawable(
             ColorDrawable(Color.TRANSPARENT)
         )
-        dialog.setContentView(R.layout.custom_image_dialog)
+        dialog.setContentView(R.layout.custom_video_dialog)
         dialog.setCancelable(true)
         dialog.setCanceledOnTouchOutside(true)
-        val ivimage = dialog.findViewById<View>(R.id.ivimage) as ImageView
-        if (imageUrl != null && !imageUrl.equals("", ignoreCase = true)) {
-            Glide.with(context).load(imageUrl).placeholder(R.drawable.placeholder_img)
-                .error(R.drawable.placeholder_img).into(ivimage)
-        }
+        val ivimage = dialog.findViewById<View>(R.id.ivvideo) as AndExoPlayerView
+        ivimage.setSource(imageUrl)
         val button = dialog.findViewById<Button>(R.id.btnshare)
         button.setOnClickListener {
             try {
@@ -94,11 +95,11 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem
                                 val path = MediaStore.Images.Media.insertImage(
                                     context.contentResolver, resource, "Festival Post", null
                                 )
-                                val screenshotUri = Uri.parse(imageUrl)
-                                val share = Intent(Intent.ACTION_SEND)
-                                share.type = "image/*"
-                                share.putExtra(Intent.EXTRA_STREAM, screenshotUri)
-                                context.startActivity(Intent.createChooser(share, "Share Design!"))
+                                val sharingIntent = Intent(Intent.ACTION_SEND)
+                                sharingIntent.type = "video/mp4" //If it is a 3gp video use ("video/3gp")
+                                val uri = Uri.parse(imageUrl)
+                                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                                context.startActivity(Intent.createChooser(sharingIntent, "Share Video!"))
                             }
 
                             override fun onLoadFailed(errorDrawable: Drawable?) {

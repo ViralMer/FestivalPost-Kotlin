@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|start"
                     android:layout_gravity="start|center"
-                    android:text="@string/txt_video"
+                    android:text="@string/txt_videos"
                     android:textStyle="bold"
                     android:padding="@dimen/_10sdp"
                     android:textColor="@color/colorBlack"

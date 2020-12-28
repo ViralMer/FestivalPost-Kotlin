@@ -1,6 +1,7 @@
 package com.app.festivalpost.adapter
 
 import android.content.Context
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,9 +39,9 @@ class FontTypeAdapter(var context: Context, var originaldata: ArrayList<FontType
         val businessCategoryItem = originaldata[position]
 
         holder.tvTitle.text=text
-
-
-        if (businessCategoryItem!!.is_selected!!) {
+        val typeface = Typeface.createFromAsset(context.assets, businessCategoryItem!!.name)
+        holder.tvTitle.typeface = typeface
+        if (businessCategoryItem.is_selected!!) {
             holder.ivSelected.visibility = View.VISIBLE
         } else {
             holder.ivSelected.visibility = View.GONE

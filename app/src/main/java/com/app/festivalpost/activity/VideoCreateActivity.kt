@@ -26,6 +26,10 @@ import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoListItem
 import com.app.festivalpost.utils.Constants
+import com.arthenica.mobileffmpeg.Config
+import com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL
+import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
+import com.arthenica.mobileffmpeg.FFmpeg
 /*import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
@@ -223,7 +227,7 @@ class VideoCreateActivity : AppBaseActivity() {
             "/storage/emulated/0/FestivalPost/$videoName"
         )
 
-        /*val rc=FFmpeg.execute(inputCode1)
+        val rc= FFmpeg.execute(inputCode1)
 
         if (rc == RETURN_CODE_SUCCESS) {
             Log.i(Config.TAG, "Command execution completed successfully.");
@@ -232,7 +236,7 @@ class VideoCreateActivity : AppBaseActivity() {
         } else {
             Log.i(Config.TAG, String.format("Command execution failed with rc=%d and the output below.", rc));
             Config.printLastCommandOutput(Log.INFO);
-        }*/
+        }
 
         Log.d(
             "VideoPAth",
@@ -296,7 +300,7 @@ class VideoCreateActivity : AppBaseActivity() {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
-        tvtitle.text = "Your Video"
+        tvtitle.text = "Save & Share"
         tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.visibility = View.GONE

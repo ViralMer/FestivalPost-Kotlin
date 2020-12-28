@@ -233,7 +233,6 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         textallSelected = true
 
 
-
         var frameListItems1 = arrayListOf<FrameListItem1>()
         frameListItems1 = getCustomFrameList()
         Log.d("framesize", "" + getCustomFrameList().size)
@@ -248,25 +247,25 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         }
         Log.d("FrmaeSize", "" + framePreviewArrayList.size)
         try {
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17,"frame_17.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18,"frame_18.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_19,"frame_19.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_20,"frame_20.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_21,"frame_21.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_1,"frame_01.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_3,"frame_03.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_4,"frame_04.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_5,"frame_05.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_6,"frame_06.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_7,"frame_07.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_8,"frame_08.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9,"frame_01.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11,"frame_03.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12,"frame_04.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_13,"frame_05.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_14,"frame_06.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_15,"frame_07.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16,"frame_08.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17, "frame_17.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18, "frame_18.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_19, "frame_19.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_20, "frame_20.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_21, "frame_21.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_1, "frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_3, "frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_4, "frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_5, "frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_6, "frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_7, "frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_8, "frame_08.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9, "frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11, "frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12, "frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_13, "frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_14, "frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_15, "frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16, "frame_08.png"))
 
         } catch (e: OutOfMemoryError) {
 
@@ -278,8 +277,35 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             LinearLayoutManager(this@ChooseFrameActivityNew, LinearLayoutManager.HORIZONTAL, false)
         recyclerView!!.layoutManager = horizontalLayoutManagaer
         recyclerView!!.adapter = frameChooseAdapter
-        framePreviewArrayList[0].isIs_selected=true
+        framePreviewArrayList[0].isIs_selected = true
         setFrameNEW(framePreviewArrayList[0])
+        if (getCustomFrameList().isNotEmpty()) {
+            val photoItem=framePreviewArrayList[0]
+            setFrameNEW(framePreviewArrayList[0])
+            if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
+                    "",
+                    ignoreCase = true
+                )
+            ) {
+                //setFrameNEW(photoItem);
+                Glide.with(this).load(photoItem.dynamic_images)
+                    .placeholder(
+                        R.drawable.placeholder_img
+                    ).error(R.drawable.placeholder_img).into(
+                        ivframebg!!
+                    )
+            }
+
+        }
+        else{
+            try {
+                setFrameNEW(framePreviewArrayList[0])
+            }catch (e: OutOfMemoryError) {
+                alertDialog!!.show()
+            } catch (e: Exception) {
+            }
+
+        }
         mPhotoEditor!!.setOnPhotoEditorListener(object : OnPhotoEditorListener {
             override fun onEditTextChangeListener(
                 rootView: View?,
@@ -1598,26 +1624,26 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             } else {
                 llwatermark!!.visibility = View.GONE
             }
-            Global.showProgressDialog(this@ChooseFrameActivityNew)
+            showProgress(true)
             val handler = Handler()
             handler.postDelayed({
-                Global.dismissProgressDialog(this@ChooseFrameActivityNew)
+                showProgress(false)
                 layroot!!.isDrawingCacheEnabled = true
                 layroot!!.buildDrawingCache(true)
                 val savedBmp = Bitmap.createBitmap(
                     layroot!!.drawingCache
                 )
                 layroot!!.isDrawingCacheEnabled = false
-                val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                //val newsaveBmp = getResizedBitmap(savedBmp, 1080, 1080)
                 try {
                     //Write file
                     val filename = "bitmap.png"
                     val stream = openFileOutput(filename, MODE_PRIVATE)
-                    newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                     //Cleanup
                     stream.close()
-                    newsaveBmp.recycle()
+                    savedBmp.recycle()
 
                     //Pop intent
                     val in1 = Intent(this@ChooseFrameActivityNew, SaveAndShareActivity::class.java)
@@ -1929,6 +1955,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
     override fun onDialogDismissed(dialogId: Int) {
 
     }
+
     fun getResizedBitmap(bm: Bitmap, newHeight: Int, newWidth: Int): Bitmap? {
         // GET CURRENT SIZE
         val width = bm.width

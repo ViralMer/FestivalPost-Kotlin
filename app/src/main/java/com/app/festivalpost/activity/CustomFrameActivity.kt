@@ -63,16 +63,19 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
         if (title != null && title == "") {
             tvtitle.text = resources.getString(R.string.txt_choose_photo)
         } else {
-            tvtitle.text = title
+            tvtitle.text = "Select Greetings"
         }
         tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
 
         tvaction!!.setOnClickListener {
+            showProgress(true)
             val detailact = Intent(this@CustomFrameActivity, CustomPhotoFrameActivity::class.java)
             detailact.putExtra("photo_path", photo_path)
+            Log.d("photo_path","123 "+photo_path)
             detailact.putExtra("frame_contact_detail", frameContentItemDetail)
             startActivity(detailact)
+            showProgress(false)
         }
     }
 
@@ -126,6 +129,7 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
                     rvdata!!.adapter = adapter
 
                     val photoItem = customCategoryPostItem[0]
+                    frameContentItemDetail=customCategoryPostItem[0]
                     photo_path = photoItem.banner_image!!
                     photoItem.is_selected=true
 

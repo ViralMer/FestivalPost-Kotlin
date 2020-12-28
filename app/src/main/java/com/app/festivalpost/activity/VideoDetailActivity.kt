@@ -441,6 +441,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                     )
                 ) {
                     video_path = videoListItem!!.video!!
+                    video_type = videoListItem!!.type!!
                     videoView!!.setSource(video_path)
                     frameLayout1!!.visibility = View.VISIBLE
                 }

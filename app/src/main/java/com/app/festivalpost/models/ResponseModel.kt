@@ -103,6 +103,7 @@ data class CurrentBusinessItem(
     val busi_name: String? = null,
     val busi_email: String? = null,
     val busi_mobile: String? = null,
+    val business_category: String? = null,
     val busi_mobile_second: String? = null,
     val busi_website: String? = null,
     val busi_address: String? = null,

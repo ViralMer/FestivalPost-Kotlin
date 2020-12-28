@@ -119,7 +119,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
 
             tvPlanName.text=planItemDetails.name
             tvPlanPrice.text=planItemDetails.price
-            tvPlanMoths.text=getString(R.string.lbl_three_months)
+            tvPlanMoths.text=getString(R.string.lbl_one_year)
             if (position==0)
             {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

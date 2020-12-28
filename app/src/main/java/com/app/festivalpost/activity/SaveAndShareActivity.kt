@@ -43,12 +43,13 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
-class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
+class SaveAndShareActivity() : AppCompatActivity() {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
     var ivimage: ImageView? = null
     var bmp: Bitmap? = null
+    var image_type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +60,10 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
         setContentView(R.layout.activity_save_and_share)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
-        apiManager = ApiManager(this@SaveAndShareActivity)
+
+
+
+
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey("image")) {
@@ -72,8 +76,41 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
                     e.printStackTrace()
                 }
             }
+            if (bundle.containsKey("image_type"))
+            {
+                try {
+                    image_type = intent.getStringExtra("image_type")
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
         val businessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+        if (!getSharedPrefInstance().getBooleanValue(
+                Constants.KeyIntent.IS_PREMIUM,
+                false
+            )
+        ) {
+            if (image_type != "0") {
+                AlertDialog.Builder(this)
+                    .setTitle("Sorry!!")
+                    .setMessage("Buy Premium plan and remove watermark")
+                    .setPositiveButton("Buy Premium") { dialog, which ->
+                        val intent = Intent(
+                            this,
+                            PremiumActivity::class.java
+                        )
+                        startActivity(intent)
+                        finish()
+                    }
+                    .setNegativeButton(
+                        "Cancel"
+                    ) { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+        }
+
         setActionbar()
         ivimage = findViewById(R.id.ivimage)
         if (bmp != null) {
@@ -106,6 +143,8 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
             }
         }
     }
+
+
 
     var sharePhoto = false
     var imagePath: String? = ""
@@ -295,116 +334,9 @@ class SaveAndShareActivity() : AppCompatActivity(), ApiResponseListener {
         return super.onOptionsItemSelected(item)
     }
 
-    internal inner class SavePhotoAsync(image: String) : AsyncTask<Void?, Void?, Void?>() {
-        private var image = ""
-        override fun onPreExecute() {
-            super.onPreExecute()
-            Global.showProgressDialog(this@SaveAndShareActivity)
-        }
-
-        override fun doInBackground(vararg p0: Void?): Void? {
-            val businessItem = Global.currentBusiness
-            apiManager!!.savephotos(ApiEndpoints.savephotos, image, businessItem.busiId.toString())
-            return null
-        }
-
-        init {
-            this.image = image
-        }
-    }
-
-    override fun isConnected(requestService: String?, isConnected: Boolean) {
-        Handler(Looper.getMainLooper()).post(object : Runnable {
-            override fun run() {
-                Global.dismissProgressDialog(this@SaveAndShareActivity)
-                if (!isConnected) {
-                    Global.noInternetConnectionDialog(this@SaveAndShareActivity)
-                }
-            }
-        })
-    }
-
-    override fun onSuccessResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post(object : Runnable {
-            override fun run() {
-                Global.dismissProgressDialog(this@SaveAndShareActivity)
-                if (requestService.equals(ApiEndpoints.savephotos, ignoreCase = true)) {
-                    try {
-                        Log.d("response", (responseString)!!)
-                        processResponse(responseString)
-                        if (status) {
-                            Global.showSuccessDialog(this@SaveAndShareActivity, message)
-                            val detailAct =
-                                Intent(this@SaveAndShareActivity, HomeActivity::class.java)
-                            detailAct.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(detailAct)
-                            finish()
-                            if (sharePhoto) {
-                                if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
-                                    val uri = Uri.parse(imagePath)
-                                    val share = Intent(Intent.ACTION_SEND)
-                                    share.type = "image/*"
-                                    share.putExtra(Intent.EXTRA_STREAM, uri)
-                                    if ((Global.getPreference(
-                                            Constant.PREF_SHARE_MESSAGE,
-                                            ""
-                                        ) == "") && Global.getPreference(
-                                            Constant.PREF_SHARE_MESSAGE, ""
-                                        ) != null
-                                    ) {
-                                        share.putExtra(
-                                            Intent.EXTRA_TEXT, Global.getPreference(
-                                                Constant.PREF_SHARE_MESSAGE, ""
-                                            )
-                                        )
-                                    }
-                                    startActivity(Intent.createChooser(share, "Share Design!"))
-                                }
-                            }
-                        } else {
-                            Global.showFailDialog(this@SaveAndShareActivity, message)
-                        }
-                    } catch (e: Exception) {
-                    }
-                }
-            }
-        })
-    }
-
-    override fun onErrorResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post(object : Runnable {
-            override fun run() {
-                Global.dismissProgressDialog(this@SaveAndShareActivity)
-                Global.showFailDialog(this@SaveAndShareActivity, responseString)
-            }
-        })
-    }
 
 
-    fun processResponse(responseString: String?) {
-        status = false
-        message = ""
-        try {
-            val jsonObject = JSONObject(responseString)
-            if (jsonObject.has("status")) {
-                status = jsonObject.getBoolean("status")
-            }
-            if (jsonObject.has("message")) {
-                message = jsonObject.getString("message")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+
 
     override fun onResume() {
         super.onResume()

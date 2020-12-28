@@ -287,6 +287,8 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
 
 
+
+
         val frameChooseAdapter = FrameChooseAdapter(this, framePreviewArrayList)
         val horizontalLayoutManagaer = LinearLayoutManager(
             this@ChooseFrameForPhotoActivityNew,
@@ -821,7 +823,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
         tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
-        tvtitle.text = resources.getString(R.string.txt_frame)
+        tvtitle.text = resources.getString(R.string.txt_select_frame)
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.setOnClickListener {
             linearAddress!!.setBackgroundResource(0)
@@ -837,9 +839,11 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             ivaddressclose!!.visibility = View.GONE
             ivnameClose!!.visibility = View.GONE
             mPhotoEditor!!.clearHelperBox()
+            showProgress(true)
             if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
                 if (image_type!! == 0) {
-                    llwatermark!!.visibility = View.VISIBLE
+                    showProgress(true)
+                    llwatermark!!.visibility = View.GONE
                     val handler = Handler()
                     handler.postDelayed({
                         Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
@@ -869,34 +873,60 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                                 SaveAndShareActivity::class.java
                             )
                             in1.putExtra("image", filename)
+                            in1.putExtra("image_type", image_type.toString())
                             startActivity(in1)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }, 1500)
+                    showProgress(false)
                 }else{
-                    AlertDialog.Builder(this)
-                        .setTitle("Sorry!!")
-                        .setMessage("Please buy premium plan and save image.")
-                        .setPositiveButton("Buy Premium") { dialog, which ->
-                            val intent = Intent(
-                                this,
-                                PremiumActivity::class.java
+                    showProgress(true)
+                    llwatermark!!.show()
+                    val handler = Handler()
+                    handler.postDelayed({
+                        //Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
+                        val params = ivframebg!!.layoutParams
+                        params.width = width
+                        params.height = width
+                        layroot!!.isDrawingCacheEnabled = true
+                        layroot!!.buildDrawingCache(true)
+                        val savedBmp = Bitmap.createBitmap(
+                            layroot!!.drawingCache, 0, 0, width, width
+                        )
+                        layroot!!.isDrawingCacheEnabled = false
+                        //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                        try {
+                            //Write file
+                            val filename = "bitmap.png"
+                            val stream = openFileOutput(filename, MODE_PRIVATE)
+                            savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                            //Cleanup
+                            stream.close()
+                            savedBmp.recycle()
+
+                            //Pop intent
+                            val in1 = Intent(
+                                this@ChooseFrameForPhotoActivityNew,
+                                SaveAndShareActivity::class.java
                             )
-                            /*val businessItem: BusinessItem = Global.getCurrentBusinessNEW()
-                            intent.putExtra("videoData", businessItem)
-                            startActivity(intent)*/
+                            in1.putExtra("image", filename)
+                            in1.putExtra("image_type", image_type.toString())
+                            startActivity(in1)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                        .setNegativeButton(
-                            "Cancel"
-                        ) { dialog, _ -> dialog.dismiss() }
-                        .show()
+                    }, 1500)
+
                 }
+                showProgress(false)
             } else {
+                showProgress(true)
                 llwatermark!!.visibility = View.GONE
                 val handler = Handler()
                 handler.postDelayed({
-                    Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
+                    //Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
                     val params = ivframebg!!.layoutParams
                     params.width = width
                     params.height = width
@@ -923,11 +953,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                             SaveAndShareActivity::class.java
                         )
                         in1.putExtra("image", filename)
+                        in1.putExtra("image_type", image_type.toString())
                         startActivity(in1)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }, 1500)
+                showProgress(false)
             }
 
 

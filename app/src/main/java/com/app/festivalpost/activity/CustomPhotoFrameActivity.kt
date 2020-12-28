@@ -258,7 +258,8 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         params1.height=width
         params1.width=width
         ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
-        if (photo_path != null && !photo_path.equals("", ignoreCase = true)) {
+        Log.d("Phot_PATH",""+photo_path!!)
+        if (photo_path != null) {
             Glide.with(this@CustomPhotoFrameActivity).load(photo_path)
                 .placeholder(R.drawable.placeholder_img).error(
                     R.drawable.placeholder_img
@@ -338,6 +339,33 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         recyclerView!!.setLayoutManager(horizontalLayoutManagaer)
         recyclerView!!.setAdapter(frameChooseAdapter)
         setFrameNEW(framePreviewArrayList[0])
+        if (getCustomFrameList().isNotEmpty()) {
+            val photoItem=framePreviewArrayList[0]
+            setFrameNEW(framePreviewArrayList[0])
+            if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
+                    "",
+                    ignoreCase = true
+                )
+            ) {
+                //setFrameNEW(photoItem);
+                Glide.with(this).load(photoItem.dynamic_images)
+                    .placeholder(
+                        R.drawable.placeholder_img
+                    ).error(R.drawable.placeholder_img).into(
+                        ivframebg!!
+                    )
+            }
+
+        }
+        else{
+            try {
+                setFrameNEW(framePreviewArrayList[0])
+            }catch (e: OutOfMemoryError) {
+                alertDialog!!.show()
+            } catch (e: Exception) {
+            }
+
+        }
         if (frameContentItemDetail != null) {
             val displayMetrics = DisplayMetrics()
             windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -770,7 +798,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
-        tvtitle.text = resources.getString(R.string.txt_frame)
+        tvtitle.text = resources.getString(R.string.txt_select_frame)
         tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.setOnClickListener {
@@ -787,42 +815,41 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             ivwebsiteclose!!.visibility = View.GONE
             ivaddressclose!!.visibility = View.GONE
             ivnameClose!!.visibility = View.GONE
-            imageView!!.visibility = View.GONE
+            try {
+
+                if (imageView!=null) {
+                    imageView!!.visibility = View.GONE
+                }
+            }
+            catch (e: Exception)
+            {
+
+            }
             mPhotoEditor!!.clearHelperBox()
-            Global.showProgressDialog(this@CustomPhotoFrameActivity)
+            //Global.showProgressDialog(this@CustomPhotoFrameActivity)
+            showProgress(true)
             val handler = Handler()
             handler.postDelayed({
                 if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
                     if (frameContentItemDetail!!.type!! == "0") {
-                        llwatermark!!.visibility = View.VISIBLE
+                        llwatermark!!.visibility = View.GONE
                     }else{
-                        AlertDialog.Builder(this)
-                            .setTitle("Sorry!!")
-                            .setMessage("Please buy premium plan and save image.")
-                            .setPositiveButton("Buy Premium") { dialog, which ->
-                                val intent = Intent(
-                                    this,
-                                    PremiumActivity::class.java
-                                )
-                                /*val businessItem: BusinessItem = Global.getCurrentBusinessNEW()
-                                intent.putExtra("videoData", businessItem)
-                                startActivity(intent)*/
-                            }
-                            .setNegativeButton(
-                                "Cancel"
-                            ) { dialog, _ -> dialog.dismiss() }
-                            .show()
+                        llwatermark!!.visibility = View.VISIBLE
                     }
                 } else {
                     llwatermark!!.visibility = View.GONE
                 }
-                Global.dismissProgressDialog(this@CustomPhotoFrameActivity)
+                showProgress(false)
+                //Global.dismissProgressDialog(this@CustomPhotoFrameActivity)
                 frameLayout!!.isDrawingCacheEnabled = true
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
                     frameLayout!!.buildDrawingCache(true)
                 }
+                val params = ivframebg!!.layoutParams
+                params.width = width
+                params.height = width
                 val savedBmp = Bitmap.createBitmap(
-                    frameLayout!!.drawingCache,0,0,1080,1080
+                    frameLayout!!.drawingCache,0,0,width,width
                 )
                 frameLayout!!.isDrawingCacheEnabled = false
                 //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
@@ -840,6 +867,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                     val in1 =
                         Intent(this@CustomPhotoFrameActivity, SaveAndShareActivity::class.java)
                     in1.putExtra("image", filename)
+                    in1.putExtra("image_type", frameContentItemDetail!!.type)
                     startActivity(in1)
                 } catch (e: Exception) {
                     e.printStackTrace()

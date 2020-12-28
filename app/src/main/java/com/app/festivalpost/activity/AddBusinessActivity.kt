@@ -110,6 +110,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             edPhone!!.setText(businessItem!!.busi_mobile)
             edPhone2!!.setText(businessItem!!.busi_mobile_second)
             edEmail!!.setText(businessItem!!.busi_email)
+            edCategory!!.setText(businessItem!!.business_category)
             if (!businessItem!!.busi_logo.equals("")) {
                 Glide.with(this@AddBusinessActivity).load(businessItem!!.busi_logo)
                     .into(ivlogo!!)
@@ -253,7 +254,6 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
                     profilePath
                 ).execute()
             } else {
-                Log.d("Business012", "" + businessItem)
                 UpdateBusinessAsync(
                     businessItem!!.busi_id.toString() + "",
                     edName!!.text.toString(),
@@ -265,6 +265,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
                     category_value!!,
                     profilePath
                 ).execute()
+                Log.d("Business012", "" + businessItem)
             }
         }
     }

@@ -29,6 +29,8 @@ import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
 import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
 import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
+import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_ID
+import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
 import com.app.festivalpost.utils.extensions.callApi
@@ -333,6 +335,7 @@ class HomeFragment : BaseFragment() {
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         activity!!.finish()
+                        getSharedPrefInstance().setValue(IS_LOGGED_IN,false)
                     }
                     linearFestival.hide()
                     linearCategory.hide()
@@ -391,18 +394,29 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        /*val currentBusinessItem=get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
-        if(currentBusinessItem!!.busi_logo!=null) {
-            Glide.with(this).load(currentBusinessItem!!.busi_logo)
-                .placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(
-                imageLogo1!!
-            )
-            if (currentBusinessItem.plan_name == "Free") {
-                tvPremium!!.show()
-            } else {
-                tvPremium!!.hide()
+        try {
+            val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+            if (currentBusinessItem != null) {
+                if (currentBusinessItem!!.busi_logo != null) {
+                    Glide.with(this).load(currentBusinessItem!!.busi_logo)
+                        .placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img)
+                        .into(
+                            imageLogo1!!
+                        )
+                    if (currentBusinessItem.plan_name == "Free") {
+                        tvPremium!!.show()
+                    } else {
+                        tvPremium!!.hide()
+                    }
+                }
+
             }
-        }*/
+        }
+        catch (e:Exception)
+        {
+
+        }
+
     }
 
 
