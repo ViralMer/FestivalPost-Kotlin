@@ -39,11 +39,13 @@ import com.emegamart.lelys.utils.extensions.onPageSelected
 import com.emegamart.lelys.utils.extensions.toast
 import com.google.gson.Gson
 import com.razorpay.Checkout
+import com.razorpay.PaymentData
 import com.razorpay.PaymentResultListener
+import com.razorpay.PaymentResultWithDataListener
 import org.json.JSONObject
 import java.util.*
 
-class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandler,PaymentResultListener {
+class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandler,PaymentResultWithDataListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -53,6 +55,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
     var score = "0"
     var billingProcessor: BillingProcessor? = null
     var readyToPurchase = false
+    var checkout:Checkout?=null
     var clicked_plan_model: PlanItem? = null
     private var viewPager: ViewPager? = null
 
@@ -79,6 +82,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
 
         viewPager = findViewById(R.id.planviewPager)
         viewPager!!.adapter = PagerAdapter()
+
 
 
         Checkout.preload(this)
@@ -126,7 +130,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
                     tvPurchase.background=ContextCompat.getDrawable(this@PremiumActivity,R.drawable.bg_gradient_blue)
                 }
             }
-            if (position==1)
+            /*if (position==1)
             {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     tvPurchase.background=ContextCompat.getDrawable(this@PremiumActivity,R.drawable.bg_gradient_purple)
@@ -137,7 +141,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     tvPurchase.background=ContextCompat.getDrawable(this@PremiumActivity,R.drawable.bg_gradient_pink)
                 }
-            }
+            }*/
 
             tvPurchase.onClick {
                 handleRazorPay()
@@ -332,19 +336,10 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         super.onBackPressed()
     }
 
-    override fun onPaymentSuccess(p0: String?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPaymentError(p0: Int, p1: String?) {
-        Log.d(this.localClassName, p0.toString())
-        //toast(response!!)
-        Log.d(this.localClassName, p1.toString())
-    }
-
     private fun handleRazorPay() {
         val checkout = Checkout()
         checkout.setImage(R.mipmap.ic_launcher_new)
+        checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
 
         try {
             val options = JSONObject()
@@ -352,7 +347,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
             options.put("description", "")
             options.put("currency", "INR")
             //options.put("order_id", orderData?.id)
-            options.put("amount", (1000 * 100).toDouble())
+            options.put("amount", (10000 * 100).toDouble())
             options.put("image", "https://rzp-mobile.s3.amazonaws.com/images/rzp.png")
 
             Log.d(this.localClassName, options.toString())
@@ -360,6 +355,14 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         } catch (e: Exception) {
             Log.e(this.localClassName, "Error in starting Razorpay Checkout", e)
         }
+    }
+
+    override fun onPaymentSuccess(p0: String?, p1: PaymentData?) {
+        Log.d("Data RazorPay Succes",""+p0.toString()+ " p1: "+p1.toString())
+    }
+
+    override fun onPaymentError(p0: Int, p1: String?, p2: PaymentData?) {
+        Log.d("Data RazorPay",""+p0.toString()+ " p1: "+p1.toString()+ " p2:"+p2)
     }
 
 
