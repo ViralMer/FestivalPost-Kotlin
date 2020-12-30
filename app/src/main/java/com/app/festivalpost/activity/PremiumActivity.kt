@@ -26,6 +26,7 @@ import androidx.viewpager.widget.ViewPager
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.BillingProcessor.IBillingHandler
 import com.anjlab.android.iab.v3.TransactionDetails
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
@@ -33,10 +34,11 @@ import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
+import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.extensions.callApi
+import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
-import com.emegamart.lelys.utils.extensions.onClick
-import com.emegamart.lelys.utils.extensions.onPageSelected
-import com.emegamart.lelys.utils.extensions.toast
+import com.emegamart.lelys.utils.extensions.*
 import com.google.gson.Gson
 import com.razorpay.Checkout
 import com.razorpay.PaymentData
@@ -45,7 +47,7 @@ import com.razorpay.PaymentResultWithDataListener
 import org.json.JSONObject
 import java.util.*
 
-class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandler,PaymentResultWithDataListener {
+class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,PaymentResultWithDataListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -56,6 +58,7 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
     var billingProcessor: BillingProcessor? = null
     var readyToPurchase = false
     var checkout:Checkout?=null
+    var business_id:String?=null
     var clicked_plan_model: PlanItem? = null
     private var viewPager: ViewPager? = null
 
@@ -78,6 +81,18 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
         )
         billingProcessor!!.initialize()
         setActionbar()
+        val bundle=intent.extras
+        if (bundle!=null)
+        {
+            if (bundle.containsKey("business_id"))
+            {
+                business_id=bundle["business_id"] as String?
+            }
+            else{
+                val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                business_id=businessItem!!.busi_id.toString()
+            }
+        }
         planItemArrayList!!.add(PlanItemDetails("1","Basic Plan","1199"))
 
         viewPager = findViewById(R.id.planviewPager)
@@ -343,11 +358,11 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
 
         try {
             val options = JSONObject()
-            options.put("name", "Iqonic")
+            options.put("name", getUserName())
             options.put("description", "")
             options.put("currency", "INR")
             //options.put("order_id", orderData?.id)
-            options.put("amount", (10000 * 100).toDouble())
+            options.put("amount", (1199 * 100).toDouble())
             options.put("image", "https://rzp-mobile.s3.amazonaws.com/images/rzp.png")
 
             Log.d(this.localClassName, options.toString())
@@ -358,11 +373,43 @@ class PremiumActivity : AppCompatActivity(), ApiResponseListener, IBillingHandle
     }
 
     override fun onPaymentSuccess(p0: String?, p1: PaymentData?) {
-        Log.d("Data RazorPay Succes",""+p0.toString()+ " p1: "+p1.toString())
+        try{
+            loadAccoutData("1234",p0.toString(),business_id!!,"1")
+            Log.d("Data RazorPay Succes",""+p0.toString())
+        }
+        catch (e:Exception)
+        {
+            Log.d("Exception Razorpay",""+e.message)
+        }
+
     }
 
     override fun onPaymentError(p0: Int, p1: String?, p2: PaymentData?) {
         Log.d("Data RazorPay",""+p0.toString()+ " p1: "+p1.toString()+ " p2:"+p2)
+    }
+
+    private fun loadAccoutData(orderID:String,paymentId:String,businessId:String,plan_id:String) {
+        showProgress(true)
+        callApi(
+            getRestApis().purchaseplan(orderID,paymentId,businessId,plan_id), onApiSuccess = {
+                showProgress(false)
+                if (it.status!!) {
+                    toast("Purchase Plan Successfully")
+                    launchActivity<HomeActivity> {
+                        finish()
+                    }
+                }
+                Log.d("Response",""+it)
+
+            }, onApiError = {
+                showProgress(false)
+
+
+            }, onNetworkError = {
+                showProgress(false)
+                openLottieDialog {  }
+
+            })
     }
 
 

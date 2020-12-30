@@ -42,7 +42,7 @@ class VideoCategoryItemAdapter(var context: Context, var originaldata: ArrayList
             context.launchActivity<VideoDetailActivity> {
                 putExtra("video_id",videoPageItem.id)
                 putExtra("video_name",videoPageItem.video_name)
-                putExtra("video_date",videoPageItem.video_date)
+                //putExtra("video_date",videoPageItem.video_date)
             }
         }
 

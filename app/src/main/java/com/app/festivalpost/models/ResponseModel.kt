@@ -90,6 +90,11 @@ data class VideoItemResponse(
     val message: String? = null
 )
 
+data class PurchasePlanResponse(
+    val message: String? = null,
+    val status: Boolean? = false,
+)
+
 data class VideoItem(
     val video_id: String? = null,
     val video_name: String? = null,

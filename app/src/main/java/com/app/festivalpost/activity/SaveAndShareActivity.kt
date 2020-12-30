@@ -119,28 +119,31 @@ class SaveAndShareActivity() : AppCompatActivity() {
         findViewById<View>(R.id.btnsubmit).setOnClickListener(
             View.OnClickListener {
                 sharePhoto = false
-                if (!getSharedPrefInstance().getBooleanValue(
+                /*if (!getSharedPrefInstance().getBooleanValue(
                         Constants.KeyIntent.IS_PREMIUM,
                         false
                     )
                 ) {
+                    savePhoto()
                     val intent = Intent(this@SaveAndShareActivity, PremiumActivity::class.java)
                     startActivity(intent)
-                } else {
+                } else {*/
                     savePhoto()
 
-                }
+                /*}*/
             })
         val btnshare=findViewById<View>(R.id.btnshare)
         btnshare.onClick {
-            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+            /*if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
                 val intent = Intent(this@SaveAndShareActivity, PremiumActivity::class.java)
                 startActivity(intent)
-            } else {
+                savePhoto()
+
+            } else {*/
                 sharePhoto = true
                 savePhoto()
 
-            }
+            /*}*/
         }
     }
 

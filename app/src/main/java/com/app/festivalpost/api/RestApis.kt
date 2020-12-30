@@ -85,6 +85,16 @@ interface RestApis {
     @POST("GetAllFestivalVideo")
     fun getAllFestivalVideo(@Field("date")date:String,@Field("token")token:String= getApiToken()):Call<VideoItemResponse>
 
+    @FormUrlEncoded
+    @POST("purchaseplan")
+    fun purchaseplan(@Field("order_id")order_id:String,
+                     @Field("purchase_id")payment_id:String,
+                     @Field("business_id")business_id:String,
+                     @Field("plan_id")plan_id:String,
+                     @Field("device")device_id:String= getDeviceType(),
+                     @Field("token")token:String= getApiToken()
+                     ):Call<PurchasePlanResponse>
+
 
 
 }

@@ -68,7 +68,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         var mBuilder: NotificationCompat.Builder? = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(application.resources.getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setGroupSummary(false)

@@ -30,6 +30,7 @@ import com.app.festivalpost.models.VideoItem
 import com.app.festivalpost.models.VideoLanguageItem
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
+import com.emegamart.lelys.utils.extensions.getCurrentDate
 import com.emegamart.lelys.utils.extensions.getCustomFrameList
 import com.emegamart.lelys.utils.extensions.launchActivity
 import com.emegamart.lelys.utils.extensions.onClick
@@ -44,6 +45,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
@@ -79,6 +82,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     var videoTitle: VideoItem? = null
     var width = 0
     var height = 0
+    private var day = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_detail)
@@ -124,6 +128,9 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         }
         else if (bundle!!.containsKey("video_id")) {
             videoid = bundle.getString("video_id")
+        }
+        if (bundle!!.containsKey("video_date")) {
+            day = getCountOfDays(getCurrentDate(), bundle.getString("video_date"))
         }
 
 
@@ -255,10 +262,17 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         }
 
         tvaction.setOnClickListener {
-            videoView!!.stopPlayer()
-            launchActivity<ChooseVideoFrameActivity> {
-                putExtra("video_path",video_path)
-                putExtra("video_type",video_type)
+            if (day in 0..1) {
+                launchActivity<ChooseVideoFrameActivity> {
+                    putExtra("video_path",video_path)
+                    putExtra("video_type",video_type)
+                }
+            } else {
+                Global.getAlertDialog(
+                    this,
+                    "Sorry!!",
+                    "This Festival is locked today.This festival photos will open before 24 hours of festival."
+                )
             }
         }
     }
@@ -453,6 +467,51 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                             }, onNetworkError = {
                 showProgress(false)
             })
+    }
+
+    private fun getCountOfDays(createdDateString: String?, expireDateString: String?): Int {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        var createdConvertedDate: Date? = null
+        var expireCovertedDate: Date? = null
+        var todayWithZeroTime: Date? = null
+        try {
+            createdConvertedDate = dateFormat.parse(createdDateString)
+            expireCovertedDate = dateFormat.parse(expireDateString)
+            val today = Date()
+            todayWithZeroTime = dateFormat.parse(dateFormat.format(today))
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        var cYear = 0
+        var cMonth = 0
+        var cDay = 0
+        if (createdConvertedDate!!.after(todayWithZeroTime)) {
+            val cCal = Calendar.getInstance()
+            cCal.time = createdConvertedDate
+            cYear = cCal[Calendar.YEAR]
+            cMonth = cCal[Calendar.MONTH]
+            cDay = cCal[Calendar.DAY_OF_MONTH]
+        } else {
+            val cCal = Calendar.getInstance()
+            cCal.time = todayWithZeroTime
+            cYear = cCal[Calendar.YEAR]
+            cMonth = cCal[Calendar.MONTH]
+            cDay = cCal[Calendar.DAY_OF_MONTH]
+        }
+        val eCal = Calendar.getInstance()
+        eCal.time = expireCovertedDate
+        val eYear = eCal[Calendar.YEAR]
+        val eMonth = eCal[Calendar.MONTH]
+        val eDay = eCal[Calendar.DAY_OF_MONTH]
+        val date1 = Calendar.getInstance()
+        val date2 = Calendar.getInstance()
+        date1.clear()
+        date1[cYear, cMonth] = cDay
+        date2.clear()
+        date2[eYear, eMonth] = eDay
+        val diff = date2.timeInMillis - date1.timeInMillis
+        val dayCount = diff.toFloat() / (24 * 60 * 60 * 1000)
+        return dayCount.toInt()
     }
 
 }

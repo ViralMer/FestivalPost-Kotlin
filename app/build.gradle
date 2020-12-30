@@ -11,74 +11,14 @@ android {
 
     defaultConfig {
         applicationId "com.app.festivalpost"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 36
+        versionName "1.2.3"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        ndk.abiFilters 'arm64-v8a','x86_64'
-        /*ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86' ,'x86_64'
-            //abiFilters 'armeabi-v7a','x86_64'
-        }*/
-    }
-
-/*
-    packagingOptions {
-
-*/
-/*
-        pickFirst 'lib/armeabi-v7a/libavcodec.so'
-        pickFirst 'lib/armeabi-v7a/libavformat.so'
-        pickFirst 'lib/armeabi-v7a/libavfilter.so'
-        pickFirst 'lib/armeabi-v7a/lic++_shared.so'
-        pickFirst 'lib/armeabi-v7a/libavutil.so'
-        pickFirst 'lib/armeabi-v7a/libmobileffmpeg.so'
-        pickFirst 'lib/armeabi-v7a/libswscale.so'
-        pickFirst 'lib/armeabi-v7a/libswresample.so'
-        pickFirst 'lib/armeabi-v7a/libavdevice.so'
-        pickFirst 'lib/armeabi-v7a/libmobileffmpeg_abidetect.so'
-
-        pickFirst 'lib/x86/libavcodec.so'
-        pickFirst 'lib/x86/libavformat.so'
-        pickFirst 'lib/x86/libavfilter.so'
-        pickFirst 'lib/x86/lic++_shared.so'
-        pickFirst 'lib/x86/libavutil.so'
-        pickFirst 'lib/x86/libmobileffmpeg.so'
-        pickFirst 'lib/x86/libswscale.so'
-        pickFirst 'lib/x86/libswresample.so'
-        pickFirst 'lib/x86/libavdevice.so'
-        pickFirst 'lib/x86/libmobileffmpeg_abidetect.so'
-
-*//*
-
-
-        pickFirst 'lib/arm64-v8a/libavcodec.so'
-        pickFirst 'lib/arm64-v8a/libavformat.so'
-        pickFirst 'lib/arm64-v8a/libavfilter.so'
-        pickFirst 'lib/arm64-v8a/lic++_shared.so'
-        pickFirst 'lib/arm64-v8a/libavutil.so'
-        pickFirst 'lib/arm64-v8a/libmobileffmpeg.so'
-        pickFirst 'lib/arm64-v8a/libswscale.so'
-        pickFirst 'lib/arm64-v8a/libswresample.so'
-        pickFirst 'lib/arm64-v8a/libavdevice.so'
-        pickFirst 'lib/arm64-v8a/libmobileffmpeg_abidetect.so'
-
-        pickFirst 'lib/x86_64/libavcodec.so'
-        pickFirst 'lib/x86_64/libavformat.so'
-        pickFirst 'lib/x86_64/libavfilter.so'
-        pickFirst 'lib/x86_64/lic++_shared.so'
-        pickFirst 'lib/x86_64/libavutil.so'
-        pickFirst 'lib/x86_64/libmobileffmpeg.so'
-        pickFirst 'lib/x86_64/libswscale.so'
-        pickFirst 'lib/x86_64/libswresample.so'
-        pickFirst 'lib/x86_64/libavdevice.so'
-        pickFirst 'lib/x86_64/libmobileffmpeg_abidetect.so'
-
 
     }
-*/
 
     aaptOptions {
         ignoreAssetsPattern "!*ffprobe"
@@ -113,7 +53,30 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            universalApk true
+        }
+    }
+
+
+
+
+
 }
+/*ext.abiCodes = ['x86':1, 'x86_64':2, 'armeabi-v7a':3, 'arm64-v8a':4]
+import com.android.build.OutputFile
+android.applicationVariants.all { variant ->
+    variant.outputs.each {
+        output ->
+            def baseAbiVersionCode = project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+            output.versionCodeOverride = baseAbiVersionCode + variant.versionCode
+    }
+}*/
 
 dependencies {
 
@@ -125,6 +88,7 @@ dependencies {
     implementation "com.karumi:dexter:6.2.1"
     implementation project(path: ':imagepicker')
     implementation project(path: ':library')
+    //implementation project(path: ':ffmpeg_app')
     implementation 'com.github.yalantis:ucrop:2.2.5'
     implementation 'com.github.jksiezni.permissive:permissive:0.1'
     implementation 'com.github.duanhong169:colorpicker:1.1.6'

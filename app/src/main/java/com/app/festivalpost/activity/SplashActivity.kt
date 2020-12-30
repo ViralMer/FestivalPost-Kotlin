@@ -16,6 +16,8 @@ import com.app.festivalpost.R
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.utils.Constants
+import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -64,7 +66,7 @@ class SplashActivity : AppCompatActivity() {
         override fun doInBackground(vararg p0: Void?): Void? {
             // TODO Auto-generated method stub
             try {
-                Thread.sleep(5000)
+                Thread.sleep(3000)
             } catch (e: InterruptedException) {
                 // TODO Auto-generated catch block
                 e.printStackTrace()
@@ -75,8 +77,7 @@ class SplashActivity : AppCompatActivity() {
         override fun onPostExecute(result: Void?) {
             // TODO Auto-generated method stub
             super.onPostExecute(result)
-            val loggedIn = Global.getPreference(Constant.PREF_LOGIN, false)
-            if (!loggedIn) {
+            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
                 val homeIntent = Intent(
                     this@SplashActivity,
                     LoginActivity::class.java

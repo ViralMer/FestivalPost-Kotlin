@@ -229,18 +229,18 @@ class AccountFragment : BaseFragment() {
 
 
     private fun loadAccoutData() {
-        showProgress()
-        callApi(
+            showProgress()
+            callApi(
 
-            getRestApis().getProfile(), onApiSuccess = {
-                hideProgress()
+                getRestApis().getProfile(), onApiSuccess = {
+                    hideProgress()
 
-            }, onApiError = {
-                hideProgress()
+                }, onApiError = {
+                    hideProgress()
 
-            }, onNetworkError = {
-                hideProgress()
+                }, onNetworkError = {
+                    hideProgress()
 
-            })
+                })
     }
 }

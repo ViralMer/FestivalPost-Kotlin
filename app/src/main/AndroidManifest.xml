@@ -75,7 +75,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.SplashActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait">
@@ -107,7 +107,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".activity.LoginActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
@@ -215,6 +215,10 @@
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
+
+        <!--<meta-data
+            android:name="com.razorpay.ApiKey"
+            android:resource="rzp_test_nxkzWJTVTnu6dj" />-->
 
         <receiver android:name=".utility.NetworkStateChecker">
             <intent-filter>

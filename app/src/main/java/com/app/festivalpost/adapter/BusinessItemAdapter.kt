@@ -55,7 +55,7 @@ class BusinessItemAdapter(var context: Context, var originaldata: ArrayList<Curr
             holder.tvupgrade.background=ContextCompat.getDrawable(context,R.drawable.bg_gradient)
             holder.tvupgrade.onClick {
                 context.launchActivity<PremiumActivity> {
-
+                    putExtra("business_id",businessCategoryItem.busi_id!!.toString())
                 }
 
             }

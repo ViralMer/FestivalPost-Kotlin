@@ -320,13 +320,14 @@ class ApiManager {
                 .add("business_id", business_id)
                 .add("plan_id", plan_id)
                 .add("order_id", order_id)
-                .add("remainingcredit", amount)
-                .add("device_id", "MyApplication.deviceInfo!!.deviceUDID")
+                .add("purchase_id", amount)
+                .add("device", "android")
                 .build()
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
                     .post(formBody).build()
             executeRequest(servicename, request)
+            Log.d("RequestParam",""+request.toString())
         } else {
             acListener.isConnected(servicename, false)
         }

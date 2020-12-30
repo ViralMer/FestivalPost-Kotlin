@@ -35,7 +35,7 @@ object ApiEndpoints {
     const val getcustomcategorypost = "userapi/v2/getcustomcategorypost"
 
     //    public static final String getmycurrentbusiness = "userapi/getmycurrentbusiness";
-    const val purchaseplan = "userapi/v2/purchaseplan"
+    const val purchaseplan = "userapi/v3/purchaseplan"
 
     object ResultCodes {
         const val ResultOk = 200

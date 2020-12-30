@@ -23,6 +23,7 @@ import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.globals.Constant
+import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoListItem
 import com.app.festivalpost.utils.Constants
@@ -75,6 +76,7 @@ class VideoCreateActivity : AppBaseActivity() {
     var width = 0
     var bmp: Bitmap? = null
     var height = 0
+
     var imageview : AppCompatImageView?=null
 
     @SuppressLint("HandlerLeak")
@@ -304,7 +306,9 @@ class VideoCreateActivity : AppBaseActivity() {
         tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.visibility = View.GONE
-        tvaction!!.setOnClickListener { }
+        tvaction!!.setOnClickListener {
+
+        }
     }
 
     fun openAddImageDialog() {
@@ -316,6 +320,10 @@ class VideoCreateActivity : AppBaseActivity() {
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
+                        val root = Environment.getExternalStorageDirectory().absolutePath
+                        val myDir = File(root + "/" + Constant.FOLDER_NAME)
+                        myDir.mkdirs()
+                        myDir.mkdir()
                     } else {
                         //showSettingsDialog();
                     }
