@@ -542,6 +542,7 @@
     <string name="font_bold" translatable="false">fonts/Montserrat-Bold.ttf</string>
     <string name="font_regular" translatable="false">fonts/Montserrat-Regular.ttf</string>
     <string name="head_festivals">Festivals</string>
+    <string name="head_upcoming_festivals">Upcoming Festivals</string>
     <string name="head_categories">Categories</string>
     <string name="lbl_new">New</string>
     <string name="txt_video">Video</string>

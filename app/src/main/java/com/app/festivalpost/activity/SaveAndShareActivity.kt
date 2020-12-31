@@ -301,7 +301,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
 
 
 
-            scanner(filePath)
+            scanner(file.absolutePath)
             //Global.storePreference("premium_data", 0)
 
             return filePath

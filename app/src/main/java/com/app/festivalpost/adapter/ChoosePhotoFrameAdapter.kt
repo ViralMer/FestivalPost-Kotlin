@@ -13,6 +13,7 @@ import com.app.festivalpost.models.CustomCategoryPostItem
 import com.app.festivalpost.models.FrameContentItemDetail
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.show
 import com.makeramen.roundedimageview.RoundedImageView
 import java.util.*
 
@@ -44,10 +45,12 @@ class ChoosePhotoFrameAdapter(
         {
             holder.tvplan.text=context.getString(R.string.free)
             holder.tvplan.setBackgroundResource(R.drawable.bg_gradient)
+            holder.tvplan.show()
         }
         else{
             holder.tvplan.text=context.getString(R.string.preimum)
             holder.tvplan.setBackgroundResource(R.drawable.premium_bg)
+            holder.tvplan.hide()
         }
         if (photoItem.is_selected!!) {
             holder.viewselected.visibility = View.VISIBLE
@@ -56,7 +59,8 @@ class ChoosePhotoFrameAdapter(
         }
         holder.layMain.tag = position
         holder.layMain.setOnClickListener { view ->
-            val index = view.tag as Int
+            val index = view.tag
+                    as Int
             val p = originaldata[index]
             onItemClickListener.onItemClicked(p, 0)
             for (i in originaldata.indices) {

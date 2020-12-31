@@ -12,6 +12,8 @@ import com.app.festivalpost.activity.OnItemClickListener
 import com.app.festivalpost.R
 import com.app.festivalpost.models.CategoryItem
 import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.show
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlin.collections.ArrayList
 
@@ -33,12 +35,14 @@ class ChoosePhotoAdapter(var context: Context, var originaldata: ArrayList<Categ
         {
             holder.tvplan.text=context.getString(R.string.free)
             holder.tvplan.setBackgroundResource(R.drawable.bg_gradient)
+            holder.tvplan.show()
 
         }
         else{
 
             holder.tvplan.text=context.getString(R.string.preimum)
             holder.tvplan.setBackgroundResource(R.drawable.premium_bg)
+            holder.tvplan.hide()
         }
 
 

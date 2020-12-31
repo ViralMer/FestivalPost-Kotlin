@@ -338,7 +338,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         )
         recyclerView!!.setLayoutManager(horizontalLayoutManagaer)
         recyclerView!!.setAdapter(frameChooseAdapter)
-        setFrameNEW(framePreviewArrayList[0])
+        //setFrameNEW(framePreviewArrayList[0])
         if (getCustomFrameList().isNotEmpty()) {
             val photoItem=framePreviewArrayList[0]
             setFrameNEW(framePreviewArrayList[0])
@@ -348,7 +348,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 )
             ) {
                 //setFrameNEW(photoItem);
-                Glide.with(this).load(photoItem.dynamic_images)
+                Glide.with(this@CustomPhotoFrameActivity).load(photoItem.dynamic_images)
                     .placeholder(
                         R.drawable.placeholder_img
                     ).error(R.drawable.placeholder_img).into(
@@ -366,47 +366,55 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             }
 
         }
-        if (frameContentItemDetail != null) {
-            val displayMetrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-            height = displayMetrics.heightPixels
-            width = displayMetrics.widthPixels
-            val ttop = frameContentItemDetail!!.position_y!!.toInt()
-            val tleft = frameContentItemDetail!!.position_x!!.toInt()
-            val itop = frameContentItemDetail!!.img_position_y!!.toInt()
-            val ileft = frameContentItemDetail!!.img_position_x!!.toInt()
-            val iwidth1 = frameContentItemDetail!!.img_width!!.toInt()
-            val iheight1 = frameContentItemDetail!!.img_height!!.toInt()
-            Log.d("1234666545", "ttop :$ttop tleft :$tleft")
-            textTopwidth = width * ttop //213
-            imageTopwidth = width * itop //80
-            textLeftWidht = width * tleft //115
-            imageLeftwidth = width * ileft //105
-            iWidht = width * iwidth1
-            iHeight = width * iheight1
-            texttop = textTopwidth / 300
-            imageTop = imageTopwidth / 300
-            textleft = textLeftWidht / 300
-            imageleft = imageLeftwidth / 300
-            imageHeight = iHeight / 300
-            imageWidth = iWidht / 300
-            makeMaskImage(
-                imageview_id,
-                frameContentItemDetail!!.banner_image,
-                frameContentItemDetail!!.banner_image,
-                textleft,
-                texttop
-            )
-            val imgparams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            )
+        showProgress(true)
+        runDelayedOnUiThread(1000) {
 
-            imgparams.topMargin = imageTop
-            imgparams.leftMargin = imageleft
-            mMovImage!!.layoutParams = imgparams
-            mMovImage!!.setImageResource(R.drawable.ic_baseline_add_photo_alternate_24_new)
+            if (frameContentItemDetail != null) {
+                val displayMetrics = DisplayMetrics()
+                windowManager.defaultDisplay.getMetrics(displayMetrics)
+                height = displayMetrics.heightPixels
+                width = displayMetrics.widthPixels
+                val ttop = frameContentItemDetail!!.position_y!!.toInt()
+                val tleft = frameContentItemDetail!!.position_x!!.toInt()
+                val itop = frameContentItemDetail!!.img_position_y!!.toInt()
+                val ileft = frameContentItemDetail!!.img_position_x!!.toInt()
+                val iwidth1 = frameContentItemDetail!!.img_width!!.toInt()
+                val iheight1 = frameContentItemDetail!!.img_height!!.toInt()
+                Log.d("1234666545", "ttop :$ttop tleft :$tleft")
+                textTopwidth = width * ttop //213
+                imageTopwidth = width * itop //80
+                textLeftWidht = width * tleft //115
+                imageLeftwidth = width * ileft //105
+                iWidht = width * iwidth1
+                iHeight = width * iheight1
+                texttop = textTopwidth / 300
+                imageTop = imageTopwidth / 300
+                textleft = textLeftWidht / 300
+                imageleft = imageLeftwidth / 300
+                imageHeight = iHeight / 300
+                imageWidth = iWidht / 300
+                makeMaskImage(
+                    imageview_id,
+                    frameContentItemDetail!!.banner_image,
+                    frameContentItemDetail!!.banner_image,
+                    textleft,
+                    texttop
+                )
+                val imgparams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT
+                )
+
+                imgparams.topMargin = imageTop
+                imgparams.leftMargin = imageleft
+                mMovImage!!.layoutParams = imgparams
+                mMovImage!!.setImageResource(R.drawable.ic_baseline_add_photo_alternate_24_new)
+                showProgress(false)
+            }
         }
+
+
+        //AsyncTaskExampleNew().execute();
         val multiTouchListenerNew = MultiTouchListenerNew()
         multiTouchListenerNew.setOnGestureControl(object : MultiTouchListenerNew.OnGestureControl {
             override fun onClick() {
@@ -839,42 +847,38 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
 
             }
             mPhotoEditor!!.clearHelperBox()
+            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+                if (frameContentItemDetail!!.type!! == "0") {
+                    llwatermark!!.visibility = View.GONE
+                }else{
+                    llwatermark!!.visibility = View.VISIBLE
+                }
+            } else {
+                llwatermark!!.visibility = View.GONE
+            }
             //Global.showProgressDialog(this@CustomPhotoFrameActivity)
             showProgress(true)
             val handler = Handler()
             handler.postDelayed({
-                if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
-                    if (frameContentItemDetail!!.type!! == "0") {
-                        llwatermark!!.visibility = View.GONE
-                    }else{
-                        llwatermark!!.visibility = View.VISIBLE
-                    }
-                } else {
-                    llwatermark!!.visibility = View.GONE
-                }
+
                 showProgress(false)
                 //Global.dismissProgressDialog(this@CustomPhotoFrameActivity)
                 frameLayout!!.isDrawingCacheEnabled = true
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
                     frameLayout!!.buildDrawingCache(true)
                 }
-                val params = ivframebg!!.layoutParams
-                params.width = width
-                params.height = width
-                val savedBmp = Bitmap.createBitmap(
-                    frameLayout!!.drawingCache,0,0,width,width
-                )
+                val savedBmp = Bitmap.createBitmap(frameLayout!!.drawingCache)
                 frameLayout!!.isDrawingCacheEnabled = false
-                //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                val newsaveBmp=getResizedBitmap(savedBmp,1080,1080)
                 try {
                     //Write file
                     val filename = "bitmap.png"
                     val stream = openFileOutput(filename, MODE_PRIVATE)
-                    savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                     //Cleanup
                     stream.close()
-                    savedBmp.recycle()
+                    newsaveBmp.recycle()
 
                     //Pop intent
                     val in1 =
@@ -882,6 +886,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                     in1.putExtra("image", filename)
                     in1.putExtra("image_type", frameContentItemDetail!!.type)
                     startActivity(in1)
+                    finish()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -1897,7 +1902,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             phoneValue = false
             websiteValue = false
             textallSelected = false
-            textviewSelected = true
+            textviewSelected = false
         }
         btncancel.setOnClickListener { dialog.dismiss() }
         dialog.show()
@@ -2087,7 +2092,12 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         } else if (phoneValue) {
             phoneTypeface = Typeface.createFromAsset(assets, path)
             tvframephone!!.typeface = phoneTypeface
-        } else if (emailValue) {
+        }
+        else if (textviewSelected) {
+            textselectedFontTypeface = Typeface.createFromAsset(assets, path)
+            textView!!.typeface = phoneTypeface
+        }
+        else if (emailValue) {
             emailTypeface = Typeface.createFromAsset(assets, path)
             tvframeemail!!.typeface = emailTypeface
         } else if (websiteValue) {
@@ -2140,7 +2150,14 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 ivcall!!.backgroundTintList = ColorStateList.valueOf(phoneselected_color)
             }
-        } else if (emailValue) {
+        }else if (textviewSelected) {
+            textselected_color = color
+            textView!!.setTextColor(textselected_color)
+            /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                ivcall!!.backgroundTintList = ColorStateList.valueOf(phoneselected_color)
+            }*/
+        }
+        else if (emailValue) {
             emailselected_color = color
             tvframeemail!!.setTextColor(emailselected_color)
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -2221,6 +2238,24 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 e.printStackTrace()
                 null
             }
+        }
+    }
+
+    inner class AsyncTaskExampleNew : AsyncTask<Void?, Void?, Void?>() {
+        override fun onPreExecute() {
+            //showProgress(true)
+            super.onPreExecute()
+        }
+
+        override fun doInBackground(vararg p0: Void?): Void? {
+
+            //showProgress(false)
+            return null
+        }
+
+        override fun onPostExecute(aVoid: Void?) {
+            //showProgress(false)
+            super.onPostExecute(aVoid)
         }
     }
 }

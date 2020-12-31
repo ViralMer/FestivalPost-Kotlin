@@ -71,6 +71,15 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
             })
     }
 
+    private fun isPackageInstalled(packagename: String, packageManager: PackageManager): Boolean {
+        return try {
+            packageManager.getPackageGids(packagename)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+
     private fun showPopupDialog(context: Context) {
         val layout = LayoutInflater.from(context).inflate(R.layout.layout_help_support, null)
 
@@ -109,22 +118,45 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
         }
 
         linearWhatsapp.onClick {
-            val url =
-                "https://api.whatsapp.com/send?phone=917686894444&text=Inquiry from FestivalPost&source=&data=&app_absent="
-            try {
-                val pm = context.applicationContext.packageManager
-                pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(url)
-                i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
-                startActivity(i)
-            } catch (e: PackageManager.NameNotFoundException) {
-                Toast.makeText(
-                    context,
-                    "Whatsapp app not installed in your phone",
-                    Toast.LENGTH_SHORT
-                ).show()
-                e.printStackTrace()
+
+            if(isPackageInstalled("com.whatsapp.w4b",packageManager))
+            {
+                val url =
+                    "https://api.whatsapp.com/send?phone=918070794444&text=Inquiry from Festival Post&source=&data=&app_absent="
+                try {
+                    val pm = packageManager
+                    pm.getPackageInfo("com.whatsapp.w4b", PackageManager.GET_ACTIVITIES)
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(url)
+                    i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
+                    startActivity(i)
+                } catch (e: PackageManager.NameNotFoundException) {
+                    Toast.makeText(
+                        this@ManageBusinessActivity,
+                        "Whatsapp Business app not installed in your phone",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    e.printStackTrace()
+                }
+            }
+            else if (isPackageInstalled("com.whatsapp",packageManager)) {
+                val url =
+                    "https://api.whatsapp.com/send?phone=918070794444&text=Inquiry from Festival Post&source=&data=&app_absent="
+                try {
+                    val pm = packageManager
+                    pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(url)
+                    i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
+                    startActivity(i)
+                } catch (e: PackageManager.NameNotFoundException) {
+                    Toast.makeText(
+                        this@ManageBusinessActivity,
+                        "Whatsapp app not installed in your phone",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    e.printStackTrace()
+                }
             }
         }
 

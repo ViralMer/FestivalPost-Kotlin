@@ -206,22 +206,45 @@ class HomeFragment : BaseFragment() {
             }
 
             ivWhatsapp.onClick {
-                val url =
-                    "https://api.whatsapp.com/send?phone="+festivalItem.adv_number+"&text=Inquiry from FestivalPost&source=&data=&app_absent="
-                try {
-                    val pm = activity!!.applicationContext.packageManager
-                    pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
-                    val i = Intent(Intent.ACTION_VIEW)
-                    i.data = Uri.parse(url)
-                    i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
-                    startActivity(i)
-                } catch (e: PackageManager.NameNotFoundException) {
-                    Toast.makeText(
-                        activity!!,
-                        "Whatsapp app not installed in your phone",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    e.printStackTrace()
+
+                 if(isPackageInstalled("com.whatsapp.w4b",activity!!.packageManager))
+                {
+                    val url =
+                        "https://api.whatsapp.com/send?phone="+festivalItem.adv_number+"&text=Inquiry from Festival Post&source=&data=&app_absent="
+                    try {
+                        val pm = activity!!.packageManager
+                        pm.getPackageInfo("com.whatsapp.w4b", PackageManager.GET_ACTIVITIES)
+                        val i = Intent(Intent.ACTION_VIEW)
+                        i.data = Uri.parse(url)
+                        i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
+                        startActivity(i)
+                    } catch (e: PackageManager.NameNotFoundException) {
+                        Toast.makeText(
+                            activity!!,
+                            "Whatsapp Business app not installed in your phone",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        e.printStackTrace()
+                    }
+                }
+                else if (isPackageInstalled("com.whatsapp",activity!!.packageManager)) {
+                    val url =
+                        "https://api.whatsapp.com/send?phone="+festivalItem.adv_number+"&text=Inquiry from Festival Post&source=&data=&app_absent="
+                    try {
+                        val pm = activity!!.packageManager
+                        pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+                        val i = Intent(Intent.ACTION_VIEW)
+                        i.data = Uri.parse(url)
+                        i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
+                        startActivity(i)
+                    } catch (e: PackageManager.NameNotFoundException) {
+                        Toast.makeText(
+                            activity!!,
+                            "Whatsapp app not installed in your phone",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        e.printStackTrace()
+                    }
                 }
             }
 
@@ -231,6 +254,14 @@ class HomeFragment : BaseFragment() {
             return view
         }
 
+        private fun isPackageInstalled(packagename: String, packageManager: PackageManager): Boolean {
+            return try {
+                packageManager.getPackageGids(packagename)
+                true
+            } catch (e: PackageManager.NameNotFoundException) {
+                false
+            }
+        }
 
         override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
             container.removeView(`object` as View)
@@ -348,31 +379,6 @@ class HomeFragment : BaseFragment() {
 
 
 
-
-                    Glide.with(this).asBitmap().load(res.current_business.busi_logo)
-                        .into(object : CustomTarget<Bitmap?>() {
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                transition: Transition<in Bitmap?>?
-                            ) {
-                                val root = Environment.getExternalStorageDirectory().absolutePath
-                                val myDir = File("$root/Imagename")
-                                myDir.mkdirs()
-                                myDir.mkdir()
-                                val fname = "logo.png"
-                                val file = File(myDir, fname)
-                                if (file.exists()) file.delete()
-                                try {
-                                    val out = FileOutputStream(file)
-                                    resource.compress(Bitmap.CompressFormat.PNG, 100, out)
-                                    out.flush()
-                                    out.close()
-                                } catch (e: Exception) {
-                                }
-                            }
-
-                            override fun onLoadCleared(placeholder: Drawable?) {}
-                        })
 
 
                     /* if (res.logout!!) {

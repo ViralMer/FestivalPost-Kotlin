@@ -258,7 +258,7 @@
                         android:layout_gravity="center"
                         android:gravity="start"
                         android:layout_weight="10"
-                        android:text="@string/head_festivals" />
+                        android:text="@string/head_upcoming_festivals" />
 
                     <TextView
                         android:id="@+id/tvviewall"

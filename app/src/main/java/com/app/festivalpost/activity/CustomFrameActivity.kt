@@ -103,7 +103,6 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
                 val detailact =
                     Intent(this@CustomFrameActivity, CustomPhotoFrameActivity::class.java)
                 detailact.putExtra("photo_path", photo_path)
-                Log.d("photo_path", "123 " + photo_path)
                 detailact.putExtra("frame_contact_detail", frameContentItemDetail)
                 startActivity(detailact)
                 showProgress(false)
