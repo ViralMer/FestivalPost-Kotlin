@@ -199,13 +199,13 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         }
 
         setActionbar()
-        selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        textselectedFontTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        phoneTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        emailTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        websiteTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        addressTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        allfonttypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
+        selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        textselectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        phoneTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        emailTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        websiteTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        addressTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        allfonttypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
         /*        horizontalScrollView = findViewById(R.id.horizontal);
 
         horizontalScrollView.post(new Runnable() {
@@ -460,6 +460,14 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 view: View?
             ) {
                 selectedPosition = numberOfAddedViews
+                emailValue = false
+                phoneValue = false
+                websiteValue = false
+                addressValue = false
+                textallSelected = false
+                nameValue = false
+                textviewSelected = true
+
             }
 
             override fun onStopViewChangeListener(
@@ -482,11 +490,16 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 defaultText = storeValue!!
             }
             fontTypeList.clear()
-            fontTypeList.add(FontTypeList("fonts/museomoderno_regular.ttf"))
-            fontTypeList.add(FontTypeList("fonts/aaargh.ttf"))
-            fontTypeList.add(FontTypeList("fonts/bold.ttf"))
-            fontTypeList.add(FontTypeList("fonts/armopb.ttf"))
-            fontTypeList.add(FontTypeList("fonts/corbel.ttf"))
+            fontTypeList.add(FontTypeList("fonts/aileron_light.otf"))
+            fontTypeList.add(FontTypeList("fonts/avenir_book.otf"))
+            fontTypeList.add(FontTypeList("fonts/breeserif_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/canter_light.otf"))
+            fontTypeList.add(FontTypeList("fonts/crimsontext_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/dense_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/himalaya_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/opensans_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/sf_ui_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/vollkorn_regular.ttf"))
             storeValue = "Festival Post"
             showPopupBusinessCategoryDialog(this, storeValue!!)
         }
@@ -1884,7 +1897,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             phoneValue = false
             websiteValue = false
             textallSelected = false
-            textviewSelected = false
+            textviewSelected = true
         }
         btncancel.setOnClickListener { dialog.dismiss() }
         dialog.show()

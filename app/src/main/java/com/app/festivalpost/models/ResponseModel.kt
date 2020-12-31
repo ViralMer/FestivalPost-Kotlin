@@ -16,7 +16,6 @@ data class HomePageResponse(
     val cateogry: ArrayList<HomePageItem?>,
     val frameList: ArrayList<FrameListItem1>,
     val current_business: CurrentBusinessItem,
-    val current_business_new: CurrentBusinessItem,
     val premium: Boolean? = false,
     val logout: Boolean? = false,
     val current_date: String? = null,
@@ -120,7 +119,8 @@ data class CurrentBusinessItem(
     val purc_end_date: String? = null,
     val need_to_upgrade: String? = null,
     val plan_id: String? = null,
-    var is_current_business: Int? = 0
+    var is_current_business: Int? = 0,
+    var status: String? = null
 ) : Serializable
 
 data class FrameListItem1(

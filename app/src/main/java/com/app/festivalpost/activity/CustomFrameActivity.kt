@@ -1,14 +1,18 @@
 package com.app.festivalpost.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,9 +22,12 @@ import com.app.festivalpost.R
 import com.app.festivalpost.adapter.ChoosePhotoFrameAdapter
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.get
+import com.emegamart.lelys.utils.extensions.launchActivity
 import com.emegamart.lelys.utils.extensions.toast
 import kotlinx.android.synthetic.main.fragment_custom.*
 import java.util.*
@@ -70,12 +77,37 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
 
         tvaction!!.setOnClickListener {
             showProgress(true)
-            val detailact = Intent(this@CustomFrameActivity, CustomPhotoFrameActivity::class.java)
-            detailact.putExtra("photo_path", photo_path)
-            Log.d("photo_path","123 "+photo_path)
-            detailact.putExtra("frame_contact_detail", frameContentItemDetail)
-            startActivity(detailact)
-            showProgress(false)
+            val currentBusinessItem =
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+            if (currentBusinessItem == null) {
+                val materialAlertDialogBuilder = AlertDialog.Builder(this)
+                val inflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
+                val tvTitle: TextView
+                val tvMessage: TextView
+                val btnOk: Button
+                val btnCancel: Button
+                tvTitle = view.findViewById(R.id.tvTitle)
+                tvMessage = view.findViewById(R.id.tvMessage)
+                btnOk = view.findViewById(R.id.btnOk)
+                btnCancel = view.findViewById(R.id.btnCancel)
+                tvTitle.text = "Sorry!!"
+                tvMessage.text = "For making post please add your business details first."
+                materialAlertDialogBuilder.setView(view).setCancelable(true)
+                val b = materialAlertDialogBuilder.create()
+                btnCancel.setOnClickListener { b.dismiss() }
+                btnOk.setOnClickListener { launchActivity<AddBusinessActivity> { finish() } }
+                b.show()
+                showProgress(false)
+            } else {
+                val detailact =
+                    Intent(this@CustomFrameActivity, CustomPhotoFrameActivity::class.java)
+                detailact.putExtra("photo_path", photo_path)
+                Log.d("photo_path", "123 " + photo_path)
+                detailact.putExtra("frame_contact_detail", frameContentItemDetail)
+                startActivity(detailact)
+                showProgress(false)
+            }
         }
     }
 

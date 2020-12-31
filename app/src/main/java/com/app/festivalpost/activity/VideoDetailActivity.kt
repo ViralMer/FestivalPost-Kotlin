@@ -2,6 +2,7 @@ package com.app.festivalpost.activity
 
 import android.Manifest
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.os.*
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
@@ -26,14 +28,13 @@ import com.app.festivalpost.adapter.ChooseVideoAdapter
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoItem
 import com.app.festivalpost.models.VideoLanguageItem
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.getCurrentDate
-import com.emegamart.lelys.utils.extensions.getCustomFrameList
-import com.emegamart.lelys.utils.extensions.launchActivity
-import com.emegamart.lelys.utils.extensions.onClick
+import com.emegamart.lelys.utils.extensions.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -262,17 +263,40 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         }
 
         tvaction.setOnClickListener {
-            if (day in 0..1) {
-                launchActivity<ChooseVideoFrameActivity> {
-                    putExtra("video_path",video_path)
-                    putExtra("video_type",video_type)
-                }
+            val currentBusinessItem =
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+            if (currentBusinessItem == null) {
+                val materialAlertDialogBuilder = AlertDialog.Builder(this)
+                val inflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
+                val tvTitle: TextView
+                val tvMessage: TextView
+                val btnOk: Button
+                val btnCancel: Button
+                tvTitle = view.findViewById(R.id.tvTitle)
+                tvMessage = view.findViewById(R.id.tvMessage)
+                btnOk = view.findViewById(R.id.btnOk)
+                btnCancel = view.findViewById(R.id.btnCancel)
+                tvTitle.text = "Sorry!!"
+                tvMessage.text = "For making post please add your business details first."
+                materialAlertDialogBuilder.setView(view).setCancelable(true)
+                val b = materialAlertDialogBuilder.create()
+                btnCancel.setOnClickListener { b.dismiss() }
+                btnOk.setOnClickListener { launchActivity<AddBusinessActivity> { finish() } }
+                b.show()
             } else {
-                Global.getAlertDialog(
-                    this,
-                    "Sorry!!",
-                    "This Festival is locked today.This festival photos will open before 24 hours of festival."
-                )
+                if (day in 0..1) {
+                    launchActivity<ChooseVideoFrameActivity> {
+                        putExtra("video_path", video_path)
+                        putExtra("video_type", video_type)
+                    }
+                } else {
+                    Global.getAlertDialog(
+                        this,
+                        "Sorry!!",
+                        "This Festival is locked today.This festival photos will open before 24 hours of festival."
+                    )
+                }
             }
         }
     }

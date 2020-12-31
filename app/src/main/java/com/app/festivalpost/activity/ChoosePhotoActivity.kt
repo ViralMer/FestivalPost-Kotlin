@@ -1,15 +1,19 @@
 package com.app.festivalpost.activity;
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.adapter.ChoosePhotoAdapter
 
@@ -21,10 +25,13 @@ import com.app.festivalpost.R
 import com.app.festivalpost.activity.*
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.get
 import com.emegamart.lelys.utils.extensions.getCurrentDate
+import com.emegamart.lelys.utils.extensions.launchActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -71,26 +78,54 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         val tvtitle = toolbar.findViewById<View>(R.id.tvtitle) as TextView
-        if (intent.getStringExtra("category_name") == "") {
-            tvtitle.text = resources.getString(R.string.txt_custom_photo)
-        } else {
-            tvtitle.text = intent.getStringExtra("category_name")
+        if (intent.getStringExtra("category_name")!=null) {
+            if (intent.getStringExtra("category_name") == "") {
+                tvtitle.text = resources.getString(R.string.txt_custom_photo)
+            } else {
+                tvtitle.text = intent.getStringExtra("category_name")
+            }
         }
         tvaction = toolbar.findViewById<View>(R.id.btn_next) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
         //animateButton()
         tvaction!!.setOnClickListener {
-            if (day in 0..1) {
-                val detailact = Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)
-                detailact.putExtra("photo_path", photo_path)
-                detailact.putExtra("image_type", image_type)
-                startActivity(detailact)
+            val currentBusinessItem =
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+            if (currentBusinessItem == null) {
+                val materialAlertDialogBuilder = AlertDialog.Builder(this)
+                val inflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
+                val tvTitle: TextView
+                val tvMessage: TextView
+                val btnOk: Button
+                val btnCancel: Button
+                tvTitle = view.findViewById(R.id.tvTitle)
+                tvMessage = view.findViewById(R.id.tvMessage)
+                btnOk = view.findViewById(R.id.btnOk)
+                btnCancel = view.findViewById(R.id.btnCancel)
+                tvTitle.text = "Sorry!!"
+                tvMessage.text = "For making post please add your business details first."
+                materialAlertDialogBuilder.setView(view).setCancelable(true)
+                val b = materialAlertDialogBuilder.create()
+                btnCancel.setOnClickListener { b.dismiss() }
+                btnOk.setOnClickListener { launchActivity<AddBusinessActivity> { finish() } }
+                b.show()
             } else {
-                Global.getAlertDialog(
-                    this@ChoosePhotoActivity,
-                    "Sorry!!",
-                    "This Festival is locked today.This festival photos will open before 24 hours of festival."
-                )
+
+
+                if (day in 0..1) {
+                    val detailact =
+                        Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)
+                    detailact.putExtra("photo_path", photo_path)
+                    detailact.putExtra("image_type", image_type)
+                    startActivity(detailact)
+                } else {
+                    Global.getAlertDialog(
+                        this@ChoosePhotoActivity,
+                        "Sorry!!",
+                        "This Festival is locked today.This festival photos will open before 24 hours of festival."
+                    )
+                }
             }
         }
     }

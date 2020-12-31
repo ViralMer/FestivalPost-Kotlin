@@ -79,37 +79,7 @@ class VideoCreateActivity : AppBaseActivity() {
 
     var imageview : AppCompatImageView?=null
 
-    @SuppressLint("HandlerLeak")
-    var handler: Handler = object : Handler() {
-        @SuppressLint("WrongConstant")
-        override fun handleMessage(msg: Message) {
-            if (progressBar != null) {
-                try {
-                    progressBar!!.dismiss()
-                    if (msg.what == -1) {
-                        //loadJNI!!.fExit(applicationContext)
-                    } else if (msg.what == 0 && stop == false) {
 
-                        /*Intent j = new Intent(VideoCreateActivity.this.getApplicationContext(), VideoPreviewActivity.class);
-                        Glob.videoname = VideoCreateActivity.this.PassCutVideoFilepath;
-                        j.setFlags(67108864);
-                        VideoCreateActivity.this.startActivity(j);
-                        VideoCreateActivity.this.finish();*/
-                    }
-                } catch (e: NumberFormatException) {
-                    e.printStackTrace()
-                } catch (e2: NoSuchMethodError) {
-                    e2.printStackTrace()
-                } catch (e3: IllegalArgumentException) {
-                    e3.printStackTrace()
-                } catch (e4: NullPointerException) {
-                    e4.printStackTrace()
-                } catch (e5: Exception) {
-                    e5.printStackTrace()
-                }
-            }
-        }
-    }
     var mFilename: String? = null
     var mBuilder: Notification.Builder? = null
     var mNotifyManager: NotificationManager? = null

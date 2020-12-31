@@ -359,9 +359,9 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
         try {
             val options = JSONObject()
             options.put("name", getUserName())
-            options.put("description", "")
+            options.put("description", getMobileNumber())
             options.put("currency", "INR")
-            //options.put("order_id", orderData?.id)
+            //options.put("order_id", "orderid_123465")
             options.put("amount", (1199 * 100).toDouble())
             options.put("image", "https://rzp-mobile.s3.amazonaws.com/images/rzp.png")
 
@@ -374,7 +374,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
 
     override fun onPaymentSuccess(p0: String?, p1: PaymentData?) {
         try{
-            loadAccoutData("1234",p0.toString(),business_id!!,"1")
+            loadAccoutData("1234",p0.toString(),business_id!!,"2")
             Log.d("Data RazorPay Succes",""+p0.toString())
         }
         catch (e:Exception)

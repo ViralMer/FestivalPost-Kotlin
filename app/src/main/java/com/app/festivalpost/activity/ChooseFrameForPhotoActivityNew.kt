@@ -169,13 +169,16 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
 
         setActionbar()
-        selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        phoneTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        emailTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        websiteTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        addressTypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        allfonttypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
-        nametypeface = Typeface.createFromAsset(assets, "fonts/open_sans_regular.ttf")
+        selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+
+
+
+        phoneTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        emailTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        websiteTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        addressTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        allfonttypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
+        nametypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
         recyclerView = findViewById(R.id.rvdata)
         ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
         if (photo_path != null && !photo_path.equals("", ignoreCase = true)) {
@@ -428,11 +431,16 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 defaultText = storeValue!!
             }
             fontTypeList.clear()
-            fontTypeList.add(FontTypeList("fonts/museomoderno_regular.ttf"))
-            fontTypeList.add(FontTypeList("fonts/aaargh.ttf"))
-            fontTypeList.add(FontTypeList("fonts/bold.ttf"))
-            fontTypeList.add(FontTypeList("fonts/armopb.ttf"))
-            fontTypeList.add(FontTypeList("fonts/corbel.ttf"))
+            fontTypeList.add(FontTypeList("fonts/aileron_light.otf"))
+            fontTypeList.add(FontTypeList("fonts/avenir_book.otf"))
+            fontTypeList.add(FontTypeList("fonts/breeserif_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/canter_light.otf"))
+            fontTypeList.add(FontTypeList("fonts/crimsontext_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/dense_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/himalaya_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/opensans_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/sf_ui_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/vollkorn_regular.ttf"))
             storeValue="Festival Post"
             showPopupBusinessCategoryDialog(this, storeValue!!)
         }

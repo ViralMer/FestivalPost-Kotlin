@@ -3,6 +3,7 @@ package com.app.festivalpost.fragment
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -14,8 +15,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,7 +28,9 @@ import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.*
 import com.app.festivalpost.adapter.*
+import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
+import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
 import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
 import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
@@ -45,6 +50,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.io.File
 import java.io.FileOutputStream
@@ -109,7 +115,30 @@ class HomeFragment : BaseFragment() {
         }
 
         tvCustom!!.onClick {
-            activity!!.launchActivity<ChooseFrameActivityNew> {  }
+            val currentBusinessItem =
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+            if (currentBusinessItem == null) {
+                val materialAlertDialogBuilder = AlertDialog.Builder(activity!!)
+                val inflater = activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
+                val tvTitle: TextView
+                val tvMessage: TextView
+                val btnOk: Button
+                val btnCancel: Button
+                tvTitle = view.findViewById(R.id.tvTitle)
+                tvMessage = view.findViewById(R.id.tvMessage)
+                btnOk = view.findViewById(R.id.btnOk)
+                btnCancel = view.findViewById(R.id.btnCancel)
+                tvTitle.text = "Sorry!!"
+                tvMessage.text = "For making post please add your business details first."
+                materialAlertDialogBuilder.setView(view).setCancelable(true)
+                val b = materialAlertDialogBuilder.create()
+                btnCancel.setOnClickListener { b.dismiss() }
+                btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> {  } }
+                b.show()
+            } else {
+                activity!!.launchActivity<ChooseFrameActivityNew> { }
+            }
         }
 
         val mainHandler = Handler(getMainLooper())
@@ -156,7 +185,8 @@ class HomeFragment : BaseFragment() {
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val view = LayoutInflater.from(activity).inflate(R.layout.item_slider, container, false)
-            val ivphoto = view.findViewById<ImageView>(R.id.imgSlider)
+            val ivphoto = view.findViewById<RoundedImageView>(R.id.imgSlider)
+            val ivWhatsapp = view.findViewById<ImageView>(R.id.ivWhatsapp)
             val festivalItem = sliderArrayList[position]
             if (festivalItem!!.adv_image != null && !festivalItem.adv_image.equals(
                     "",
@@ -174,6 +204,27 @@ class HomeFragment : BaseFragment() {
                 i.data = Uri.parse(festivalItem.adv_link)
                 activity!!.startActivity(i)
             }
+
+            ivWhatsapp.onClick {
+                val url =
+                    "https://api.whatsapp.com/send?phone="+festivalItem.adv_number+"&text=Inquiry from FestivalPost&source=&data=&app_absent="
+                try {
+                    val pm = activity!!.applicationContext.packageManager
+                    pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(url)
+                    i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
+                    startActivity(i)
+                } catch (e: PackageManager.NameNotFoundException) {
+                    Toast.makeText(
+                        activity!!,
+                        "Whatsapp app not installed in your phone",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    e.printStackTrace()
+                }
+            }
+
 
 
             container.addView(view)
@@ -217,23 +268,32 @@ class HomeFragment : BaseFragment() {
 
 
                     getSharedPrefInstance().setValue(LOG_OUT, res.logout)
+
                     getSharedPrefInstance().setValue(IS_PREMIUM, res.premium)
                     getSharedPrefInstance().setValue(CURRENT_DATE, res.current_date)
                     getSharedPrefInstance().setValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
-                    put(res.current_business, KEY_CURRENT_BUSINESS)
+                    if (res.current_business.status=="1") {
+                        put(res.current_business, KEY_CURRENT_BUSINESS)
+                    }
+                    else{
+                        put(null, KEY_CURRENT_BUSINESS)
+                    }
 
 
                     val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
-                    if (currentBusinessItem!!.plan_name == "Free") {
-                        tvPremium!!.show()
-                    } else {
-                        tvPremium!!.hide()
+                    if (currentBusinessItem!=null) {
+                        if (currentBusinessItem!!.plan_name == "Free") {
+                            tvPremium!!.show()
+                        } else {
+                            tvPremium!!.hide()
+                        }
+                        Glide.with(this).load(currentBusinessItem!!.busi_logo)
+                            .placeholder(R.drawable.placeholder_img).error(
+                                R.drawable.placeholder_img
+                            ).into(imageLogo!!)
                     }
 
-                    Glide.with(this).load(currentBusinessItem!!.busi_logo)
-                        .placeholder(R.drawable.placeholder_img).error(
-                            R.drawable.placeholder_img
-                        ).into(imageLogo!!)
+
 
 
 

@@ -272,11 +272,16 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         }
         linearfonttype!!.setOnClickListener {
             fontTypeList.clear()
-            fontTypeList.add(FontTypeList("fonts/museomoderno_regular.ttf"))
-            fontTypeList.add(FontTypeList("fonts/aaargh.ttf"))
-            fontTypeList.add(FontTypeList("fonts/bold.ttf"))
-            fontTypeList.add(FontTypeList("fonts/armopb.ttf"))
-            fontTypeList.add(FontTypeList("fonts/corbel.ttf"))
+            fontTypeList.add(FontTypeList("fonts/aileron_light.otf"))
+            fontTypeList.add(FontTypeList("fonts/avenir_book.otf"))
+            fontTypeList.add(FontTypeList("fonts/breeserif_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/canter_light.otf"))
+            fontTypeList.add(FontTypeList("fonts/crimsontext_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/dense_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/himalaya_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/opensans_regular.ttf"))
+            fontTypeList.add(FontTypeList("fonts/sf_ui_regular.otf"))
+            fontTypeList.add(FontTypeList("fonts/vollkorn_regular.ttf"))
             storeValue="Festival Post"
             showPopupBusinessCategoryDialog(this, storeValue!!)
         }

@@ -279,4 +279,10 @@ private fun performLogin() {
         alertDialog.show()
 
 
-    }}
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+}

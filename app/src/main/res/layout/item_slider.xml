@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.makeramen.roundedimageview.RoundedImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<com.makeramen.roundedimageview.RoundedImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/imgSlider"
     android:layout_width="match_parent"
@@ -9,3 +14,15 @@
     android:layout_margin="@dimen/_10ssp"
     android:adjustViewBounds="true"
     android:orientation="vertical" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivWhatsapp"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:scaleType="fitXY"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/whatsapp"
+        android:layout_margin="@dimen/_15sdp"
+        android:adjustViewBounds="true"
+        android:orientation="vertical" />
+</FrameLayout>

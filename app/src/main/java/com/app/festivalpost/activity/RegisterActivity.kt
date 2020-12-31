@@ -162,7 +162,7 @@ class RegisterActivity : AppBaseActivity() {
     private fun loadRegisterData() {
         showProgress(true)
         callApi(
-            getRestApis().register(et_name.text.toString(), et_number.toString()),
+            getRestApis().register(et_name.text.toString(), et_number.text.toString()),
             onApiSuccess = {
                 showProgress(false)
                 launchActivity<HomeActivity> {

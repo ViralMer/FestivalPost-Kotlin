@@ -110,6 +110,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             edPhone!!.setText(businessItem!!.busi_mobile)
             edPhone2!!.setText(businessItem!!.busi_mobile_second)
             edEmail!!.setText(businessItem!!.busi_email)
+            category_value=businessItem!!.business_category
             edCategory!!.setText(businessItem!!.business_category)
             if (!businessItem!!.busi_logo.equals("")) {
                 Glide.with(this@AddBusinessActivity).load(businessItem!!.busi_logo)
