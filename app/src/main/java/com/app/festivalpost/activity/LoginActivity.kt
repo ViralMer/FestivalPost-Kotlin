@@ -42,9 +42,9 @@ import kotlinx.android.synthetic.main.activity_register.*
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
-class LoginActivity : AppBaseActivity(),View.OnFocusChangeListener{
+class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
-    var ivBack:ImageView?=null
+    var ivBack: ImageView? = null
     private var verificationId: String? = null
     private var etOtp: AppCompatEditText? = null
     private var mAuth: FirebaseAuth? = null
@@ -54,20 +54,19 @@ class LoginActivity : AppBaseActivity(),View.OnFocusChangeListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         FirebaseApp.initializeApp(this)
-        et_number.onFocusChangeListener=this
+        et_number.onFocusChangeListener = this
 
-        val toolbar=findViewById<View>(R.id.toolbar) as Toolbar
-        ivBack=toolbar.findViewById(R.id.ivBack)
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        ivBack = toolbar.findViewById(R.id.ivBack)
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
-            getSharedPrefInstance().setValue(Constants.KeyIntent.DEVICE_TOKEN,token)
+            getSharedPrefInstance().setValue(Constants.KeyIntent.DEVICE_TOKEN, token)
             // send it to server
         }
-        if (isLoggedIn())
-        {
-            launchActivity<HomeActivity> {  }
+        if (isLoggedIn()) {
+            launchActivity<HomeActivity> { }
             finish()
         }
 
@@ -77,7 +76,7 @@ class LoginActivity : AppBaseActivity(),View.OnFocusChangeListener{
         }
 
         tvsignup.onClick {
-            launchActivity<RegisterActivity> {  }
+            launchActivity<RegisterActivity> { }
         }
 
         ivBack!!.onClick {
@@ -85,23 +84,21 @@ class LoginActivity : AppBaseActivity(),View.OnFocusChangeListener{
         }
 
 
-
-
-
     }
 
-private fun performLogin() {
-    if (et_number.text.toString().equals("", ignoreCase = true)) {
-        Global.getAlertDialog(
-            this@LoginActivity,
-            "Opps..!",
-            resources.getString(R.string.txt_fill_all_details)
-        )
-    } else {
-        Log.d("spinner","+" + spinner.selectedCountryCode + et_number.text.toString())
-        sendVerificationCode("+" + spinner.selectedCountryCode + et_number.text.toString())
+    private fun performLogin() {
+        if (et_number.text.toString().equals("", ignoreCase = true)) {
+            Global.getAlertDialog(
+                this@LoginActivity,
+                "Opps..!",
+                resources.getString(R.string.txt_fill_all_details)
+            )
+        } else {
+            Log.d("spinner", "+" + spinner.selectedCountryCode + et_number.text.toString())
+            sendVerificationCode("+" + spinner.selectedCountryCode + et_number.text.toString())
+            //login()
+        }
     }
-}
 
 
     private fun login() {
@@ -113,14 +110,24 @@ private fun performLogin() {
                 showProgress(false)
                 launchActivity<HomeActivity> {
                     getSharedPrefInstance().setValue(Constants.SharedPref.IS_LOGGED_IN, true)
-                    getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA, it.data)
+                    //getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA,it.data)
                     getSharedPrefInstance().setValue(Constants.SharedPref.USER_TOKEN, it.token)
 
-                    for (i in 0 until it.data.size)
-                    {
-                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME,it.data[i]!!.name)
-                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, it.data[i]!!.mobile)
-                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_EMAIL, it.data[i]!!.email)
+
+
+                    for (i in 0 until it.data.size) {
+                        getSharedPrefInstance().setValue(
+                            Constants.SharedPref.USER_NAME,
+                            it.data[i]!!.name
+                        )
+                        getSharedPrefInstance().setValue(
+                            Constants.SharedPref.USER_NUMBER,
+                            it.data[i]!!.mobile
+                        )
+                        getSharedPrefInstance().setValue(
+                            Constants.SharedPref.USER_EMAIL,
+                            it.data[i]!!.email
+                        )
                     }
                 }
                 finish()
@@ -136,7 +143,6 @@ private fun performLogin() {
 
             })
     }
-
 
 
     override fun onFocusChange(v: View?, hasFocus: Boolean) {
@@ -190,7 +196,6 @@ private fun performLogin() {
     }
 
 
-
     private fun sendVerificationCode(number: String?) {
         try {
             showProgress(true)
@@ -214,7 +219,7 @@ private fun performLogin() {
                 super.onCodeSent(s, forceResendingToken)
                 showProgress(false)
                 verificationId = s
-                token=forceResendingToken
+                token = forceResendingToken
                 Toast.makeText(
                     this@LoginActivity,
                     "OTP sent to your mobile number.",
@@ -236,7 +241,11 @@ private fun performLogin() {
                     .show()
             }
         }
-    private fun resendVerificationCode(phoneNumber: String?, token: PhoneAuthProvider.ForceResendingToken?) {
+
+    private fun resendVerificationCode(
+        phoneNumber: String?,
+        token: PhoneAuthProvider.ForceResendingToken?
+    ) {
         showProgress(true)
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
             phoneNumber!!,  // Phone number to verify
@@ -257,7 +266,6 @@ private fun performLogin() {
         val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as ImageView
 
 
-
         val builder = AlertDialog.Builder(context)
             .setView(layout)
             .setCancelable(false)
@@ -269,7 +277,12 @@ private fun performLogin() {
             performSubmit()
         }
 
-        tvresendOtp.onClick { resendVerificationCode(et_number.text.toString(),token!!) }
+        tvresendOtp.onClick {
+            resendVerificationCode(
+                "+" + spinner.selectedCountryCode + "" + et_number.text.toString(),
+                token!!
+            )
+        }
 
 
         ib_cancel.onClick {
@@ -281,8 +294,5 @@ private fun performLogin() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
 
-    }
 }

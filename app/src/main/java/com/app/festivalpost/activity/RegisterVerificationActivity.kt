@@ -22,7 +22,6 @@ import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
-import com.app.festivalpost.utils.Constants.SharedPref.KEY_USER_DATA
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
@@ -161,7 +160,9 @@ class RegisterVerificationActivity : AppBaseActivity(),
                 showProgress(false)
                 launchActivity<HomeActivity> {
                     getSharedPrefInstance().setValue(IS_LOGGED_IN, true)
+/*
                     getSharedPrefInstance().setValue(KEY_USER_DATA, it.data)
+*/
 
 
                 }

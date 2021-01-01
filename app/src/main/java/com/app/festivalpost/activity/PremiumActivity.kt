@@ -333,14 +333,11 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
             "sfsfsdf",
             "Owned Managed Product: \$sku"
         )
-        /*for (sku in bp!!.listOwnedSubscriptions()) Log.d(
-                "fdsgg",
-                "Owned Subscription: $sku"
-        )*/
+
     }
 
     override fun onBillingError(errorCode: Int, error: Throwable?) {
-        //Log.d("Errrorrr",""+error.getMessage()+"sdss"+errorCode);
+
     }
 
     override fun onBillingInitialized() {

@@ -100,6 +100,7 @@ class AccountFragment : BaseFragment() {
 
 
 
+/*
         for (i in 0 until getUserData().size )
         {
             getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME, getUserData()[i].name)
@@ -108,6 +109,7 @@ class AccountFragment : BaseFragment() {
                 getUserData()[i].mobile
             )
         }
+*/
 
         tvusername.text = getUserName()
         tvusernaumber.text = getMobileNumber()
@@ -152,7 +154,7 @@ class AccountFragment : BaseFragment() {
             .setMessage(activity!!.resources.getString(R.string.txt_logout_message))
             .setPositiveButton(activity!!.resources.getString(R.string.txt_yes)) { dialog, which ->
                 clearLoginPref()
-                val detailAct = Intent(activity, LoginActivity::class.java)
+                 val detailAct = Intent(activity, LoginActivity::class.java)
                 detailAct.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 activity!!.startActivity(detailAct)
                 activity!!.finish()
