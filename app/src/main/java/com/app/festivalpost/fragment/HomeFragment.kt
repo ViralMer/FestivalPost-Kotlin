@@ -296,10 +296,7 @@ class HomeFragment : BaseFragment() {
             onApiSuccess = { res ->
                 hideProgress()
                 if (res.status!!) {
-
-
                     getSharedPrefInstance().setValue(LOG_OUT, res.logout)
-
                     getSharedPrefInstance().setValue(IS_PREMIUM, res.premium)
                     getSharedPrefInstance().setValue(CURRENT_DATE, res.current_date)
                     getSharedPrefInstance().setValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
