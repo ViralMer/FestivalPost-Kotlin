@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
@@ -21,6 +22,10 @@ import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.SharedPref.USER_EMAIL
+import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
@@ -31,20 +36,31 @@ import java.lang.Exception
 class EditProfileActivity : AppBaseActivity() {
 
     var userItem: UserItem? = null
+    var sessionManager: SessionManager? = null
+
+    private var etName:AppCompatEditText?=null
+    private var etEmail:AppCompatEditText?=null
+    private var btn_save:TextView?=null
+    var token : String?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(
             R.layout.activity_edit_profile
         )
 
-
+        sessionManager=SessionManager(this)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         setActionbar()
+        etEmail=findViewById(R.id.etEmail)
+        etName=findViewById(R.id.etName)
+        btn_save=findViewById(R.id.btn_save)
+        val email=sessionManager!!.getValueString(USER_EMAIL)
+        val name=sessionManager!!.getValueString(USER_NAME)
+        etEmail!!.setText(email)
+        etName!!.setText(name)
 
-
-        etEmail.setText(getEmail())
-        etName.setText(getUserName())
-
-        btn_save.onClick {
+        btn_save!!.onClick {
             performRegister()
         }
 
@@ -82,9 +98,9 @@ class EditProfileActivity : AppBaseActivity() {
 
 
     fun performRegister() {
-        if (etName.text.toString() == "") {
+        if (etName!!.text.toString() == "") {
             Global.getAlertDialog(this, "Opps..!", "Please Enter Name")
-        } else if (etEmail.text.toString() != "" && !validEmail(etEmail.text.toString())) {
+        } else if (etEmail!!.text.toString() != "" && !validEmail(etEmail!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Enter valid e-mail!")
         } else {
             editprofile()
@@ -101,10 +117,11 @@ class EditProfileActivity : AppBaseActivity() {
         showProgress(true)
         callApi(
 
-            getRestApis().editmyprofile(etName.text.toString(),etEmail.text.toString()), onApiSuccess = {
+            getRestApis().editmyprofile(etName!!.text.toString(),etEmail!!.text.toString(),token!!), onApiSuccess = {
                 showProgress(false)
-                getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME,it.data.name)
-                getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, it.data.email)
+                sessionManager!!.setStringValue(USER_NAME,it.data.name!!)
+                sessionManager!!.setStringValue(USER_EMAIL,it.data.email!!)
+
                 onBackPressed()
             }, onApiError = {
                 showProgress(false)

@@ -46,37 +46,6 @@ class MyPostFragment : BaseFragment() {
         rvdata!!.layoutManager = mLayoutManager
 
         linearLayout = view.findViewById(R.id.rlNoData)
-
-
-
-
-        /*Log.d("data arraylist", "" + dataArrayList.size)
-        val path: String =
-            Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
-        Log.d("Files", "Path: $path")
-        val directory = File(path)
-        val files: Array<File> = directory.listFiles()
-
-        Log.d("Files", "Size: " + files.size)
-        val filenames = ArrayList<String>()
-        for (i in files.indices) {
-            val file=files[i]
-            if (filenames.isNotEmpty()) {
-                linearLayout!!.hide()
-                if (file.isFile && file.path.endsWith(".jpg")) {
-                    Log.d("Files", "FileName:" + files[i].name)
-                    filenames.add(files[i].name)
-                    dataArrayList.add(FileListItem(files[i].name))
-
-                }
-            }
-            else{
-                linearLayout!!.show()
-            }
-
-            adapter = PostAdapter(activity!!, dataArrayList)
-            rvdata!!.adapter = adapter
-        }*/
         PhotoItemList().execute();
         return view
     }

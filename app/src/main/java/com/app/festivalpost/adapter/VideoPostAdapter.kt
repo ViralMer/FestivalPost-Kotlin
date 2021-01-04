@@ -23,16 +23,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.R
-import com.app.festivalpost.globals.Constant
-import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.FileListItem
 import com.app.festivalpost.models.PostItem
 import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
+import com.app.festivalpost.utils.SessionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+
 import com.potyvideo.library.AndExoPlayerView
 import java.util.*
 import java.util.function.Consumer
@@ -49,15 +48,22 @@ class VideoPostAdapter(var context: Context, var originaldata: ArrayList<FileLis
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val festivalItem = originaldata[position]
-        Log.d("image_url", "" + originaldata.size)
-        holder.tvname.text = getSharedPrefInstance().getStringValue(USER_NAME)
-        val path: String =
-            Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
-        val thumb: Bitmap = ThumbnailUtils.createVideoThumbnail(
-            path+ "/" + festivalItem.path,
-            MediaStore.Images.Thumbnails.MINI_KIND
-        )!!
-        holder.ivphoto.setImageBitmap(thumb)
+        val sessionManager=SessionManager(context)
+        holder.tvname.text = sessionManager.getValueString(USER_NAME)
+        var path: String? = null
+        try {
+
+            path = Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
+            val thumb: Bitmap = ThumbnailUtils.createVideoThumbnail(
+                path + "/" + festivalItem.path,
+                MediaStore.Images.Thumbnails.MINI_KIND
+            )!!
+            holder.ivphoto.setImageBitmap(thumb)
+        } catch (e: java.lang.Exception) {
+
+        }
+
+
         holder.layMain.tag = festivalItem
         holder.layMain.setOnClickListener { view ->
             showFullScreenImage(path + "/" + festivalItem.path)
@@ -93,7 +99,7 @@ class VideoPostAdapter(var context: Context, var originaldata: ArrayList<FileLis
                                 transition: Transition<in Bitmap?>?
                             ) {
                                 val path = MediaStore.Images.Media.insertImage(
-                                    context.contentResolver, resource, "Festival Post", null
+                                    context.contentResolver, resource, "FestivalPost", null
                                 )
                                 val sharingIntent = Intent(Intent.ACTION_SEND)
                                 sharingIntent.type = "video/mp4" //If it is a 3gp video use ("video/3gp")

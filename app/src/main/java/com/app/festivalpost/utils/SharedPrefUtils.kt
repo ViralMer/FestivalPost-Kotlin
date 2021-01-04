@@ -51,9 +51,6 @@ class SharedPrefUtils {
         return mSharedPreferences.getLong(key, defaultValue)
     }
 
-    fun getBooleanValue(keyFlag: String, defaultValue: Boolean = false): Boolean {
-        return mSharedPreferences.getBoolean(keyFlag, defaultValue)
-    }
 
     fun removeKey(key: String) {
         mSharedPreferencesEditor.remove(key)

@@ -36,6 +36,7 @@ import com.app.festivalpost.photoeditor.PhotoEditorView
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
@@ -142,11 +143,12 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
     var alertDialog: AlertDialog? = null
     var width = 0
     var height = 0
+    var sessionManager:SessionManager?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_video_frame)
-
+        sessionManager= SessionManager(this)
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey("video_path")) {
@@ -178,8 +180,8 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
 
 
         var frameListItems1 = arrayListOf<FrameListItem1>()
-        frameListItems1 = getCustomFrameList()
-        Log.d("framesize", "" + getCustomFrameList().size)
+        frameListItems1 = getCustomFrameList(this)
+
         plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
@@ -239,7 +241,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             rootTextView = null
             showAddTextDialog("", selected_color)
         }
-        if (getCustomFrameList().isNotEmpty()) {
+        if (getCustomFrameList(this).isNotEmpty()) {
             val photoItem=framePreviewArrayList[0]
             setFrameNEW(framePreviewArrayList[0])
             if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
@@ -600,7 +602,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             websiteLine.setVisibility(View.VISIBLE);
         }*/
 
-        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
 
         imagemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNewNotRotate.OnGestureControl {
@@ -1471,13 +1473,10 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                     stream.close()
                     newsaveBmp!!.recycle()
 
-                    if (!getSharedPrefInstance().getBooleanValue(
-                            Constants.KeyIntent.IS_PREMIUM,
-                            false
-                        )
+                    if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!
                     ) {
                         if (video_type!! == "0") {
-                            getSharedPrefInstance().setValue(
+                            sessionManager!!.setStringValue(
                                 "image_name",
                                 "/data/data/com.app.festivalpost/files/$filename"
                             )
@@ -1502,8 +1501,9 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                                 ) { dialog, _ -> dialog.dismiss() }
                                 .show()
                         }
+                        showProgress(false)
                     } else {
-                        getSharedPrefInstance().setValue(
+                        sessionManager!!.setStringValue(
                             "image_name",
                             "/data/data/com.app.festivalpost/files/$filename"
                         )
@@ -1512,7 +1512,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
 
                     //Pop intent
 
-
+                showProgress(false)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -1801,7 +1801,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             c.connect()
             val videoname = "/data/data/com.app.festivalpost/files/$videoName"
             val videoname1 = videoName
-            getSharedPrefInstance().setValue("video_name", videoname)
+            sessionManager!!.setStringValue("video_name", videoname)
             val file: File
             var fileOutputStream: FileOutputStream? = null
             try {

@@ -17,6 +17,8 @@ import com.app.festivalpost.fragment.HomeFragment.Companion.imageLogo1
 import com.app.festivalpost.fragment.VideoFragment
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
@@ -30,13 +32,14 @@ class HomeActivity : AppBaseActivity(),OnItemClickListener {
     var tvaction: TextView? = null
     var tvtitle: TextView? = null
     var mBottomNavigationView: BottomNavigationView? = null
-
+    var sessionManager: SessionManager? = null
+    var token : String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         instance = this
-
-        val mainHandler = Handler(Looper.getMainLooper())
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         loadHomeFragment()
         setupBottomNavigation()
 
@@ -129,22 +132,20 @@ class HomeActivity : AppBaseActivity(),OnItemClickListener {
     override fun onItemClicked(`object`: Any?, index: Int) {
         val b = `object` as CurrentBusinessItem?
         currentBusinessID = "" + b!!.busi_id
-        put(b, Constants.SharedPref.KEY_CURRENT_BUSINESS)
-        val b1=get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
-        Log.d("dsdsd",""+b1!!.busi_logo)
+        put(b, Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
         showProgress(true)
         callApi(
 
-            getRestApis().markascurrentbusiness(currentBusinessID), onApiSuccess = {
-                getSharedPrefInstance().setValue(Constants.SharedPref.KEY_FRAME_LIST, Gson().toJson(it.frameList))
-                put(it.current_business, Constants.SharedPref.KEY_CURRENT_BUSINESS)
+            getRestApis().markascurrentbusiness(currentBusinessID,token!!), onApiSuccess = {
+                sessionManager!!.setStringValue(KEY_FRAME_LIST, Gson().toJson(it.frameList))
+                put(it.current_business, Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
                 showProgress(false)
                 if (it.status!!)
                 {
                     b.is_current_business=1
                 }
                 alertDialog!!.dismiss()
-                val currentBusinessItem=get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                val currentBusinessItem=get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
                 Glide.with(this).load(currentBusinessItem!!.busi_logo).placeholder(R.drawable.placeholder_img).error(R.drawable.placeholder_img).into(
                     imageLogo1!!)
             }, onApiError = {

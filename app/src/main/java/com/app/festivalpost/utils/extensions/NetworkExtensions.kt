@@ -4,7 +4,7 @@ import android.util.Log
 import com.app.festivalpost.BuildConfig
 import com.app.festivalpost.FestivalPost.Companion.getAppInstance
 import com.app.festivalpost.R
-import com.emegamart.lelys.network.RestApis
+import com.app.festivalpost.api.RestApis
 import com.emegamart.lelys.network.RetrofitClientFactory
 import com.emegamart.lelys.utils.extensions.getHtmlString
 import com.emegamart.lelys.utils.extensions.isNetworkAvailable

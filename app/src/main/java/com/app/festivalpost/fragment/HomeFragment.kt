@@ -15,10 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,10 +31,10 @@ import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
 import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
 import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
-import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_ID
 import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
@@ -66,10 +63,16 @@ class HomeFragment : BaseFragment() {
     private var viewPager: ViewPager? = null
     private var rcvCustomFestival: RecyclerView? = null
     private var rcvCustomCategory: RecyclerView? = null
+    private var linearFestival: LinearLayout? = null
+    private var linearCategory: LinearLayout? = null
     private var tvPremium: TextView? = null
     private var tvCustom: TextView? = null
     private var tvviewall: TextView? = null
+    private var sessionManager: SessionManager? = null
 
+
+
+    var token : String?=null
     var businessDialogItemAdapter: BusinessDialogItemAdapter? = null
     var currentBusinessItemList = arrayListOf<CurrentBusinessItem?>()
     var rcvBusinessItem: RecyclerView? = null
@@ -83,28 +86,26 @@ class HomeFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val view=  inflater.inflate(R.layout.fragment_home, container, false)
         openAddImageDialog()
-
+        sessionManager= SessionManager(activity!!)
+        token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         rcvCustomCategory = view.findViewById(R.id.customCategory)
         rcvCustomFestival = view.findViewById(R.id.customFestival)
-
         viewPager = view.findViewById(R.id.sliderviewPager)
         tvPremium = view.findViewById(R.id.tvPremium)
         tvCustom = view.findViewById(R.id.tvCustom)
         imageLogo1 = view.findViewById(R.id.imageLogo)
         tvviewall = view.findViewById(R.id.tvviewall)
+        linearCategory = view.findViewById(R.id.linearCategory)
+        linearFestival = view.findViewById(R.id.linearFestival)
 
 
         tvPremium!!.onClick {
             activity!!.launchActivity<PremiumActivity> {  }
         }
 
-        imageLogo!!.onClick {
+        imageLogo1!!.onClick {
             activity!!.launchActivity<ManageBusinessActivity> {
 
             }
@@ -116,7 +117,7 @@ class HomeFragment : BaseFragment() {
 
         tvCustom!!.onClick {
             val currentBusinessItem =
-                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,activity!!)
             if (currentBusinessItem == null) {
                 val materialAlertDialogBuilder = AlertDialog.Builder(activity!!)
                 val inflater = activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -141,10 +142,9 @@ class HomeFragment : BaseFragment() {
             }
         }
 
-        val mainHandler = Handler(getMainLooper())
-        val runnable= Runnable { loadHomePageData() }
 
-        mainHandler.postDelayed(runnable, 0)
+        loadHomePageData()
+
 
 
         NUM_PAGES = sliderArrayList.size
@@ -156,7 +156,7 @@ class HomeFragment : BaseFragment() {
         val Update = Runnable {
             if (currentPage === NUM_PAGES) {
                 currentPage = 0
-                
+
             }
             viewPager!!.setCurrentItem(currentPage++, true)
         }
@@ -165,7 +165,15 @@ class HomeFragment : BaseFragment() {
             override fun run() {
                 handler.post(Update)
             }
-        }, 3000, 3000)
+        }, 3000, 5000)
+
+        return view
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
 
     }
@@ -292,23 +300,23 @@ class HomeFragment : BaseFragment() {
     private fun loadHomePageData() {
         showProgress()
         callApi(
-            getRestApis().getHomePageData(),
+            getRestApis().getHomePageData(token!!),
             onApiSuccess = { res ->
                 hideProgress()
                 if (res.status!!) {
-                    getSharedPrefInstance().setValue(LOG_OUT, res.logout)
-                    getSharedPrefInstance().setValue(IS_PREMIUM, res.premium)
-                    getSharedPrefInstance().setValue(CURRENT_DATE, res.current_date)
-                    getSharedPrefInstance().setValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
+                    sessionManager!!.setBooleanValue(LOG_OUT, res.logout!!)
+                    sessionManager!!.setBooleanValue(IS_PREMIUM, res.premium!!)
+                    sessionManager!!.setStringValue(CURRENT_DATE, res.current_date!!)
+                    sessionManager!!.setStringValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
                     if (res.current_business.status=="1") {
-                        put(res.current_business, KEY_CURRENT_BUSINESS)
+                        put(res.current_business, KEY_CURRENT_BUSINESS,activity!!)
                     }
                     else{
-                        put(null, KEY_CURRENT_BUSINESS)
+                        put(null, KEY_CURRENT_BUSINESS,activity!!)
                     }
 
 
-                    val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+                    val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,activity!!)
                     if (currentBusinessItem!=null) {
                         if (currentBusinessItem!!.plan_name == "Free") {
                             tvPremium!!.show()
@@ -320,19 +328,6 @@ class HomeFragment : BaseFragment() {
                                 R.drawable.placeholder_img
                             ).into(imageLogo!!)
                     }
-
-
-
-
-
-
-
-
-                    Log.d(
-                        "GetApiToken",
-                        getApiToken() + "    122" + res.frameList.size + " 123" + getCustomFrameList().size
-                    )
-
 
                     sliderArrayList = res.slider
                     festivalArrayList = res.festival
@@ -360,34 +355,17 @@ class HomeFragment : BaseFragment() {
                     }
 
                     if (festivalArrayList.size > 0) {
-                        linearFestival.show()
+                        linearFestival!!.show()
                     } else {
-                        linearFestival.hide()
+                        linearFestival!!.hide()
 
                     }
 
                     if (categoryArrayList.size > 0) {
-                        linearCategory.show()
+                        linearCategory!!.show()
                     } else {
-                        linearCategory.hide()
+                        linearCategory!!.hide()
                     }
-
-
-
-
-
-
-
-                    /* if (res.logout!!) {
-                        val detailAct = Intent(
-                            activity, LoginActivity::class.java
-                        )
-                        detailAct.flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        activity!!.startActivity(detailAct)
-                        activity!!.finish()
-                    }*/
-
 
                 } else {
                     if (res.message == "user not valid") {
@@ -398,17 +376,18 @@ class HomeFragment : BaseFragment() {
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         activity!!.finish()
-                        getSharedPrefInstance().setValue(IS_LOGGED_IN,false)
+                        sessionManager!!.setBooleanValue(IS_LOGGED_IN,false)
+
                     }
-                    linearFestival.hide()
-                    linearCategory.hide()
+                    linearFestival!!.hide()
+                    linearCategory!!.hide()
                 }
             },
             onApiError = {
                 if (activity == null) return@callApi
                 hideProgress()
-                linearCategory.hide()
-                linearFestival.hide()
+                linearCategory!!.hide()
+                linearFestival!!.hide()
 
             },
             onNetworkError = {
@@ -417,26 +396,7 @@ class HomeFragment : BaseFragment() {
             })
     }
 
-    private fun loadManageBusinessAllData()
-    {
-        showProgress()
-        callApi(
-            getRestApis().getAllMyBusiness(), onApiSuccess = {
-                hideProgress()
-                currentBusinessItemList = it.data
-                showBusinessCategoryDialog(activity!!)
 
-
-            }, onApiError = {
-                hideProgress()
-
-
-            }, onNetworkError = {
-                hideProgress()
-
-
-            })
-    }
 
     private fun showBusinessCategoryDialog(context: Context) {
         val layout = LayoutInflater.from(context).inflate(R.layout.layout_business_dialog, null)
@@ -458,7 +418,7 @@ class HomeFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         try {
-            val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
+            val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,activity!!)
             if (currentBusinessItem != null) {
                 if (currentBusinessItem!!.busi_logo != null) {
                     Glide.with(this).load(currentBusinessItem!!.busi_logo)

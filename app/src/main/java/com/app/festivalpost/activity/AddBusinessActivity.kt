@@ -32,10 +32,13 @@ import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.BusinessCategory
 import com.app.festivalpost.models.CurrentBusinessItem
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.onClick
+import com.emegamart.lelys.utils.extensions.toast
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.karumi.dexter.Dexter
@@ -69,10 +72,14 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
     var businessCategoryList= arrayListOf<BusinessCategory?>()
     var rcvCategory: RecyclerView?=null
     var alertDialog: AlertDialog?=null
+    var sessionManager: SessionManager?=null
+    var token: String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_business)
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey("object")) {
@@ -113,7 +120,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             category_value=businessItem!!.business_category
             edCategory!!.setText(businessItem!!.business_category)
             if (!businessItem!!.busi_logo.equals("")) {
-                Glide.with(this@AddBusinessActivity).load(businessItem!!.busi_logo)
+                Glide.with(this).load(businessItem!!.busi_logo)
                     .into(ivlogo!!)
             }
         }
@@ -325,7 +332,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
                 website,
                 address,
                 category,
-                profilePath
+                profilePath,token!!
             )
             return null
         }
@@ -380,7 +387,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
                 website,
                 address,
                 category,
-                profilePath
+                profilePath,token!!
             )
             Log.d("mobile2",""+edPhone2!!.text.toString())
 
@@ -516,17 +523,28 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
     {
         showProgress(true)
         callApi(
-            getRestApis().getAllBusinessCategory(), onApiSuccess = {
+            getRestApis().getAllBusinessCategory(token!!), onApiSuccess = {
                 showProgress(false)
-                showPopupBusinessCategoryDialog(this)
-                businessCategoryList=it.cateogry
-                businessCategoryItemAdapter= BusinessCategoryItemAdapter(this,businessCategoryList)
-                rcvCategory!!.adapter=businessCategoryItemAdapter
+                if (it.status!!) {
+
+                    showPopupBusinessCategoryDialog(this)
+                    businessCategoryList = it.cateogry
+                    businessCategoryItemAdapter =
+                        BusinessCategoryItemAdapter(this, businessCategoryList)
+                    rcvCategory!!.adapter = businessCategoryItemAdapter
+                }
+                else{
+                    toast("Something Went Wrong")
+                }
+
+
             }, onApiError = {
                 showProgress(false)
+                toast("Something Went Wrong")
 
             }, onNetworkError = {
                 showProgress(false)
+                toast("Something Went Wrong")
 
             })
     }

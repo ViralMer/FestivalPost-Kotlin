@@ -32,6 +32,9 @@ import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoItem
 import com.app.festivalpost.models.VideoLanguageItem
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
@@ -84,6 +87,8 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     var width = 0
     var height = 0
     private var day = 0
+    var sessionManager : SessionManager?=null
+    var token : String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_detail)
@@ -92,6 +97,8 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             WindowManager.LayoutParams.FLAG_SECURE
         )
         openAddImageDialog()
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         setActionbar()
 
 
@@ -131,7 +138,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             videoid = bundle.getString("video_id")
         }
         if (bundle!!.containsKey("video_date")) {
-            day = getCountOfDays(getCurrentDate(), bundle.getString("video_date"))
+            day = getCountOfDays(sessionManager!!.getValueString(CURRENT_DATE), bundle.getString("video_date"))
         }
 
 
@@ -154,95 +161,15 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         }
 
         videoView!!.setShowController(true)
-        p = ProgressDialog(this@VideoDetailActivity)
 
 
-//        int colorInt=Integer.parseInt(color);
+
     }
 
-    /*fun setVideoData(videoData: VideoLanguageItem?) {
-
-        Log.d(
-            "BusinessData",
-            "Business Mobile" + businessItem.busiMobile + "Email" + businessItem.busiEmail + "Nane:" + businessItem.busiName + "Address:" + businessItem.busiAddress + "Website:" + businessItem.busiWebsite
-        )
-        if (businessItem.busiName != "") {
-            //Log.d("StringColorCode",""+colorInt);
-            tvframename!!.visibility = View.VISIBLE
-            tvframename1!!.visibility = View.VISIBLE
-            tvframename!!.text = businessItem.busiName
-            tvframename1!!.text = businessItem.busiName
-            //tvframename!!.setTextColor(Color.parseColor(videoData!!.color))
-            //tvframename1!!.setTextColor(Color.parseColor(videoData.color))
-        }
-        if (businessItem.busiLogo != "") {
-            ivlogo!!.visibility = View.VISIBLE
-            ivlogo1!!.visibility = View.VISIBLE
-            //Glide.with(VideoDetailActivity.this).load(businessItem.getBusiLogo()).into(ivlogo);
-            Log.d("imageName", "" + businessItem.busiLogo)
-            ivlogo1!!.setImageURI(Uri.parse("/storage/emulated/0/Imagename/logo.png"))
-            ivlogo!!.setImageURI(Uri.parse("/storage/emulated/0/Imagename/logo.png"))
-            url = businessItem.busiLogo
-        }
-        if (businessItem.busiMobile != "") {
-            tvframephone!!.visibility = View.VISIBLE
-            tvframephone1!!.visibility = View.VISIBLE
-            tvframephone!!.text = businessItem.busiMobile
-            tvframephone1!!.text = businessItem.busiMobile
-            //tvframephone!!.setTextColor(Color.parseColor(videoData!!.color))
-            //tvframephone1!!.setTextColor(Color.parseColor(videoData.color))
-        }
-        if (businessItem.busiAddress != "") {
-            tvframelocation!!.visibility = View.VISIBLE
-            tvframelocation1!!.visibility = View.VISIBLE
-            tvframelocation!!.text = businessItem.busiAddress
-            tvframelocation1!!.text = businessItem.busiAddress
-            *//*tvframelocation!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframelocation1!!.setTextColor(Color.parseColor(videoData.color))*//*
-        }
-        if (businessItem.busiEmail != "") {
-            tvframeemail!!.visibility = View.VISIBLE
-            tvframeemail1!!.visibility = View.VISIBLE
-            tvframeemail!!.text = businessItem.busiEmail
-            tvframeemail1!!.text = businessItem.busiEmail
-            *//*tvframeemail!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframeemail1!!.setTextColor(Color.parseColor(videoData.color))*//*
-            textEmail!!.visibility = View.VISIBLE
-            //textEmail!!.setTextColor(Color.parseColor(videoData.color))
-            textEmail1!!.visibility = View.VISIBLE
-            //textEmail1!!.setTextColor(Color.parseColor(videoData.color))
-        }
-        if (businessItem.busiWebsite != "") {
-            tvframeweb!!.visibility = View.VISIBLE
-            tvframeweb1!!.visibility = View.VISIBLE
-            tvframeweb!!.text = businessItem.busiWebsite
-            tvframeweb1!!.text = businessItem.busiWebsite
-            *//*tvframeweb!!.setTextColor(Color.parseColor(videoData!!.color))
-            tvframeweb1!!.setTextColor(Color.parseColor(videoData.color))*//*
-            textWebsite!!.visibility = View.VISIBLE
-            //textWebsite!!.setTextColor(Color.parseColor(videoData.color))
-            textWebsite1!!.visibility = View.VISIBLE
-            //textWebsite1!!.setTextColor(Color.parseColor(videoData.color))
-        }
-        frameLayout!!.isDrawingCacheEnabled = true
-        frameLayout!!.buildDrawingCache(true)
-        savedBmp = getBitmapFromView(frameLayout)
-
-        saveImage(savedBmp)
-        frameLayout!!.isDrawingCacheEnabled = false
-    }*/
-
-    private fun getBitmapFromView(view: View?): Bitmap {
-        view!!.measure(view.width, view.height)
-        val bitmap = Bitmap.createBitmap(1080, 1080, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        view.layout(0, 0, 1080, 1080)
-        view.draw(canvas)
-        return bitmap
-    }
 
     var tvaction: TextView? = null
     override fun onResume() {
+        videoView!!.stopPlayer()
         super.onResume()
     }
 
@@ -260,11 +187,12 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
 
         ivBack.onClick {
             onBackPressed()
+            videoView!!.stopPlayer()
         }
 
         tvaction.setOnClickListener {
             val currentBusinessItem =
-                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
             if (currentBusinessItem == null) {
                 val materialAlertDialogBuilder = AlertDialog.Builder(this)
                 val inflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -300,15 +228,6 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             }
         }
     }
-
-    fun animateButton() {
-        val myAnim = AnimationUtils.loadAnimation(this@VideoDetailActivity, R.anim.bounce)
-        val interpolator = MyBounceInterpolator(0.2, 20.0)
-        myAnim.interpolator = interpolator
-        tvaction!!.startAnimation(myAnim)
-    }
-
-
 
     var video_path = ""
     var video_type = ""
@@ -373,7 +292,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             c.connect()
             val videoname = "/data/data/com.app.festivalpost/files/$videoName"
             val videoname1 = videoName
-            Global.storePreference("video_name", videoname)
+
             val file: File
             var fileOutputStream: FileOutputStream? = null
             try {
@@ -395,7 +314,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                     e.printStackTrace()
                 }
             }
-            Log.d("ImageName and VideoName", "" + Global.getPreference("image_name", ""))
+
             val intent = Intent(this, VideoCreateActivity::class.java)
             intent.putExtra("video_item", videoListItem)
             startActivity(intent)
@@ -415,7 +334,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         myDir.mkdir()
         val fname = "Image-Bitmap" + ".png"
         val file = File(myDir, fname)
-        Global.storePreference("image_name", file.absolutePath)
+
         if (file.exists()) file.delete()
         try {
             val out = FileOutputStream(file)
@@ -433,6 +352,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
 
     override fun onDestroy() {
         Global.dismissProgressDialog(this)
+        videoView!!.stopPlayer()
         super.onDestroy()
     }
 
@@ -463,16 +383,16 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     private fun loadAccoutData() {
         showProgress(true)
         callApi(
-            getRestApis().getVideoLanguageData(videoid!!, "0"), onApiSuccess = {
+            getRestApis().getVideoLanguageData(videoid!!, "0",token!!), onApiSuccess = {
                 showProgress(false)
                 Log.d("videoItemList", "" + it.data.size)
                 val adapter = ChooseVideoAdapter(this@VideoDetailActivity, it.data)
                 rvdata!!.adapter = adapter
                 videoListItemArrayList=it.data
-                //new PlayVideo().execute();
+
                 videoListItem = videoListItemArrayList[0]
                 videoListItem!!.isIs_selected=true
-                //setVideoData(videoListItem)
+
                 if (videoListItem!!.image != null && !videoListItem!!.image.equals(
                         "",
                         ignoreCase = true
@@ -537,5 +457,9 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         val dayCount = diff.toFloat() / (24 * 60 * 60 * 1000)
         return dayCount.toInt()
     }
+
+
+
+
 
 }

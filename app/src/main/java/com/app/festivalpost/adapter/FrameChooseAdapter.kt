@@ -33,7 +33,7 @@ class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<Frame
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val framePreview = originaldata[position]
 
-        if (position < getCustomFrameList().size) {
+        if (position < getCustomFrameList(context).size) {
             Glide.with(context).load(framePreview.dynamic_images)
                 .placeholder(R.drawable.placeholder_img).error(
                     R.drawable.placeholder_img
@@ -75,17 +75,7 @@ class FrameChooseAdapter(var context: Context, var originaldata: ArrayList<Frame
         }
 
 
-        /*
 
-        holder.layMain.setTag(position);
-        holder.layMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int index = (int) view.getTag();
-                FrameItem f = originaldata.get(index);
-                onItemClickListener.onItemClicked(f,index);
-            }
-        });*/
     }
 
     override fun getItemCount(): Int {

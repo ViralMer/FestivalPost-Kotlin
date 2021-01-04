@@ -1,9 +1,13 @@
 package com.app.festivalpost.activity
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -31,8 +35,14 @@ import com.app.festivalpost.models.FileListItem
 import com.app.festivalpost.models.PostItem
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.show
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.io.File
 import java.util.*
 
@@ -50,7 +60,7 @@ class MyPostActivity : AppBaseActivity() {
         setContentView(R.layout.activity_my_post)
         setActionbar()
 
-
+        openAddImageDialog()
         tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         viewPager = findViewById<ViewPager>(R.id.viewPager)
 
@@ -79,6 +89,47 @@ class MyPostActivity : AppBaseActivity() {
 
 
 
+    }
+
+    fun openAddImageDialog() {
+        Dexter.withContext(this)
+            .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if (report.areAllPermissionsGranted()) {
+
+
+                    } else {
+                        showSettingsDialog()
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: List<PermissionRequest?>?,
+                    token: PermissionToken
+                ) {
+                    token.continuePermissionRequest()
+                }
+            }).check()
+    }
+
+    private fun showSettingsDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Need Permissions")
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.")
+        builder.setPositiveButton("GOTO SETTINGS") { dialog, _ ->
+            dialog.cancel()
+            openSettings()
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.show()
+    }
+
+    private fun openSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivityForResult(intent, 101)
     }
 
 

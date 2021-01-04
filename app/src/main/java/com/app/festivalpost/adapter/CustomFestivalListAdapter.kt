@@ -39,8 +39,7 @@ class CustomFestivalListAdapter(
             val index = v.tag as Int
             val f = originaldata!![index]
             val detailact = Intent(context, ChoosePhotoActivity::class.java)
-            Global.storePreference(Constant.PREF_PHOTO_INDEX, index)
-            Global.storePreference("category_name", title)
+
             detailact.putExtra("object_post_content", f)
             context.startActivity(detailact)
         }
@@ -51,10 +50,7 @@ class CustomFestivalListAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val ivphoto: RoundedImageView
+        val ivphoto: RoundedImageView = view.findViewById<View>(R.id.ivphoto) as RoundedImageView
 
-        init {
-            ivphoto = view.findViewById<View>(R.id.ivphoto) as RoundedImageView
-        }
     }
 }

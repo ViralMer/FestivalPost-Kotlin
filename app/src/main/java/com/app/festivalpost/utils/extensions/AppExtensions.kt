@@ -37,6 +37,7 @@ import com.app.festivalpost.utils.Constants.SharedPref.USER_ID
 import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
 import com.app.festivalpost.utils.Constants.SharedPref.USER_NUMBER
 import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.emegamart.lelys.utils.SharedPrefUtils
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -44,6 +45,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.dialog_no_internet.*
 
 
+/*
 fun isLoggedIn(): Boolean = getSharedPrefInstance().getBooleanValue(IS_LOGGED_IN)
 fun getUserId(): String = getSharedPrefInstance().getStringValue(USER_ID)
 fun getCurrentDate(): String = getSharedPrefInstance().getStringValue(CURRENT_DATE)
@@ -67,15 +69,9 @@ fun clearLoginPref() {
 
 
 }
+*/
 
-fun getSharedPrefInstance(): SharedPrefUtils {
-    return if (FestivalPost.sharedPrefUtils == null) {
-        FestivalPost.sharedPrefUtils = SharedPrefUtils()
-        FestivalPost.sharedPrefUtils!!
-    } else {
-        FestivalPost.sharedPrefUtils!!
-    }
-}
+
 
 fun RecyclerView.rvItemAnimation() {
     layoutAnimation = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down)
@@ -159,13 +155,14 @@ fun Activity.openLottieDialog(
     }
 }
 
-fun getCustomFrameList(): ArrayList<FrameListItem1> {
-    if (getSharedPrefInstance().getStringValue(KEY_FRAME_LIST) == "") {
+fun getCustomFrameList(context: Context): ArrayList<FrameListItem1> {
+    val sessionManager=SessionManager(context)
+    if (sessionManager.getValueString(KEY_FRAME_LIST) == "") {
         return ArrayList()
     }
 
     return Gson().fromJson<ArrayList<FrameListItem1>>(
-        getSharedPrefInstance().getStringValue(
+        sessionManager.getValueString(
             KEY_FRAME_LIST
         ), object : TypeToken<ArrayList<FrameListItem1>>() {}.type
     )
@@ -173,27 +170,19 @@ fun getCustomFrameList(): ArrayList<FrameListItem1> {
 
 
 
-fun getCurrentBusinessData(): CurrentBusinessItem {
-    if (getSharedPrefInstance().getStringValue(KEY_CURRENT_BUSINESS) == "") {
-        return CurrentBusinessItem()
 
-    }
-    return Gson().fromJson<CurrentBusinessItem>(
-        getSharedPrefInstance().getStringValue(
-            KEY_CURRENT_BUSINESS
-        ), object : TypeToken<UserDataItem>() {}.type
-    )
-}
 
-fun <T> put (`object`:T,key:String)
+fun <T> put (`object`:T,key:String,context: Context)
 {
     val jsonString=GsonBuilder().create().toJson(`object`);
+    val sessionManager=SessionManager(context)
+    sessionManager.setStringValue(key,jsonString)
 
-    getSharedPrefInstance().setValue(key,jsonString)
 }
 
-inline fun <reified T> get(key: String): T?{
-    val value = getSharedPrefInstance().getStringValue(key,"")
+inline fun <reified T> get(key: String,context: Context): T?{
+    val sessionManager=SessionManager(context)
+    val value = sessionManager.getValueString(key)
     return GsonBuilder().create().fromJson(value,T::class.java)
 }
 

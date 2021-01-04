@@ -11,7 +11,7 @@ object Constants {
 
     const val PLAY_STORE_URL_PREFIX = "https://play.google.com/store/apps/details?id="
 
-    const val myPreferences = "FestivalPost"
+    const val myPreferences = "Festival Post"
 
     object Config {
         const  val DEFAULT_URL = "http://festivalpost.in/admin/api/"
@@ -30,7 +30,7 @@ object Constants {
         const val USER_NUMBER = "user_number"
         const val USER_TOKEN = "user_token"
         const val USER_NAME = "user_name"
-        const val IS_LOGGED_ID = "is_login"
+
 
     }
 

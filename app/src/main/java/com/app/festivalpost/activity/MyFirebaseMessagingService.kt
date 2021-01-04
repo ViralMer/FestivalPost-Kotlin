@@ -13,10 +13,8 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.app.festivalpost.R
-import com.app.festivalpost.globals.Constant
-import com.app.festivalpost.globals.Global
 import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TOKEN
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.app.festivalpost.utils.SessionManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.io.IOException
@@ -28,10 +26,12 @@ import java.util.*
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     private var mNotificationManager: NotificationManager? = null
     var context: Context? = null
+    var sessionManager:SessionManager?=null
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
-        getSharedPrefInstance().setValue(DEVICE_TOKEN,token)
         context = applicationContext
+        sessionManager= SessionManager(this)
+        sessionManager!!.setStringValue(DEVICE_TOKEN,token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
