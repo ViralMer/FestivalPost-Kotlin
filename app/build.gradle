@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-kapt'
 }
 
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
@@ -13,8 +14,8 @@ android {
         applicationId "com.app.festivalpost"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 37
-        versionName "2.0.0"
+        versionCode 40
+        versionName "2.0.1"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -25,21 +26,42 @@ android {
     }
 
 
+    signingConfigs {
+        config {
+            keyAlias 'festival post'
+            keyPassword '123456'
+            storeFile file ('E:\\Github\\FestivalPost\\festival_post_certificate.jks')
+            storePassword '123456'
+        }
+
+    }
+
 
 
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            shrinkResources true
+            shrinkResources false
             jniDebuggable false
             renderscriptDebuggable false
             pseudoLocalesEnabled true
             zipAlignEnabled true
+            multiDexEnabled true
+            //signingConfigs signingConfigs.config
+
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //signingConfigs signingConfigs.config
+
         }
     }
+
+
 
     lintOptions {
         checkReleaseBuilds false
@@ -59,7 +81,7 @@ android {
             enable true
             reset()
             include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            universalApk false
+            universalApk true
         }
     }
 
@@ -67,8 +89,9 @@ android {
 
 
 
+
 }
-ext.abiCodes = ['x86':1, 'x86_64':2, 'armeabi-v7a':3, 'arm64-v8a':4]
+/*ext.abiCodes = ['x86':1, 'x86_64':2, 'armeabi-v7a':3, 'arm64-v8a':4]
 import com.android.build.OutputFile
 android.applicationVariants.all { variant ->
     variant.outputs.each {
@@ -76,7 +99,7 @@ android.applicationVariants.all { variant ->
             def baseAbiVersionCode = project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
             output.versionCodeOverride = baseAbiVersionCode + variant.versionCode
     }
-}
+}*/
 
 dependencies {
 

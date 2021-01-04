@@ -32,7 +32,6 @@ import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS_DATA
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
-import com.app.festivalpost.utils.Constants.SharedPref.KEY_USER_DATA
 import com.app.festivalpost.utils.Constants.SharedPref.USER_EMAIL
 import com.app.festivalpost.utils.Constants.SharedPref.USER_ID
 import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
@@ -61,10 +60,11 @@ fun getApiToken(): String = getSharedPrefInstance().getStringValue(USER_TOKEN)
 fun clearLoginPref() {
     getSharedPrefInstance().removeKey(IS_LOGGED_IN)
     getSharedPrefInstance().removeKey(USER_ID)
-    getSharedPrefInstance().removeKey(KEY_USER_DATA)
     getSharedPrefInstance().removeKey(USER_EMAIL)
     getSharedPrefInstance().removeKey(USER_TOKEN)
     getSharedPrefInstance().removeKey(USER_NUMBER)
+    getSharedPrefInstance().clear()
+
 
 }
 
@@ -172,16 +172,6 @@ fun getCustomFrameList(): ArrayList<FrameListItem1> {
 }
 
 
-fun getUserData(): ArrayList<UserDataItem> {
-    if (getSharedPrefInstance().getStringValue(KEY_USER_DATA) == "") {
-        return ArrayList()
-    }
-    return Gson().fromJson<ArrayList<UserDataItem>>(
-        getSharedPrefInstance().getStringValue(
-            KEY_USER_DATA
-        ), object : TypeToken<ArrayList<UserDataItem>>() {}.type
-    )
-}
 
 fun getCurrentBusinessData(): CurrentBusinessItem {
     if (getSharedPrefInstance().getStringValue(KEY_CURRENT_BUSINESS) == "") {
@@ -209,12 +199,7 @@ inline fun <reified T> get(key: String): T?{
 
 
 
-fun Activity.showCurrentBusiness(model: CurrentBusinessItem) {
-    launchActivity<AddBusinessActivity> {
-        putExtra(KEY_USER_DATA, model)
-    }
 
-}
 
 
 

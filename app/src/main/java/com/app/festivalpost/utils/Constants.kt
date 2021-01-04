@@ -21,7 +21,7 @@ object Constants {
     }
     object SharedPref {
         const val KEY_FRAME_LIST = "frame_list"
-        const val KEY_USER_DATA = "user_data"
+
         const val KEY_CURRENT_BUSINESS_DATA = "business_data"
         const val KEY_CURRENT_BUSINESS = "current_business"
         const val IS_LOGGED_IN = "isLoggedIn"

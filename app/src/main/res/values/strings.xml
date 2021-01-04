@@ -12,6 +12,7 @@
     <string name="txt_sign_in">Sign In</string>
 
     <string name="txt_send_otp">Send OTP</string>
+    <string name="token1">$2y$12$nUChH26o.QDdtsssLics.uYWX9epDzrR5R85u4HW1VuAbTY45WUqC</string>
     <string name="url_name">http://festivalpost.in/admin/api/</string>
     <string name="txt_resend_otp"><u>Resend OTP</u></string>
     <string name="txt_email">Enter your email</string>

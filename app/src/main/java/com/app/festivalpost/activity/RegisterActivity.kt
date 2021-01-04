@@ -16,10 +16,7 @@ import com.app.festivalpost.globals.Global
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
-import com.emegamart.lelys.utils.extensions.isLoggedIn
-import com.emegamart.lelys.utils.extensions.launchActivity
-import com.emegamart.lelys.utils.extensions.onClick
+import com.emegamart.lelys.utils.extensions.*
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
@@ -101,7 +98,7 @@ class RegisterActivity : AppBaseActivity() {
             performSubmit()
         }
 
-        tvresendOtp.onClick { resendVerificationCode(et_number.text.toString(),token!!) }
+        tvresendOtp.onClick { resendVerificationCode("+" +spinner.selectedCountryCode+""+et_number.text.toString(),token!!) }
 
         alertDialog.show()
 
@@ -164,19 +161,37 @@ class RegisterActivity : AppBaseActivity() {
         callApi(
             getRestApis().register(et_name.text.toString(), et_number.text.toString()),
             onApiSuccess = {
-                showProgress(false)
-                launchActivity<HomeActivity> {
-                    getSharedPrefInstance().setValue(Constants.SharedPref.IS_LOGGED_IN, true)
-                    getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA, it.data)
-                    getSharedPrefInstance().setValue(Constants.SharedPref.USER_TOKEN, it.token)
+                if (it.status!!) {
+                    showProgress(false)
+                    launchActivity<HomeActivity> {
+                        try {
+                            getSharedPrefInstance().setValue(Constants.SharedPref.IS_LOGGED_IN, true)
+                            //getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA, it.data)
+                            getSharedPrefInstance().setValue(Constants.SharedPref.USER_TOKEN, it.token)
+                            if (it.data.isNotEmpty()) {
+                                for (i in 0 until it.data.size) {
+                                    getSharedPrefInstance().setValue(
+                                        Constants.SharedPref.USER_NAME,
+                                        it.data[i]!!.name
+                                    )
+                                    getSharedPrefInstance().setValue(
+                                        Constants.SharedPref.USER_NUMBER,
+                                        it.data[i]!!.name
+                                    )
+                                    getSharedPrefInstance().setValue(
+                                        Constants.SharedPref.USER_EMAIL,
+                                        it.data[i]!!.email
+                                    )
+                                }
+                            }
+                        }
+                        catch (e:Exception)
+                        {
+                            //toast("Da")
+                        }
 
-                    for (i in 0 until it.data.size )
-                    {
-                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME,it.data[i]!!.name)
-                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_NUMBER, it.data[i]!!.mobile)
-                        getSharedPrefInstance().setValue(Constants.SharedPref.USER_EMAIL, it.data[i]!!.email)
+                        finish()
                     }
-                    finish()
                 }
             },
             onApiError = {
