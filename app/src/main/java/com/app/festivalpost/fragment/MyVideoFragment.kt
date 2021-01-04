@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.PostAdapter
 import com.app.festivalpost.adapter.VideoPostAdapter
+import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.models.FileListItem
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.show
@@ -47,32 +48,43 @@ class MyVideoFragment : BaseFragment() {
 
 
         Log.d("data arraylist", "" + dataArrayList.size)
-        val path: String =
-            Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
-        Log.d("Files", "Path: $path")
-        val directory = File(path)
-        val files: Array<File> = directory.listFiles()
+        try {
+            val root = Environment.getExternalStorageDirectory().absolutePath
+            val myDir = File(root + "/" + Constant.FOLDER_NAME)
+            myDir.mkdirs()
+            myDir.mkdir()
+            val path: String =
+                Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
+            Log.d("Files", "Path: $path")
+            val directory = File(path)
+            val files: Array<File> = directory.listFiles()
 
-        Log.d("Files", "Size: " + files.size)
-        val filenames = ArrayList<String>()
-        for (i in files.indices) {
-            val file=files[i]
-            if (files.isNotEmpty()) {
-                linearLayout!!.hide()
-                if (file.isFile && file.path.endsWith(".mp4")) {
-                    Log.d("Files", "FileName:" + files[i].name)
-                    filenames.add(files[i].name)
-                    dataArrayList.add(FileListItem(files[i].name))
+            Log.d("Files", "Size: " + files.size)
+            val filenames = ArrayList<String>()
+            for (i in files.indices) {
+                val file=files[i]
+                if (files.isNotEmpty()) {
+                    linearLayout!!.hide()
+                    if (file.isFile && file.path.endsWith(".mp4")) {
+                        Log.d("Files", "FileName:" + files[i].name)
+                        filenames.add(files[i].name)
+                        dataArrayList.add(FileListItem(files[i].name))
 
+                    }
                 }
-            }
-            else{
-                linearLayout!!.show()
-            }
+                else{
+                    linearLayout!!.show()
+                }
 
-            adapter = VideoPostAdapter(activity!!, dataArrayList)
-            rvdata!!.adapter = adapter
+                adapter = VideoPostAdapter(activity!!, dataArrayList)
+                rvdata!!.adapter = adapter
+            }
         }
+        catch (e:Exception)
+        {
+
+        }
+
         return view
     }
 

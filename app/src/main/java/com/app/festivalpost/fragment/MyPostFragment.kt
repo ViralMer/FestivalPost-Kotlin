@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.PostAdapter
+import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.models.FileListItem
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.show
@@ -47,7 +48,13 @@ class MyPostFragment : BaseFragment() {
 
         linearLayout = view.findViewById(R.id.rlNoData)
 
+        try {
+            PhotoItemList().execute();
+        }
+        catch (e:Exception)
+        {
 
+        }
 
 
         /*Log.d("data arraylist", "" + dataArrayList.size)
@@ -77,7 +84,7 @@ class MyPostFragment : BaseFragment() {
             adapter = PostAdapter(activity!!, dataArrayList)
             rvdata!!.adapter = adapter
         }*/
-        PhotoItemList().execute();
+
         return view
     }
 
@@ -93,32 +100,44 @@ class MyPostFragment : BaseFragment() {
 
         override fun doInBackground(vararg p0: String?): ArrayList<FileListItem>? {
             dataArrayList = arrayListOf<FileListItem>()
-            Log.d("data arraylist", "" + dataArrayList.size)
-            val path: String =
-                Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
-            Log.d("Files", "Path: $path")
-            val directory = File(path)
-            val files: Array<File> = directory.listFiles()
+            try {
+                Log.d("data arraylist", "" + dataArrayList.size)
+                val root = Environment.getExternalStorageDirectory().absolutePath
+                val myDir = File(root + "/" + Constant.FOLDER_NAME)
+                myDir.mkdirs()
+                myDir.mkdir()
+                val path: String =
+                    Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
 
-            Log.d("Files", "Size: " + files.size)
-            val filenames = java.util.ArrayList<String>()
-            for (i in files.indices) {
-                val file = files[i]
+                Log.d("Files", "Path: $path")
+                val directory = File(path)
+                val files: Array<File> = directory.listFiles()
+
+                Log.d("Files", "Size: " + files.size)
+                val filenames = java.util.ArrayList<String>()
+                for (i in files.indices) {
+                    val file = files[i]
                     if (files.isNotEmpty())
                     {
-                    linearLayout!!.hide()
-                    if (file.isFile && file.path!!.endsWith(".jpg")) {
-                        Log.d("Files", "FileName:" + files[i].name)
-                        filenames.add(files[i].name)
-                        dataArrayList.add(FileListItem(files[i].name))
+                        linearLayout!!.hide()
+                        if (file.isFile && file.path!!.endsWith(".jpg")) {
+                            Log.d("Files", "FileName:" + files[i].name)
+                            filenames.add(files[i].name)
+                            dataArrayList.add(FileListItem(files[i].name))
 
+                        }
+                    } else {
+                        linearLayout!!.show()
                     }
-                } else {
-                    linearLayout!!.show()
-                }
 
+
+                }
+            }
+            catch (e:Exception)
+            {
 
             }
+
             return dataArrayList
         }
 
