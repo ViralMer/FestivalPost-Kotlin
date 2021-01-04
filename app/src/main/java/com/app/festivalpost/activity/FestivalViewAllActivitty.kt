@@ -12,6 +12,8 @@ import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.DayAdapter
 import com.app.festivalpost.models.HomePageItem
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.hide
@@ -26,17 +28,20 @@ class FestivalViewAllActivitty : AppBaseActivity() {
     private var dayAdapter: DayAdapter? = null
     var picker: DatePickerDialog? = null
     var dateVal = ""
-
+    var sessionManager:SessionManager?=null
+    var token : String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_festival_view_all_activitty)
         setActionbar()
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         lvdata = findViewById<View>(R.id.lvdata) as RecyclerView
         btnchoosedate = findViewById<View>(R.id.btnchoosedate) as Button
-        loadgetDaysAllData()
         dayAdapter= DayAdapter(this, daylist)
         lvdata!!.adapter = dayAdapter
+        loadgetDaysAllData()
 
 
         btnchoosedate!!.onClick {
@@ -83,7 +88,7 @@ class FestivalViewAllActivitty : AppBaseActivity() {
     {
         showProgress(true)
         callApi(
-            getRestApis().getdays(dateVal), onApiSuccess = {
+            getRestApis().getdays(dateVal,token!!), onApiSuccess = {
                 showProgress(false)
                 lvdata!!.show()
                 dayAdapter=null

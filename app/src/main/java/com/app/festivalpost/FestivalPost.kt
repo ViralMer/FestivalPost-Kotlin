@@ -10,8 +10,9 @@ import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_ID
 import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TOKEN
 import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TYPE
+import com.app.festivalpost.utils.SessionManager
 import com.emegamart.lelys.utils.SharedPrefUtils
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
@@ -24,23 +25,22 @@ import okhttp3.OkHttpClient
 class FestivalPost : MultiDexApplication() {
 
     private var mAuth: FirebaseAuth? = null
+    private var sessionManager: SessionManager? = null
 
     override fun onCreate() {
         super.onCreate()
         appInstance = this
-
+        sessionManager= SessionManager(this)
         FirebaseApp.initializeApp(appInstance)
         val deviceInfo = DeviceInfo1(this)
 
-        getSharedPrefInstance().setValue(DEVICE_TYPE, "Android")
-
-        getSharedPrefInstance().setValue(DEVICE_ID, deviceInfo.deviceUDID)
-
+        sessionManager!!.setStringValue(DEVICE_TYPE,"Android")
+        sessionManager!!.setStringValue(DEVICE_ID,deviceInfo.deviceUDID)
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
-            getSharedPrefInstance().setValue(Constants.KeyIntent.DEVICE_TOKEN,token)
+            sessionManager!!.setStringValue(DEVICE_TOKEN,token)
             // send it to server
         }
 

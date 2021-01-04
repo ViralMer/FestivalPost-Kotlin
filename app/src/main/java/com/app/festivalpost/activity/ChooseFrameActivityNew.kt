@@ -37,6 +37,8 @@ import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -149,6 +151,8 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
     var fontTypeList = arrayListOf<FontTypeList?>()
     var rcvFont: RecyclerView? = null
     var alertDialog: AlertDialog? = null
+    var sessionManager: SessionManager? = null
+    var token : String?=null
 
 
     override fun onResume() {
@@ -167,8 +171,9 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             .permitAll().build()
         StrictMode.setThreadPolicy(policy)
         frameLayout = findViewById(R.id.frameLayout)
-
         setActionbar()
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
         phoneTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
         emailTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
@@ -177,11 +182,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         allfonttypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
         nametypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
 
-        /*  cbEmail=findViewById(R.id.cbEmail);
-        cbMobile=findViewById(R.id.cbMobile);
-        cbWebsite=findViewById(R.id.cbWebsite);
-        cbAddress=findViewById(R.id.cbAddress);
-        cbProfile=findViewById(R.id.cbImageProfile);*/
+
         ivphoneselect = findViewById(R.id.ivMobileSelected)
         ivemailselect = findViewById(R.id.ivEmailSelected)
         ivaddressselect = findViewById(R.id.ivAddressSelected)
@@ -189,7 +190,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         ivlogoselect = findViewById(R.id.ivLogoSelected)
         ivnameSelect = findViewById(R.id.ivNameSelected)
         recyclerView = findViewById(R.id.rvdata)
-        if (get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS) == null) {
+        if (get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,this) == null) {
             val intent = Intent(this, AddBusinessActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -234,8 +235,8 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
 
 
         var frameListItems1 = arrayListOf<FrameListItem1>()
-        frameListItems1 = getCustomFrameList()
-        Log.d("framesize", "" + getCustomFrameList().size)
+        frameListItems1 = getCustomFrameList(this)
+
         plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
@@ -279,7 +280,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         recyclerView!!.adapter = frameChooseAdapter
         framePreviewArrayList[0].isIs_selected = true
         setFrameNEW(framePreviewArrayList[0])
-        if (getCustomFrameList().isNotEmpty()) {
+        if (getCustomFrameList(this).isNotEmpty()) {
             val photoItem=framePreviewArrayList[0]
             setFrameNEW(framePreviewArrayList[0])
             if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
@@ -694,7 +695,8 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         {
             phoneLine.setVisibility(View.VISIBLE);
             websiteLine.setVisibility(View.VISIBLE);
-        }*/imagemultiTouchListenerNew.setOnGestureControl(object :
+        }*/
+        imagemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNewNotRotate.OnGestureControl {
             override fun onClick() {
                 linearPhone!!.setBackgroundResource(0)
@@ -994,7 +996,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         frameAddress!!.setOnTouchListener(addressmultiTouchListenerNew)
         frameLogo!!.setOnTouchListener(imagemultiTouchListenerNew)
         frameName!!.setOnTouchListener(namemultiTouchListenerNer)
-        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+        val businessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,this)
         if (businessItem != null) {
             try {
                 if (index1 == 0 + plus) {
@@ -1624,7 +1626,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             ivaddressclose!!.visibility = View.GONE
             ivnameClose!!.visibility = View.GONE
             mPhotoEditor!!.clearHelperBox()
-            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+            if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
                 llwatermark!!.visibility = View.VISIBLE
             } else {
                 llwatermark!!.visibility = View.GONE
@@ -1662,12 +1664,6 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         //animateButton()
     }
 
-    fun animateButton() {
-        val myAnim = AnimationUtils.loadAnimation(this@ChooseFrameActivityNew, R.anim.bounce)
-        val interpolator = MyBounceInterpolator(0.2, 20.0)
-        myAnim.interpolator = interpolator
-        tvaction!!.startAnimation(myAnim)
-    }
 
     override fun onBackPressed() {
         if (backpressed) {

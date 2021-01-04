@@ -78,20 +78,6 @@ open class AppBaseActivity : AppCompatActivity(),View.OnFocusChangeListener {
         return context.createConfigurationContext(config)
     }
 
-/*
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(updateBaseContextLocale(newBase!!)))
-    }
-
-    private fun updateBaseContextLocale(context: Context): Context {
-        val language = getSharedPrefInstance().getStringValue(LANGUAGE, "en")
-        val locale = Locale(language)
-        Locale.setDefault(locale)
-        return changeLanguage(context, locale)
-
-    }
-*/
-
     override fun onStart() {
         Log.d("onStart", "called")
         super.onStart()

@@ -6,7 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import com.app.festivalpost.R
 import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_ID
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+
 import java.io.Serializable
 
 

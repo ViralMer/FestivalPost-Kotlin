@@ -41,6 +41,7 @@ import com.app.festivalpost.utility.MultiTouchListenerNew
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -184,12 +185,14 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
     var fontTypeList = arrayListOf<FontTypeList?>()
     var rcvFont: RecyclerView? = null
     var alertDialog: AlertDialog? = null
+    var sessionManager: SessionManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
+
         setContentView(R.layout.activity_custom_photo_frame)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -197,7 +200,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             Log.d("AppCrash", "" + thread.toString())
             Log.d("AppCrash1", "" + e.message.toString())
         }
-
+        sessionManager=SessionManager(this)
         setActionbar()
         selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
         textselectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
@@ -292,8 +295,8 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
 
 
         var frameListItems1 = arrayListOf<FrameListItem1>()
-        frameListItems1 = getCustomFrameList()
-        Log.d("framesize", "" + getCustomFrameList().size)
+        frameListItems1 = getCustomFrameList(this)
+        Log.d("framesize", "" + getCustomFrameList(this).size)
         plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
@@ -339,7 +342,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         recyclerView!!.setLayoutManager(horizontalLayoutManagaer)
         recyclerView!!.setAdapter(frameChooseAdapter)
         //setFrameNEW(framePreviewArrayList[0])
-        if (getCustomFrameList().isNotEmpty()) {
+        if (getCustomFrameList(this).isNotEmpty()) {
             val photoItem=framePreviewArrayList[0]
             setFrameNEW(framePreviewArrayList[0])
             if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
@@ -847,7 +850,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
 
             }
             mPhotoEditor!!.clearHelperBox()
-            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+            if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
                 if (frameContentItemDetail!!.type!! == "0") {
                     llwatermark!!.visibility = View.GONE
                 }else{
@@ -895,6 +898,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         //animateButton()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun setFrameNEW(localFrameItem: FramePreview?) {
         Global.dismissProgressDialog(this@CustomPhotoFrameActivity)
         if (llframe!!.childCount > 0) llframe!!.removeAllViews()
@@ -1243,7 +1247,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         frameAddress!!.setOnTouchListener(addressmultiTouchListenerNew)
         frameLogo!!.setOnTouchListener(imagemultiTouchListenerNew)
         frameName!!.setOnTouchListener(namemultiTouchListenerNer)
-        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
         if (businessItem != null) {
             try {
                 if (index1 == 0+plus) {
@@ -1799,12 +1803,6 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         dialog.show()
     }
 
-    fun animateButton() {
-        val myAnim = AnimationUtils.loadAnimation(this@CustomPhotoFrameActivity, R.anim.bounce)
-        val interpolator = MyBounceInterpolator(0.2, 20.0)
-        myAnim.interpolator = interpolator
-        tvaction!!.startAnimation(myAnim)
-    }
 
     override fun onBackPressed() {
         if (backpressed) {

@@ -1,4 +1,4 @@
-package com.emegamart.lelys.network
+package com.app.festivalpost.api
 
 import com.app.festivalpost.models.*
 import com.emegamart.lelys.models.BaseResponse
@@ -11,16 +11,16 @@ interface RestApis {
 
     @FormUrlEncoded
     @POST("gethomepage")
-    fun getHomePageData(@Field("token")token:String= getApiToken()):Call<HomePageResponse>
+    fun getHomePageData(@Field("token")token:String):Call<HomePageResponse>
 
 
     @FormUrlEncoded
     @POST("getAllVideoPosts")
-    fun getVideoPageData(@Field("token")token:String= getApiToken()):Call<VideoPageResponse>
+    fun getVideoPageData(@Field("token")token:String):Call<VideoPageResponse>
 
     @FormUrlEncoded
     @POST("getLanguageVideo")
-    fun getVideoLanguageData(@Field("videoid")videoid:String,@Field("languageid")languageid:String,@Field("token")token:String= getApiToken()):Call<VideoLanguageItemResponse>
+    fun getVideoLanguageData(@Field("videoid")videoid:String,@Field("languageid")languageid:String,@Field("token")token:String):Call<VideoLanguageItemResponse>
 
 
 
@@ -30,60 +30,60 @@ interface RestApis {
 
     @FormUrlEncoded
     @POST("getmyprofile")
-    fun getProfile(@Field("token")token:String= getApiToken()):Call<ProfileResponse>
+    fun getProfile(@Field("token")token:String):Call<ProfileResponse>
 
     @FormUrlEncoded
     @POST("editmyprofile")
-    fun editmyprofile(@Field("name")name:String, @Field("email")email:String,@Field("token")token:String= getApiToken()):Call<ProfileResponse>
+    fun editmyprofile(@Field("name")name:String, @Field("email")email:String,@Field("token")token:String):Call<ProfileResponse>
 
 
     @FormUrlEncoded
     @POST("getCustomCategoryPosts")
-    fun getCustomCategoryPosts(@Field("token")token:String= getApiToken()):Call<CustomCategoryResponse>
+    fun getCustomCategoryPosts(@Field("token")token:String):Call<CustomCategoryResponse>
 
 
     @FormUrlEncoded
     @POST("getLanguageCustomeCategoryPost")
-    fun getLanguageCustomeCategoryPost(@Field("catid")catid:String,@Field("token")token:String= getApiToken(),@Field("languageid")languageid:String= "0"):Call<CustomCategoryPostResponse>
+    fun getLanguageCustomeCategoryPost(@Field("catid")catid:String,@Field("token")token:String,@Field("languageid")languageid:String= "0"):Call<CustomCategoryPostResponse>
 
     @FormUrlEncoded
     @POST("addbusiness")
-    fun addBusiness(@Field("token")token:String= getApiToken()):Call<AddBussiensResponse>
+    fun addBusiness(@Field("token")token:String):Call<AddBussiensResponse>
 
     @FormUrlEncoded
     @POST("updatebusiness")
-    fun updateBusiness(@Field("token")token:String= getApiToken()):Call<UpdateBussiensResponse>
+    fun updateBusiness(@Field("token")token:String):Call<UpdateBussiensResponse>
 
     @FormUrlEncoded
     @POST("register")
-    fun register(@Field("name")token:String, @Field("mobile")mobile:String, @Field("device_id")device_id:String= getDeviceID(), @Field("device")device:String= getDeviceType(),@Field("device_token")device_token:String= getDeviceToken()):Call<RegisterResponse>
+    fun register(@Field("name")token:String, @Field("mobile")mobile:String, @Field("device_id")device_id:String, @Field("device")device:String,@Field("device_token")device_token:String):Call<RegisterResponse>
 
 
     @FormUrlEncoded
     @POST("login")
-    fun login(@Field("mobile")mobile:String, @Field("device_id")device_id:String= getDeviceID(), @Field("device")device:String= getDeviceType(),@Field("device_token")device_token:String= getDeviceToken()):Call<LoginResponse>
+    fun login(@Field("mobile")mobile:String, @Field("device_id")device_id:String, @Field("device")device:String,@Field("device_token")device_token:String):Call<LoginResponse>
 
     @FormUrlEncoded
     @POST("getmyallbusiness")
-    fun getAllMyBusiness(@Field("token")token:String= getApiToken()):Call<BusinessItemResponse>
+    fun getAllMyBusiness(@Field("token")token:String):Call<BusinessItemResponse>
 
 
     @FormUrlEncoded
     @POST("getBusinessCategory")
-    fun getAllBusinessCategory(@Field("token")token:String= getApiToken()):Call<BusinessCategoryResponse>
+    fun getAllBusinessCategory(@Field("token")token:String):Call<BusinessCategoryResponse>
 
 
     @FormUrlEncoded
     @POST("markascurrentbusiness")
-    fun markascurrentbusiness(@Field("business_id")business_id:String= getApiToken(),@Field("token")token:String= getApiToken()):Call<BusinessItemResponse>
+    fun markascurrentbusiness(@Field("business_id")business_id:String,@Field("token")token:String):Call<BusinessItemResponse>
 
     @FormUrlEncoded
     @POST("getdays")
-    fun getdays(@Field("date")date:String,@Field("token")token:String= getApiToken()):Call<DaysPageResponse>
+    fun getdays(@Field("date")date:String,@Field("token")token:String):Call<DaysPageResponse>
 
     @FormUrlEncoded
     @POST("GetAllFestivalVideo")
-    fun getAllFestivalVideo(@Field("date")date:String,@Field("token")token:String= getApiToken()):Call<VideoItemResponse>
+    fun getAllFestivalVideo(@Field("date")date:String,@Field("token")token:String):Call<VideoItemResponse>
 
     @FormUrlEncoded
     @POST("purchaseplan")
@@ -91,8 +91,8 @@ interface RestApis {
                      @Field("purchase_id")payment_id:String,
                      @Field("business_id")business_id:String,
                      @Field("plan_id")plan_id:String,
-                     @Field("device")device_id:String= getDeviceType(),
-                     @Field("token")token:String= getApiToken()
+                     @Field("device")device_id:String,
+                     @Field("token")token:String
                      ):Call<PurchasePlanResponse>
 
 

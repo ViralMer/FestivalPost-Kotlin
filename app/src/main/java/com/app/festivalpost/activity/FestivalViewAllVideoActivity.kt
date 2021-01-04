@@ -12,6 +12,8 @@ import com.app.festivalpost.R
 import com.app.festivalpost.adapter.DayAdapter
 import com.app.festivalpost.adapter.DayVideoAdapter
 import com.app.festivalpost.models.VideoItem
+import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.hide
@@ -26,12 +28,17 @@ class FestivalViewAllVideoActivity : AppBaseActivity() {
     private var dayVideoAdapter:DayVideoAdapter?=null
     var picker: DatePickerDialog? = null
     var dateVal = ""
+    var sessionManager:SessionManager?=null
+
+    var token : String?=null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_festival_view_all_activity_video)
         setActionbar()
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         lvdata = findViewById<View>(R.id.lvdata) as RecyclerView
         btnchoosedate = findViewById<View>(R.id.btnchoosedate) as Button
         loadgetDaysAllData()
@@ -80,7 +87,7 @@ class FestivalViewAllVideoActivity : AppBaseActivity() {
     {
         showProgress(true)
         callApi(
-            getRestApis().getAllFestivalVideo(dateVal), onApiSuccess = {
+            getRestApis().getAllFestivalVideo(dateVal,token!!), onApiSuccess = {
                 showProgress(false)
                 lvdata!!.show()
                 dayVideoAdapter=null

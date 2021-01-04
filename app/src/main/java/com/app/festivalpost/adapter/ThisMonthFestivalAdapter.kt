@@ -45,25 +45,7 @@ class ThisMonthFestivalAdapter(var context: Context, var originaldata: ArrayList
         holder.tvdate.text = festivalItem.festDay
         holder.layMain.tag = position
         holder.layMain.setOnClickListener { view ->
-            val c = Calendar.getInstance()
-            println("Current time => " + c.time)
-            val date = Global.getPreference(Constant.PREF_CURRRENT_DATE, "")
-            if (date != null) {
-                val df = SimpleDateFormat("dd-MM-yyyy")
-                val formattedDate = df.format(c.time)
-                val day = getCountOfDays(date, festivalItem.festDate)
-                /*if (day <= 1 && day>=0) {
-    */
-                val index = view.tag as Int
-                val f = originaldata[index]
-                val detailact = Intent(context, ChoosePhotoActivity::class.java)
-                Global.storePreference("category_name", f.festName)
-                detailact.putExtra("object", f)
-                context.startActivity(detailact)
-                /*                  } else {
-                            Global.getAlertDialog(context, "Sorry!!", "This Festival is locked today.This festival photos will open before 24 hours of festival.");
-                        }*/
-            }
+
         }
     }
 

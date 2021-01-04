@@ -26,11 +26,12 @@ import com.app.festivalpost.activity.*
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.get
-import com.emegamart.lelys.utils.extensions.getCurrentDate
 import com.emegamart.lelys.utils.extensions.launchActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -41,11 +42,14 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
     var layroot: LinearLayout? = null
     var ivbackground: ImageView? = null
 
-
+    var sessionManager:SessionManager?=null
     private var day = 0
+    var token : String?=null
     var horizontalLayoutManagaer: GridLayoutManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         setContentView(R.layout.activity_choose_photo)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
@@ -60,7 +64,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
         rvdata!!.itemAnimator = DefaultItemAnimator()
         loadCategoryImages()
         if (intent.getStringExtra("category_date") != null) {
-            day = getCountOfDays(getCurrentDate(), intent.getStringExtra("category_date"))
+            day = getCountOfDays(sessionManager!!.getValueString(Constants.KeyIntent.CURRENT_DATE), intent.getStringExtra("category_date"))
         }
 
 
@@ -90,7 +94,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
         //animateButton()
         tvaction!!.setOnClickListener {
             val currentBusinessItem =
-                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
             if (currentBusinessItem == null) {
                 val materialAlertDialogBuilder = AlertDialog.Builder(this)
                 val inflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -144,12 +148,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
     }
 
 
-    fun animateButton() {
-        val myAnim = AnimationUtils.loadAnimation(this@ChoosePhotoActivity, R.anim.bounce)
-        val interpolator = MyBounceInterpolator(0.2, 20.0)
-        myAnim.interpolator = interpolator
-        tvaction!!.startAnimation(myAnim)
-    }
+
 
 
     private var photo_path = ""
@@ -221,9 +220,10 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
     private fun loadCategoryImages() {
         showProgress(true)
 
-
+        var categoryId:String?=null
+        categoryId= intent.getStringExtra("category_id")!!
         callApi(
-            getRestApis().getCategoryImages(intent.getStringExtra("category_id")!!),
+            getRestApis().getCategoryImages(categoryId),
             onApiSuccess = { res ->
                 showProgress(false)
                 if (res.status!!) {
@@ -238,7 +238,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
                         photoItem!!.is_selected=true
                         photo_path = photoItem.post_content!!
                         image_type = photoItem.image_type!!
-                        Glide.with(this@ChoosePhotoActivity).load(photoItem.post_content)
+                        Glide.with(this).load(photoItem.post_content)
                             .placeholder(R.drawable.placeholder_img).error(
                                 R.drawable.placeholder_img
                             ).into(

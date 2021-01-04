@@ -17,13 +17,15 @@ import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.utils.Constants
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+import com.app.festivalpost.utils.SessionManager
+
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 class SplashActivity : AppCompatActivity() {
     var imageView: ImageView? = null
     var videoView: VideoView? = null
+    var sessionManager: SessionManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = (
@@ -31,14 +33,8 @@ class SplashActivity : AppCompatActivity() {
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         setContentView(R.layout.activity_splash)
         imageView = findViewById(R.id.splash)
-        //videoView=findViewById(R.id.splash1);
-
-        //UpdateHelper.with(this).onUpdateCheck(this).check();
-
-
-        /*Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.splash);
-        videoView.setVideoURI(video);
-        videoView.start();*/try {
+        sessionManager=SessionManager(this)
+      try {
             val info = packageManager.getPackageInfo(
                 packageName,
                 PackageManager.GET_SIGNATURES
@@ -55,12 +51,7 @@ class SplashActivity : AppCompatActivity() {
         //animateButton()
     }
 
-    fun animateButton() {
-        val myAnim = AnimationUtils.loadAnimation(this@SplashActivity, R.anim.bounce_new)
-        val interpolator = MyBounceInterpolatorNew(0.1, 20.0)
-        myAnim.interpolator = interpolator
-        imageView!!.startAnimation(myAnim)
-    }
+
 
     internal inner class HomeActivityAsync : AsyncTask<Void?, Void?, Void?>() {
         override fun doInBackground(vararg p0: Void?): Void? {
@@ -77,7 +68,7 @@ class SplashActivity : AppCompatActivity() {
         override fun onPostExecute(result: Void?) {
             // TODO Auto-generated method stub
             super.onPostExecute(result)
-            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+            if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
                 val homeIntent = Intent(
                     this@SplashActivity,
                     LoginActivity::class.java

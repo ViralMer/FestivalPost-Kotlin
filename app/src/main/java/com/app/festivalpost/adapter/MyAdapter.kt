@@ -14,7 +14,7 @@ class MyAdapter(private val myContext: Context, fm: FragmentManager, internal va
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                //  val homeFragment: HomeFragment = HomeFragment()
+
                 MyPostFragment()
             }
             1 -> {

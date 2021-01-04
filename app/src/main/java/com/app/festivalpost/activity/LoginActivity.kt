@@ -23,7 +23,9 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.UserDataItem
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
@@ -34,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.iid.FirebaseInstanceId
+import com.hbb20.CountryCodePicker
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.et_name
 import kotlinx.android.synthetic.main.activity_login.et_number
@@ -49,34 +52,58 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     private var etOtp: AppCompatEditText? = null
     private var mAuth: FirebaseAuth? = null
     var token: PhoneAuthProvider.ForceResendingToken? = null
+    var sessionManager:SessionManager?=null
+
+    private var etNumber:AppCompatEditText?=null
+    private var spinnerCountry:CountryCodePicker?=null
+    private var linearlogin:LinearLayout?=null
+    private var tvsignup:TextView?=null
+
+    var user_token : String?=null
+    var device_token : String?=null
+    var device_id : String?=null
+    var device_type : String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         FirebaseApp.initializeApp(this)
-        et_number.onFocusChangeListener = this
 
+        sessionManager= SessionManager(this)
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         ivBack = toolbar.findViewById(R.id.ivBack)
+
+        user_token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
+        device_token=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
+        device_id=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
+        device_type=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
+        etNumber=findViewById(R.id.et_number)
+        spinnerCountry=findViewById(R.id.spinner)
+        linearlogin= findViewById<LinearLayout>(R.id.linearLogin)
+        tvsignup= findViewById<TextView>(R.id.tvsignup)
+        etNumber!!.onFocusChangeListener = this
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
-            getSharedPrefInstance().setValue(Constants.KeyIntent.DEVICE_TOKEN, token)
-            // send it to server
+            sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN,token)
+
         }
-        if (isLoggedIn()) {
+        val isLoogedIn=sessionManager!!.getBooleanValue(Constants.SharedPref.IS_LOGGED_IN)
+
+        if (isLoogedIn!!) {
             launchActivity<HomeActivity> { }
             finish()
         }
 
 
-        linearLogin.onClick {
+
+        linearlogin!!.onClick {
             performLogin()
         }
 
-        tvsignup.onClick {
-            launchActivity<RegisterActivity> { }
+        tvsignup!!.onClick {
+            launchActivity<RegisterActivity> { finish() }
         }
 
         ivBack!!.onClick {
@@ -87,15 +114,14 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     }
 
     private fun performLogin() {
-        if (et_number.text.toString().equals("", ignoreCase = true)) {
+        if (etNumber!!.text.toString().equals("", ignoreCase = true)) {
             Global.getAlertDialog(
                 this@LoginActivity,
                 "Opps..!",
                 resources.getString(R.string.txt_fill_all_details)
             )
         } else {
-            Log.d("spinner", "+" + spinner.selectedCountryCode + et_number.text.toString())
-            sendVerificationCode("+" + spinner.selectedCountryCode + et_number.text.toString())
+            sendVerificationCode("+" + spinnerCountry!!.selectedCountryCode + etNumber!!.text.toString())
             //login()
         }
     }
@@ -105,41 +131,52 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         showProgress(true)
         callApi(
 
-            getRestApis().login(et_number.text.toString()),
+            getRestApis().login(etNumber!!.text.toString(),device_id!!,device_type!!,device_token!!),
             onApiSuccess = {
                 showProgress(false)
+                if (it.status!!)
+                {
                 launchActivity<HomeActivity> {
-                    getSharedPrefInstance().setValue(Constants.SharedPref.IS_LOGGED_IN, true)
-                    //getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA,it.data)
-                    getSharedPrefInstance().setValue(Constants.SharedPref.USER_TOKEN, it.token)
+                    try {
+                        sessionManager!!.setStringValue(Constants.SharedPref.USER_TOKEN,it.token!!)
+
+                        var dataarraylist= arrayListOf<UserDataItem?>()
+                        dataarraylist=it.data
+                        for (i in 0 until dataarraylist.size) {
+                            sessionManager!!.setStringValue(Constants.SharedPref.USER_NAME,dataarraylist[i]!!.name!!)
+                            sessionManager!!.setStringValue(Constants.SharedPref.USER_NUMBER,dataarraylist[i]!!.mobile!!)
+                            sessionManager!!.setStringValue(Constants.SharedPref.USER_EMAIL,dataarraylist[i]!!.email!!)
+
+                        }
+                        sessionManager!!.setBooleanValue(Constants.SharedPref.IS_LOGGED_IN, true)
+                        finish()
+                    } catch (e: java.lang.Exception) {
+
+                    }
+
+                }
 
 
 
-                    for (i in 0 until it.data.size) {
-                        getSharedPrefInstance().setValue(
-                            Constants.SharedPref.USER_NAME,
-                            it.data[i]!!.name
-                        )
-                        getSharedPrefInstance().setValue(
-                            Constants.SharedPref.USER_NUMBER,
-                            it.data[i]!!.mobile
-                        )
-                        getSharedPrefInstance().setValue(
-                            Constants.SharedPref.USER_EMAIL,
-                            it.data[i]!!.email
-                        )
+
+
+                }
+                else{
+                    if (it.message!!.equals("Mobile number not registered. Please register first")) {
+                        toast(it.message)
                     }
                 }
-                finish()
 
 
             },
             onApiError = {
                 showProgress(false)
+                toast("Something Went Wrong")
 
             },
             onNetworkError = {
                 showProgress(false)
+                toast("Please Connect your network")
 
             })
     }

@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,12 +29,11 @@ import com.app.festivalpost.adapter.CustomFestivalItemAdapter
 import com.app.festivalpost.adapter.CustomFestivalVideoItemAdapter
 import com.app.festivalpost.adapter.VideoCategoryItemAdapter
 import com.app.festivalpost.models.*
+import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.hide
-import com.emegamart.lelys.utils.extensions.launchActivity
-import com.emegamart.lelys.utils.extensions.onClick
-import com.emegamart.lelys.utils.extensions.show
+import com.emegamart.lelys.utils.extensions.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -48,6 +48,14 @@ class VideoFragment : BaseFragment() {
     private var categoryVideoArrayList = arrayListOf<VideoPageItem?>()
     private var rcvCustomFestivalVideo: RecyclerView? = null
     private var rcvCustomCategoryVideo: RecyclerView? = null
+    private var linearCategoryVideo: LinearLayout? = null
+    private var linearFestivalVideo: LinearLayout? = null
+
+    private var sessionManager: SessionManager? = null
+
+
+
+    var token : String?=null
 
     private var tvviewall: TextView? = null
     override fun onCreateView(
@@ -55,24 +63,26 @@ class VideoFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_video, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val view=inflater.inflate(R.layout.fragment_video, container, false)
         openAddImageDialog()
 
         rcvCustomCategoryVideo = view.findViewById(R.id.customCategoryVideo)
         rcvCustomFestivalVideo = view.findViewById(R.id.customFestivalVideo)
+        linearCategoryVideo = view.findViewById(R.id.linearCategoryVideo)
+        linearFestivalVideo = view.findViewById(R.id.linearFestivalVideo)
+        sessionManager= SessionManager(activity!!)
+        token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         tvviewall = view.findViewById(R.id.tvviewall)
-                val mainHandler = Handler(getMainLooper())
-        var runnable: Runnable = Runnable { loadVideoPageData() }
-
-        if(savedInstanceState==null) mainHandler.postDelayed(runnable, 0)
-
         tvviewall!!.onClick {
             activity!!.launchActivity<FestivalViewAllVideoActivity> {  }
         }
+        loadVideoPageData()
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
 
     }
@@ -99,7 +109,7 @@ class VideoFragment : BaseFragment() {
     private fun loadVideoPageData() {
         showProgress()
         callApi(
-            getRestApis().getVideoPageData(),
+            getRestApis().getVideoPageData(token!!),
             onApiSuccess = { res ->
                 hideProgress()
                 if (res.status!!) {
@@ -122,16 +132,16 @@ class VideoFragment : BaseFragment() {
                     rcvCustomCategoryVideo!!.adapter = customCategoryAdapter
 
                     if (festivalVideoArrayList.size > 0) {
-                        linearFestivalVideo.show()
+                        linearFestivalVideo!!.show()
                     } else {
-                        linearFestivalVideo.hide()
+                        linearFestivalVideo!!.hide()
 
                     }
 
                     if (categoryVideoArrayList.size > 0) {
-                        linearCategoryVideo.show()
+                        linearCategoryVideo!!.show()
                     } else {
-                        linearCategoryVideo.hide()
+                        linearCategoryVideo!!.hide()
                     }
 
 
@@ -146,6 +156,7 @@ class VideoFragment : BaseFragment() {
             onNetworkError = {
                 if (activity == null) return@callApi
                 hideProgress()
+                toast("Please Connect your network")
             })
     }
 

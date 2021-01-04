@@ -29,8 +29,8 @@ import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
+import com.app.festivalpost.utils.SessionManager
 import com.emegamart.lelys.utils.extensions.get
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
 import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.toast
 import com.karumi.dexter.Dexter
@@ -50,6 +50,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
     var ivimage: ImageView? = null
     var bmp: Bitmap? = null
     var image_type: String? = null
+    var sessionManager: SessionManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +59,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_SECURE
         )
         setContentView(R.layout.activity_save_and_share)
+        sessionManager=SessionManager(this)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
@@ -86,11 +88,8 @@ class SaveAndShareActivity() : AppCompatActivity() {
                 }
             }
         }
-        val businessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS)
-        if (!getSharedPrefInstance().getBooleanValue(
-                Constants.KeyIntent.IS_PREMIUM,
-                false
-            )
+        val businessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,this)
+        if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!
         ) {
             if (image_type != "0") {
                 AlertDialog.Builder(this)
@@ -119,31 +118,17 @@ class SaveAndShareActivity() : AppCompatActivity() {
         findViewById<View>(R.id.btnsubmit).setOnClickListener(
             View.OnClickListener {
                 sharePhoto = false
-                /*if (!getSharedPrefInstance().getBooleanValue(
-                        Constants.KeyIntent.IS_PREMIUM,
-                        false
-                    )
-                ) {
-                    savePhoto()
-                    val intent = Intent(this@SaveAndShareActivity, PremiumActivity::class.java)
-                    startActivity(intent)
-                } else {*/
+
                     savePhoto()
 
-                /*}*/
             })
         val btnshare=findViewById<View>(R.id.btnshare)
         btnshare.onClick {
-            /*if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
-                val intent = Intent(this@SaveAndShareActivity, PremiumActivity::class.java)
-                startActivity(intent)
-                savePhoto()
 
-            } else {*/
                 sharePhoto = true
                 savePhoto()
 
-            /*}*/
+
         }
     }
 
@@ -161,9 +146,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
                         if (bmp != null) {
                             imagePath = SaveImage(bmp!!)
                             Log.d("Stored", imagePath!!)
-                           /* if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
-                                SavePhotoAsync(imagePath!!).execute()
-                            }*/
+
                             if (sharePhoto) {
                                 if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
                                     val uri = Uri.parse(imagePath)
@@ -171,13 +154,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
                                     share.type = "image/*"
                                     share.putExtra(Intent.EXTRA_STREAM, uri)
                                     startActivity(Intent.createChooser(share, "Share Design!"))
-                                    /*toast("Image Saved Successfully1")
-                                    val detailAct =
-                                        Intent(this@SaveAndShareActivity, HomeActivity::class.java)
-                                    detailAct.flags =
-                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    startActivity(detailAct)
-                                    finish()*/
+
                                 }
 
                             }
@@ -278,7 +255,6 @@ class SaveAndShareActivity() : AppCompatActivity() {
                 )
             }
 
-//            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
             sendBroadcast(
                 Intent(
                     Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(
@@ -302,7 +278,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
 
 
             scanner(file.absolutePath)
-            //Global.storePreference("premium_data", 0)
+
 
             return filePath
         } catch (e: Exception) {

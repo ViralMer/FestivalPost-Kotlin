@@ -24,7 +24,6 @@ import com.app.festivalpost.R
 import com.app.festivalpost.models.LocalFrameItem
 import com.app.festivalpost.models.FramePreview
 import com.app.festivalpost.models.LocalFrameItemNew
-import com.app.festivalpost.activity.MyApplication
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.models.BusinessItem
 import com.google.gson.Gson
@@ -652,92 +651,9 @@ object Global {
      * Checking device has camera hardware or not
      */
     fun isDeviceSupportCamera(context: Context): Boolean {
-        return if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            // this device has a camera
-            true
-        } else {
-            // no camera on this device
-            false
-        }
+        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)
     }
 
-    fun storePreference(parameters: HashMap<String?, String?>) {
-        val editor = MyApplication.sharedPref!!.edit()
-        val it: Iterator<Map.Entry<String?, String?>> = parameters.entries.iterator()
-        while (it.hasNext()) {
-            val pairs = it.next()
-            editor.putString(pairs.key, pairs.value)
-        }
-        editor.commit()
-    }
-
-    fun storePreference(key: String?, value: String?) {
-        val editor = MyApplication.sharedPref!!.edit()
-        editor.putString(key, value)
-        editor.commit()
-    }
-
-    fun storePreference(key: String?, value: Int) {
-        val editor = MyApplication.sharedPref!!.edit()
-        editor.putInt(key, value)
-        editor.commit()
-    }
-
-    fun storePreference(key: String?, value: Long) {
-        val editor = MyApplication.sharedPref!!.edit()
-        editor.putLong(key, value)
-        editor.commit()
-    }
-
-    fun removePreference(key: String?) {
-        val editor = MyApplication.sharedPref!!.edit()
-        editor.remove(key)
-        editor.commit()
-    }
-
-    fun removePreferences(keys: Array<String?>) {
-        val editor = MyApplication.sharedPref!!.edit()
-        for (key in keys) {
-            editor.remove(key)
-        }
-        editor.commit()
-    }
-
-    fun clearPrefernces() {
-        val editor = MyApplication.sharedPref!!.edit()
-        editor.clear()
-        editor.commit()
-    }
-
-    fun storePreference(key: String?, value: Boolean?) {
-        val editor = MyApplication.sharedPref!!.edit()
-        editor.putBoolean(key, value!!)
-        editor.commit()
-    }
-
-    fun getPreference(keys: Array<String>): HashMap<String, String?> {
-        val parameters = HashMap<String, String?>()
-        for (key in keys) {
-            parameters[key] = MyApplication.sharedPref!!.getString(key, null)
-        }
-        return parameters
-    }
-
-    fun getPreference(key: String?, defValue: String?): String? {
-        return MyApplication.sharedPref!!.getString(key, defValue)
-    }
-
-    fun getPreference(key: String?, defValue: Long): Long {
-        return MyApplication.sharedPref!!.getLong(key, defValue)
-    }
-
-    fun getPreference(key: String?, defValue: Int): Int {
-        return MyApplication.sharedPref!!.getInt(key, defValue)
-    }
-
-    fun getPreference(key: String?, defValue: Boolean?): Boolean {
-        return MyApplication.sharedPref!!.getBoolean(key, defValue!!)
-    }
 
     fun fileLog(filename: String, output: String?) {
         try {
@@ -770,55 +686,6 @@ object Global {
         inputManager.hideSoftInputFromWindow(editText.windowToken, 0)
     }
 
-    fun storeCurrentBusiness(json: String?) {
-        storePreference(Constant.PREF_CURRENT_BUSINESS, json)
-    }
-
-    fun storeCurrentBusinessNew(json: String?) {
-        storePreference(Constant.PREF_CURRENT_BUSINESS_NEW, json)
-    }
-
-    val currentBusiness: BusinessItem
-        get() {
-            val json = getPreference(Constant.PREF_CURRENT_BUSINESS, "")
-            return if (!json.equals("", ignoreCase = true)) {
-                Gson().fromJson(json, BusinessItem::class.java)
-            } else {
-                BusinessItem()
-            }
-        }
-    val currentBusinessNEW: BusinessItem
-        get() {
-            val json = getPreference(Constant.PREF_CURRENT_BUSINESS_NEW, "")
-            return if (!json.equals("", ignoreCase = true)) {
-                Gson().fromJson(json, BusinessItem::class.java)
-            } else {
-                BusinessItem()
-            }
-        }
-    val preferenceItem: PreferenceItem
-        get() {
-            val json = getPreference(Constant.PREF_PREF_LIST, "")
-            return if (!json.equals("", ignoreCase = true)) {
-                Gson().fromJson(json, PreferenceItem::class.java)
-            } else {
-                PreferenceItem()
-            }
-        }
-
-    fun storeFrameList(json: String?) {
-        storePreference(Constant.PREF_FRAME_LIST, json)
-    }
-
-    val frameList: FrameListItem
-        get() {
-            val json = getPreference(Constant.PREF_FRAME_LIST, "")
-            return if (!json.equals("", ignoreCase = true)) {
-                Gson().fromJson(json, FrameListItem::class.java)
-            } else {
-                FrameListItem()
-            }
-        }
 
     fun getAlertDialog(context: Context, title: String?, message: String?) {
         val materialAlertDialogBuilder = AlertDialog.Builder(context)

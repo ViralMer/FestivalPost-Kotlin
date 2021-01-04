@@ -41,6 +41,7 @@ import com.app.festivalpost.photoeditor.ViewType
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
@@ -144,6 +145,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
     var fontTypeList = arrayListOf<FontTypeList?>()
     var rcvFont: RecyclerView? = null
     var alertDialog: AlertDialog? = null
+    var sessionManager: SessionManager? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,6 +159,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             Log.d("AppCrash", "" + thread.toString())
             Log.d("AppCrash1", "" + e.message.toString())
         }
+        sessionManager=SessionManager(this)
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey("photo_path")) {
@@ -245,8 +248,8 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
 
         var frameListItems1 = arrayListOf<FrameListItem1>()
-        frameListItems1 = getCustomFrameList()
-        Log.d("framesize", "" + getCustomFrameList().size)
+        frameListItems1 = getCustomFrameList(this)
+
         plus += frameListItems1.size
         for (i in frameListItems1.indices) {
             framePreviewArrayList.add(
@@ -300,7 +303,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         )
         recyclerView!!.layoutManager = horizontalLayoutManagaer
         recyclerView!!.adapter = frameChooseAdapter
-        if (getCustomFrameList().isNotEmpty()) {
+        if (getCustomFrameList(this).isNotEmpty()) {
             val photoItem=framePreviewArrayList[0]
             setFrameNEW(framePreviewArrayList[0])
             if (photoItem.dynamic_images != null && !photoItem.dynamic_images.equals(
@@ -848,7 +851,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             ivnameClose!!.visibility = View.GONE
             mPhotoEditor!!.clearHelperBox()
             showProgress(true)
-            if (!getSharedPrefInstance().getBooleanValue(Constants.KeyIntent.IS_PREMIUM, false)) {
+            if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
                 if (image_type!! == 0) {
                     showProgress(true)
                     llwatermark!!.visibility = View.GONE
@@ -975,13 +978,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         //animateButton()
     }
 
-    fun animateButton() {
-        val myAnim =
-            AnimationUtils.loadAnimation(this@ChooseFrameForPhotoActivityNew, R.anim.bounce)
-        val interpolator = MyBounceInterpolator(0.2, 20.0)
-        myAnim.interpolator = interpolator
-        tvaction!!.startAnimation(myAnim)
-    }
+
 
     override fun onBackPressed() {
         if (backpressed) {
@@ -1132,7 +1129,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             websiteLine.setVisibility(View.VISIBLE);
         }*/
 
-        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
 
         imagemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNewNotRotate.OnGestureControl {

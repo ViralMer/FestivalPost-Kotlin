@@ -4,13 +4,12 @@ import android.content.Context
 import android.util.Log
 
 
-import com.app.festivalpost.activity.MyApplication
 import com.app.festivalpost.R
 import com.app.festivalpost.globals.BuildConfig
 import com.app.festivalpost.globals.BuildConfig.URL_NAME
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
-import com.emegamart.lelys.utils.extensions.getApiToken
+
 import com.squareup.okhttp.*
 import java.io.File
 import java.io.IOException
@@ -243,7 +242,7 @@ class ApiManager {
     fun getphotos(servicename: String, token: String?, page: Int) {
         if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
-            Log.d("PREFETOKEN", "" + Global.getPreference(Constant.PREF_TOKEN, ""))
+
             val formBody = FormEncodingBuilder()
                 .add("token", token)
                 .add("page", page.toString())
@@ -266,7 +265,7 @@ class ApiManager {
     ) {
         if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
-            val deviceToken = deviceToken
+            val deviceToken = "deviceToken"
             val formBody = FormEncodingBuilder()
                 .add("name", name)
                 .add("email", email)
@@ -284,13 +283,12 @@ class ApiManager {
         }
     }
 
-    val deviceToken: String
-        get() = Global.getPreference(Constant.PREF_DEVICE_TOKEN, "NA")!!
+
 
     fun login(servicename: String, mobile: String?) {
         if (ConnectivityReceiver.isConnected) {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
-            val deviceToken = deviceToken
+            val deviceToken = "deviceToken"
             val formBody = FormEncodingBuilder()
                 .add("mobile", mobile)
                 .add("device_token", deviceToken)
@@ -445,7 +443,7 @@ class ApiManager {
             val url: String = BuildConfig.URL_NAME.toString() + servicename
             val formBody = FormEncodingBuilder()
                 .add("id", id)
-                .add("token", Global.getPreference(Constant.PREF_TOKEN, ""))
+
                 .build()
             val request =
                 Request.Builder().url(url).header(ApiEndpoints.API_KEY, ApiEndpoints.API_SECRET)
@@ -465,7 +463,8 @@ class ApiManager {
         website: String?,
         address: String?,
         category: String?,
-        profilePath: String
+        profilePath: String,
+        token:String?
     ) {
         if (ConnectivityReceiver.isConnected) {
             var result = ""
@@ -480,7 +479,7 @@ class ApiManager {
                 multipart.addFormField("website", website)
                 multipart.addFormField("address", address)
                 multipart.addFormField("business_category", category)
-                multipart.addFormField("token", getApiToken())
+                multipart.addFormField("token", token)
                 if (profilePath != "") {
                     multipart.addFilePart("logo", File(profilePath))
                 }
@@ -505,7 +504,8 @@ class ApiManager {
         website: String?,
         address: String?,
         category: String?,
-        profilePath: String
+        profilePath: String,
+        token:String?
     ) {
         if (ConnectivityReceiver.isConnected) {
             var result = ""
@@ -521,11 +521,11 @@ class ApiManager {
                 multipart.addFormField("website", website)
                 multipart.addFormField("address", address)
                 multipart.addFormField("business_category", category)
-                multipart.addFormField("token", getApiToken())
+                multipart.addFormField("token", token)
                 if (profilePath != "") {
                     multipart.addFilePart("logo", File(profilePath))
                 }
-                Log.d("IDNAME", "ID :$id NAme:$mobile2" + "toekn:"+ getApiToken())
+
                 result = multipart.finish()
                 acListener.onSuccessResponse(servicename, result, ApiEndpoints.ResultCodes.ResultOk)
             } catch (ex: IOException) {
@@ -583,7 +583,7 @@ class ApiManager {
             try {
                 val multipart =
                     MultipartUtility(BuildConfig.URL_NAME.toString() + servicename, charset)
-                multipart.addFormField("token", Global.getPreference(Constant.PREF_TOKEN, ""))
+
                 multipart.addFormField("business_id", business_id)
                 if (image != "") {
                     multipart.addFilePart("image", File(image))

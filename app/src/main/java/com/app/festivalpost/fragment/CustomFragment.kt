@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,8 @@ import com.app.festivalpost.models.CustomCategoryItem
 import com.app.festivalpost.models.FrameContentItem
 import com.app.festivalpost.models.FrameContentListItem
 import com.app.festivalpost.models.SliderItem
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
@@ -37,8 +40,11 @@ import java.util.*
 
 class CustomFragment : BaseFragment() {
     var customFrame: RecyclerView? = null
+    var linearCustomCategory: LinearLayout? = null
     var viewPager: ViewPager? = null
     var frameContentItemArrayList = arrayListOf<CustomCategoryItem>()
+    var sessionManager : SessionManager?=null
+    var token : String?=null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,8 +57,11 @@ class CustomFragment : BaseFragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_custom, container, false)
+        sessionManager=SessionManager(activity!!)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         viewPager = view.findViewById(R.id.homeSlider)
         customFrame = view.findViewById(R.id.rvCustomPost)
+        linearCustomCategory = view.findViewById(R.id.linearCustomCategorry)
         loadDetails()
 
         return view
@@ -63,12 +72,12 @@ class CustomFragment : BaseFragment() {
         showProgress()
         callApi(
 
-            getRestApis().getCustomCategoryPosts(), onApiSuccess = {
+            getRestApis().getCustomCategoryPosts(token!!), onApiSuccess = {
                 hideProgress()
                 frameContentItemArrayList = it.data
                 Log.d("CustomCategorySize",""+frameContentItemArrayList.size)
                 if (frameContentItemArrayList.isNotEmpty()) {
-                    linearCustomCategorry.show()
+                    linearCustomCategory!!.show()
                     val customFrameAdapter =
                         CustomFrameAdapter(activity!!, frameContentItemArrayList)
                     customFrame!!.adapter = customFrameAdapter
@@ -82,6 +91,7 @@ class CustomFragment : BaseFragment() {
 
             }, onNetworkError = {
                 hideProgress()
+                toast("Please Connect your network")
 
             })
     }

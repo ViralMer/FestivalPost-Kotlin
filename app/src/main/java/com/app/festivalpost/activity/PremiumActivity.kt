@@ -35,6 +35,9 @@ import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
+import com.app.festivalpost.utils.Constants.SharedPref.USER_NUMBER
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
@@ -61,10 +64,17 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     var business_id:String?=null
     var clicked_plan_model: PlanItem? = null
     private var viewPager: ViewPager? = null
+    private var sessionManager: SessionManager? = null
+    private var token: String? = null
+    var device_type : String?=null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_premium)
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
+        device_type=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
         apiManager = ApiManager(this@PremiumActivity)
         if (!BillingProcessor.isIabServiceAvailable(this)) {
             Toast.makeText(
@@ -89,7 +99,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
                 business_id=bundle["business_id"] as String?
             }
             else{
-                val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
                 business_id=businessItem!!.busi_id.toString()
             }
         }
@@ -214,18 +224,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
                     processPurchaseResponse(responseString)
                     if (status) {
                         Global.showSuccessDialog(this@PremiumActivity, message)
-                        val data = Global.getPreference("premium_data", 0)
-                        if (data == 2) {
-                            startActivity(Intent(this@PremiumActivity, HomeActivity::class.java))
-                            Global.storePreference("premium_data", 0)
-                            finish()
-                        } else if (data == 3) {
-                            startActivity(Intent(this@PremiumActivity, HomeActivity::class.java))
-                            Global.storePreference("premium_data", 0)
-                            finish()
-                        } else {
-                            onBackPressed()
-                        }
+
                     } else {
                         Global.showFailDialog(this@PremiumActivity, message)
                     }
@@ -289,7 +288,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
             }
             if (jsonObject.has("user_credit")) {
                 val score_int = jsonObject.getInt("user_credit")
-                Global.storePreference(Constant.PREF_SCORE, score_int)
+
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -298,11 +297,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
 
     private fun onBuyPointsButtonClicked(SKU_USD: String?) {
         billingProcessor!!.purchase(this@PremiumActivity, SKU_USD)
-        /* }
-        catch (Exception e)
-        {
-            Log.d("Purchase Cancelled",""+e.getMessage());
-        }*/
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -320,7 +315,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
         Global.showProgressDialog(this@PremiumActivity)
         apiManager!!.purchaseplan(
             ApiEndpoints.purchaseplan,
-            Global.getPreference(Constant.PREF_TOKEN, ""),
+            "",
             businessItem!!.busi_id.toString(),
             clicked_plan_model!!.planId.toString(),
             details!!.purchaseInfo.purchaseData.orderId,
@@ -356,8 +351,8 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
 
         try {
             val options = JSONObject()
-            options.put("name", getUserName())
-            options.put("description", getMobileNumber())
+            options.put("name", sessionManager!!.getValueString(USER_NAME))
+            options.put("description", sessionManager!!.getValueString(USER_NUMBER))
             options.put("currency", "INR")
             //options.put("order_id", "orderid_123465")
             options.put("amount", (1199 * 100).toDouble())
@@ -389,7 +384,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     private fun loadAccoutData(orderID:String,paymentId:String,businessId:String,plan_id:String) {
         showProgress(true)
         callApi(
-            getRestApis().purchaseplan(orderID,paymentId,businessId,plan_id), onApiSuccess = {
+            getRestApis().purchaseplan(orderID,paymentId,businessId,plan_id,device_type!!,token!!), onApiSuccess = {
                 showProgress(false)
                 if (it.status!!) {
                     toast("Purchase Plan Successfully")

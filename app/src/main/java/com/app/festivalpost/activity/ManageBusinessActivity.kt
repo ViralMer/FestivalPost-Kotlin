@@ -19,6 +19,8 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
@@ -30,9 +32,13 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
     private var lvdata: RecyclerView? = null
     var businessItemArrayList = arrayListOf<CurrentBusinessItem?>()
     var businessItemAdapter:BusinessItemAdapter?=null
+    var sessionManager:SessionManager?=null
+    var token : String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_business)
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         setActionbar()
         val linearHelp=findViewById<View>(R.id.linearHelpSupport) as LinearLayout
         loadManageBusinessAllData()
@@ -52,7 +58,7 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
     {
         showProgress(true)
         callApi(
-            getRestApis().getAllMyBusiness(), onApiSuccess = {
+            getRestApis().getAllMyBusiness(token!!), onApiSuccess = {
                 showProgress(false)
                 lvdata!!.show()
                 businessItemArrayList = it.data
@@ -214,9 +220,9 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
         showProgress(true)
         callApi(
 
-            getRestApis().markascurrentbusiness(currentBusinessID), onApiSuccess = {
-                getSharedPrefInstance().setValue(Constants.SharedPref.KEY_FRAME_LIST, Gson().toJson(it.frameList))
-                put(it.current_business, Constants.SharedPref.KEY_CURRENT_BUSINESS)
+            getRestApis().markascurrentbusiness(currentBusinessID,token!!), onApiSuccess = {
+                sessionManager!!.setStringValue(KEY_FRAME_LIST, Gson().toJson(it.frameList))
+                put(it.current_business, Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
                 showProgress(false)
                 if (it.status!!)
                 {

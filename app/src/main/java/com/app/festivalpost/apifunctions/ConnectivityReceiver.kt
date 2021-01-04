@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import com.app.festivalpost.FestivalPost
-import com.app.festivalpost.activity.MyApplication
 
 /**
  */

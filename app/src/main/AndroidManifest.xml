@@ -221,11 +221,7 @@
             android:name="com.razorpay.ApiKey"
             android:resource="rzp_test_nxkzWJTVTnu6dj" />-->
 
-        <receiver android:name=".utility.NetworkStateChecker">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+
     </application>
 
 </manifest>

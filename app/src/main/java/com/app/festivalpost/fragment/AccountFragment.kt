@@ -18,31 +18,41 @@ import com.app.festivalpost.BuildConfig
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.*
 import com.app.festivalpost.globals.Constant
-import com.app.festivalpost.utils.Constants
-import com.app.festivalpost.utils.extensions.callApi
-import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.*
+import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
+import com.app.festivalpost.utils.Constants.KeyIntent.IS_PREMIUM
+import com.app.festivalpost.utils.Constants.KeyIntent.LOG_OUT
+import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
+import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
+import com.app.festivalpost.utils.Constants.SharedPref.USER_EMAIL
+import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
+import com.app.festivalpost.utils.Constants.SharedPref.USER_NUMBER
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
+import com.emegamart.lelys.utils.extensions.launchActivity
+import com.emegamart.lelys.utils.extensions.onClick
 
 class AccountFragment : BaseFragment() {
+
+    var sessionManager: SessionManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, null)
-        val linearHelp=view.findViewById<View>(R.id.linearHelpSupport) as LinearLayout
-        val linearMyBusiness=view.findViewById<View>(R.id.linearMyBusiness) as LinearLayout
-        val linearMyPost=view.findViewById<View>(R.id.linearMyPost) as LinearLayout
-        val linearShareus=view.findViewById<View>(R.id.linearShareus) as LinearLayout
-        val linearRateus=view.findViewById<View>(R.id.linearRateus) as LinearLayout
-        val layTerms=view.findViewById<View>(R.id.tvterms) as TextView
-        val layPrivacy=view.findViewById<View>(R.id.tvPrivacy) as TextView
-        val tvlogout=view.findViewById<View>(R.id.tvLogout) as TextView
-        val tvusername=view.findViewById<View>(R.id.tvUserName) as TextView
-        val tvusernaumber=view.findViewById<View>(R.id.tvUserNumber) as TextView
-        val iv_edit=view.findViewById<View>(R.id.iv_edit) as AppCompatImageView
+        val linearHelp = view.findViewById<View>(R.id.linearHelpSupport) as LinearLayout
+        val linearMyBusiness = view.findViewById<View>(R.id.linearMyBusiness) as LinearLayout
+        val linearMyPost = view.findViewById<View>(R.id.linearMyPost) as LinearLayout
+        val linearShareus = view.findViewById<View>(R.id.linearShareus) as LinearLayout
+        val linearRateus = view.findViewById<View>(R.id.linearRateus) as LinearLayout
+        val layTerms = view.findViewById<View>(R.id.tvterms) as TextView
+        val layPrivacy = view.findViewById<View>(R.id.tvPrivacy) as TextView
+        val tvlogout = view.findViewById<View>(R.id.tvLogout) as TextView
+        val tvusername = view.findViewById<View>(R.id.tvUserName) as TextView
+        val tvusernaumber = view.findViewById<View>(R.id.tvUserNumber) as TextView
+        val iv_edit = view.findViewById<View>(R.id.iv_edit) as AppCompatImageView
 
-
+        sessionManager = SessionManager(activity!!)
 
         linearShareus.onClick {
             try {
@@ -99,20 +109,8 @@ class AccountFragment : BaseFragment() {
         })
 
 
-
-/*
-        for (i in 0 until getUserData().size )
-        {
-            getSharedPrefInstance().setValue(Constants.SharedPref.USER_NAME, getUserData()[i].name)
-            getSharedPrefInstance().setValue(
-                Constants.SharedPref.USER_NUMBER,
-                getUserData()[i].mobile
-            )
-        }
-*/
-
-        tvusername.text = getUserName()
-        tvusernaumber.text = getMobileNumber()
+        tvusername.text = sessionManager!!.getValueString(USER_NAME)
+        tvusernaumber.text = sessionManager!!.getValueString(USER_NUMBER)
         linearHelp.onClick {
             showPopupDialog(activity!!)
         }
@@ -153,8 +151,17 @@ class AccountFragment : BaseFragment() {
         builder.setTitle(activity!!.resources.getString(R.string.txt_logout_title))
             .setMessage(activity!!.resources.getString(R.string.txt_logout_message))
             .setPositiveButton(activity!!.resources.getString(R.string.txt_yes)) { dialog, which ->
-                clearLoginPref()
-                 val detailAct = Intent(activity, LoginActivity::class.java)
+                sessionManager!!.removeValue(USER_NAME)
+                sessionManager!!.removeValue(USER_NUMBER)
+                sessionManager!!.removeValue(KEY_CURRENT_BUSINESS)
+                sessionManager!!.removeValue(CURRENT_DATE)
+                sessionManager!!.removeValue(USER_EMAIL)
+                sessionManager!!.removeValue(IS_LOGGED_IN)
+                sessionManager!!.removeValue(USER_TOKEN)
+                sessionManager!!.removeValue(IS_PREMIUM)
+                sessionManager!!.removeValue(LOG_OUT)
+
+                val detailAct = Intent(activity, LoginActivity::class.java)
                 detailAct.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 activity!!.startActivity(detailAct)
                 activity!!.finish()
@@ -230,19 +237,5 @@ class AccountFragment : BaseFragment() {
     }
 
 
-    private fun loadAccoutData() {
-            showProgress()
-            callApi(
 
-                getRestApis().getProfile(), onApiSuccess = {
-                    hideProgress()
-
-                }, onApiError = {
-                    hideProgress()
-
-                }, onNetworkError = {
-                    hideProgress()
-
-                })
-    }
 }

@@ -28,11 +28,12 @@ import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.FileListItem
 import com.app.festivalpost.models.PostItem
 import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
+import com.app.festivalpost.utils.SessionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+
 import java.util.*
 import java.util.function.Consumer
 
@@ -49,7 +50,10 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val festivalItem = originaldata[position]
         Log.d("image_url", "" + originaldata.size)
-        holder.tvname.text = getSharedPrefInstance().getStringValue(USER_NAME)
+        var sessionManager:SessionManager?=null
+        sessionManager= SessionManager(context)
+        holder.tvname.text = sessionManager.getValueString(USER_NAME)
+
         val path: String =
             Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
         val bitmap = BitmapFactory.decodeFile(path + "/" + festivalItem.path)
@@ -91,9 +95,6 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem
                                 resource: Bitmap,
                                 transition: Transition<in Bitmap?>?
                             ) {
-                                val path = MediaStore.Images.Media.insertImage(
-                                    context.contentResolver, resource, "Festival Post", null
-                                )
                                 val screenshotUri = Uri.parse(imageUrl)
                                 val share = Intent(Intent.ACTION_SEND)
                                 share.type = "image/*"

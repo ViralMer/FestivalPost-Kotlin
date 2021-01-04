@@ -250,10 +250,7 @@ class ChooseFrameBkpActivity() : AppCompatActivity(), ApiResponseListener,OnItem
         //        rvdata.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(12), true));
         rvdata!!.itemAnimator = DefaultItemAnimator()
         Global.showProgressDialog(this@ChooseFrameBkpActivity)
-        apiManager!!.getTemplates(
-            ApiEndpoints.getTemplates,
-            Global.getPreference(Constant.PREF_TOKEN, "")
-        )
+
     }
 
     fun startCamera() {

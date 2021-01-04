@@ -27,6 +27,7 @@ import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoListItem
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
@@ -37,7 +38,7 @@ import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
 import com.arthenica.mobileffmpeg.FFmpeg*/
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.get
-import com.emegamart.lelys.utils.extensions.getSharedPrefInstance
+
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -78,6 +79,7 @@ class VideoCreateActivity : AppBaseActivity() {
     var height = 0
 
     var imageview : AppCompatImageView?=null
+    var sessionManager : SessionManager?=null
 
 
     var mFilename: String? = null
@@ -87,12 +89,14 @@ class VideoCreateActivity : AppBaseActivity() {
     //var loadJNI: LoadJNI? = null
     var vkLogPath: String? = null
     var workFolder: String? = null
+    @SuppressLint("SdCardPath")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_create)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
         openAddImageDialog()
+        sessionManager= SessionManager(this)
         videoView = findViewById(R.id.ivvideo)
         setActionbar()
         val bundle = intent.extras
@@ -113,7 +117,7 @@ class VideoCreateActivity : AppBaseActivity() {
         textEmail1 = findViewById(R.id.viewPhone)
         textWebsite1 = findViewById(R.id.viewwebsite)
         imageview = findViewById(R.id.imageview)
-        videoView!!.setSource("/data/data/com.app.festivalpost/files/video_demo.mp4")
+
         setVideoData(videoListItem)
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -133,8 +137,7 @@ class VideoCreateActivity : AppBaseActivity() {
             params1.height=width
             params1.width=width
         }
-
-        val filename = "video_bitmap.png"
+         val filename = "video_bitmap.png"
         try {
             val `is` = openFileInput(filename)
             bmp = BitmapFactory.decodeStream(`is`)
@@ -145,16 +148,12 @@ class VideoCreateActivity : AppBaseActivity() {
 
         imageview!!.setImageBitmap(bmp)
 
+        videoView!!.setSource("/data/data/com.app.festivalpost/files/video_demo.mp4")
+        videoView!!.setPlayWhenReady(true)
 
 
 
 
-        Log.d(
-            "VideoPAth",
-            "" + getSharedPrefInstance().getStringValue("image_name") + " Video_name" + getSharedPrefInstance().getStringValue(
-                "video_name"
-            ),
-        )
         btnSave = findViewById(R.id.btnsubmit)
         btnShare = findViewById(R.id.btnshare)
 
@@ -186,12 +185,10 @@ class VideoCreateActivity : AppBaseActivity() {
         
 
         val inputCode1: Array<String> = arrayOf(
-           /* "ffmpeg",
-            "-y",*/
             "-i",
-            getSharedPrefInstance().getStringValue("video_name"),
+            sessionManager!!.getValueString("video_name")!!,
             "-i",
-            getSharedPrefInstance().getStringValue("image_name"),
+            sessionManager!!.getValueString("image_name")!!,
             "-filter_complex",
             "overlay=(W-w):(H-h)",
             "-codec:a",
@@ -210,35 +207,10 @@ class VideoCreateActivity : AppBaseActivity() {
             Config.printLastCommandOutput(Log.INFO);
         }
 
-        Log.d(
-            "VideoPAth",
-            "" + getSharedPrefInstance().getStringValue("image_name") + " Video_name" + getSharedPrefInstance().getStringValue(
-                "video_name"
-            ),
-        )
 
 
 
 
-
-        val inputCode: Array<String> = arrayOf(
-            /*"ffmpeg",
-            "-y",*/
-            "-i",
-            getSharedPrefInstance().getStringValue("video_name"),
-            "-i",
-            getSharedPrefInstance().getStringValue("image_name"),
-            "-filter_complex",
-            "overlay=(W-w):(H-h)",
-            "-codec:a",
-            "copy",
-            "/storage/emulated/0/FestivalPost/$videoName"
-        )
-        /*try {
-            addVideoWaterMark(inp*utCode, this@VideoCreateActivity)
-        } catch (e: CommandValidationException) {
-            e.printStackTrace()
-        }*/
         MediaScannerConnection.scanFile(
             applicationContext, arrayOf("/storage/emulated/0$videoPath"), arrayOf("video/mp4")
         ) { path, uri ->
@@ -249,20 +221,6 @@ class VideoCreateActivity : AppBaseActivity() {
         }
     }
 
-    //@Throws(CommandValidationException::class)
-    fun addVideoWaterMark(strings: Array<String>?, context: Context) {
-        Log.d("WaterMarkHelper", "starting addVideoWaterMark")
-        Log.e("addVideoWaterMark", "starting addVideoWaterMark")
-        val startTime = System.currentTimeMillis()
-        // LoadJNI vk = new LoadJNI();
-        //val vk = LoadJNI()
-        val workFolder = context.applicationContext.filesDir.toString() + "/"
-            //vk.run(strings, workFolder, context.applicationContext)
-        Log.e(
-            "WaterMarkHelper",
-            "finish addVideoWaterMark, took " + (System.currentTimeMillis() - startTime) / 1000 + "seconds."
-        )
-    }
 
     var tvaction: TextView? = null
     fun setActionbar() {
@@ -276,9 +234,7 @@ class VideoCreateActivity : AppBaseActivity() {
         tvaction = toolbar.findViewById<View>(R.id.tvaction) as TextView
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.visibility = View.GONE
-        tvaction!!.setOnClickListener {
 
-        }
     }
 
     fun openAddImageDialog() {
@@ -359,7 +315,10 @@ class VideoCreateActivity : AppBaseActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            android.R.id.home -> onBackPressed()
+            android.R.id.home -> {
+                onBackPressed()
+                videoView!!.stopPlayer()
+            }
             else -> {
             }
         }
@@ -367,22 +326,19 @@ class VideoCreateActivity : AppBaseActivity() {
     }
 
     fun setVideoData(videoData: VideoListItem?) {
-        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
         if (businessItem!!.busi_name != "") {
-            //Log.d("StringColorCode",""+colorInt);
             tvframename1!!.visibility = View.VISIBLE
             tvframename1!!.text = businessItem.busi_name
 
         }
         if (businessItem.busi_logo != "") {
             ivlogo1!!.visibility = View.VISIBLE
-            //ivlogo1!!.setImageURI(Uri.parse("/storage/emulated/0/Imagename/logo.png"))
             Glide.with(this).load(businessItem.busi_logo).into(ivlogo1!!);
             Log.d("imageName", "" + businessItem.busi_logo)
         }
 
 
-        //downloadFileImage(businessItem.getBusiLogo());
         if (businessItem.busi_mobile != "") {
             tvframephone1!!.visibility = View.VISIBLE
             tvframephone1!!.text = businessItem.busi_mobile

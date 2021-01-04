@@ -50,26 +50,12 @@ class DayVideoAdapter(var context: Context, var originaldata: ArrayList<VideoIte
         holder.layMain.tag = position
         holder.layMain.setOnClickListener { view ->
             val c = Calendar.getInstance()
-            println("Current time => " + c.time)
-            /*
-            val df = SimpleDateFormat("dd-MM-yyyy")
-            val formattedDate = df.format(c.time)
-            val day = getCountOfDays(date, festivalItem.video_date)
-            Log.d("CountOfDayas", "" + day)
-            *//* if (day <= 1 && day>=0) {
-    *//*
-            val index = view.tag as Int
-            val f = originaldata[index]*/
+
             val detailact = Intent(context, VideoDetailActivity::class.java)
             detailact.putExtra("object", festivalItem)
             detailact.putExtra("video_id", festivalItem.video_id)
             context.startActivity(detailact)
-            /*                  }
-                        else {
-                            Global.getAlertDialog(context, "Sorry!!", "This Festival is locked today.This festival photos will open before 24 hours of festival.");
-    
-                        }
-    */
+
         }
     }
 

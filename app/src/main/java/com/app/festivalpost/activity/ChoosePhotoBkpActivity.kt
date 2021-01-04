@@ -300,21 +300,6 @@ class ChoosePhotoBkpActivity : AppCompatActivity(), ApiResponseListener,OnItemCl
                 }
             }
 
-//                if (requestService.equalsIgnoreCase(ApiEndpoints.getmycurrentbusiness)) {
-//                    try {
-//
-//                        Log.d("response", responseString);
-//                        processBusinessResponse(responseString);
-//
-//                        if (status) {
-//                            fillFrames(businessItem);
-//                        } else {
-//                            Global.showFailDialog(ChoosePhotoBkpActivity.this, message);
-//                        }
-//                    } catch (Exception e) {
-//
-//                    }
-//                }
         }
     }
 

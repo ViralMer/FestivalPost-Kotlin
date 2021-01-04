@@ -23,6 +23,8 @@ import com.app.festivalpost.adapter.ChoosePhotoFrameAdapter
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
@@ -42,12 +44,16 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
     var title: String? = null
     var custom_category_id: String? = null
     var index = 0
+    var sessionManager:SessionManager?=null
+    var token : String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_custom_frame)
         layroot = findViewById<View>(R.id.layroot) as LinearLayout
         ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
         rvdata = findViewById<View>(R.id.rvdata) as RecyclerView
+        sessionManager= SessionManager(this)
+        token=sessionManager!!.getValueString(USER_TOKEN)
         setActionbar()
         horizontalLayoutManagaer = GridLayoutManager(this@CustomFrameActivity, 4)
         rvdata!!.layoutManager = horizontalLayoutManagaer
@@ -78,7 +84,7 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
         tvaction!!.setOnClickListener {
             showProgress(true)
             val currentBusinessItem =
-                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS)
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
             if (currentBusinessItem == null) {
                 val materialAlertDialogBuilder = AlertDialog.Builder(this)
                 val inflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -150,7 +156,7 @@ class CustomFrameActivity : AppBaseActivity(), OnItemClickListener {
         showProgress(true)
         callApi(
 
-            getRestApis().getLanguageCustomeCategoryPost(custom_category_id!!), onApiSuccess = {
+            getRestApis().getLanguageCustomeCategoryPost(custom_category_id!!,token!!), onApiSuccess = {
                 showProgress(false)
                 customCategoryPostItem = it.data
 

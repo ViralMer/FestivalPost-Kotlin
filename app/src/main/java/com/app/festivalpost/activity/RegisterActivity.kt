@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -13,7 +14,9 @@ import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.UserDataItem
 import com.app.festivalpost.utils.Constants
+import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
@@ -25,6 +28,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
 import com.google.firebase.iid.FirebaseInstanceId
+import com.hbb20.CountryCodePicker
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.concurrent.TimeUnit
 
@@ -35,19 +39,46 @@ class RegisterActivity : AppBaseActivity() {
     private var mAuth: FirebaseAuth? = null
     var token: ForceResendingToken? = null
     var ivBack:ImageView?=null
+    var sessionManager: SessionManager?=null
+
+    private var etNumber:AppCompatEditText?=null
+    private var etName:AppCompatEditText?=null
+    private var spinnerCountry: CountryCodePicker?=null
+
+    private var linearregister: LinearLayout?=null
+    private var tvsignin:TextView?=null
+
+    var user_token : String?=null
+    var device_token : String?=null
+    var device_id : String?=null
+    var device_type : String?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         FirebaseApp.initializeApp(this)
+        sessionManager= SessionManager(this)
+        user_token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
+        device_token=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
+        device_id=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
+        device_type=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
 
-
-        et_name.onFocusChangeListener = this
-        et_number.onFocusChangeListener = this
         mAuth = FirebaseAuth.getInstance()
         val toolbar=findViewById<View>(R.id.toolbar) as Toolbar
         ivBack=toolbar.findViewById(R.id.ivBack)
 
-        if (isLoggedIn())
+        etNumber=findViewById(R.id.et_number)
+        spinnerCountry=findViewById(R.id.spinner)
+        etName=findViewById(R.id.et_name)
+        linearregister= findViewById<LinearLayout>(R.id.linearRegister)
+        tvsignin= findViewById<TextView>(R.id.tvsignin)
+
+        etName!!.onFocusChangeListener = this
+        etNumber!!.onFocusChangeListener = this
+
+        val isLoogedIn=sessionManager!!.getBooleanValue(Constants.SharedPref.IS_LOGGED_IN)
+
+        if (isLoogedIn!!)
         {
             launchActivity<HomeActivity> {  }
             finish()
@@ -55,11 +86,11 @@ class RegisterActivity : AppBaseActivity() {
 
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
-            getSharedPrefInstance().setValue(Constants.KeyIntent.DEVICE_TOKEN, token)
+            sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN,token)
             // send it to server
         }
 
-        linearRegister.onClick {
+        linearregister!!.onClick {
             performRegister()
 
         }
@@ -107,9 +138,9 @@ class RegisterActivity : AppBaseActivity() {
 
 
      private fun performRegister() {
-         if (et_name.text.toString() == "") {
+         if (etName!!.text.toString() == "") {
              Global.getAlertDialog(this, "Opps..!", "Please Enter Name")
-         } else if (et_number.text.toString().length != 10) {
+         } else if (etNumber!!.text.toString().length != 10) {
              Global.getAlertDialog(this, "Opps..!", "Enter valid Number!")
          } else {
              sendVerificationCode("+" + spinner.selectedCountryCode + et_number.text.toString())
@@ -159,38 +190,28 @@ class RegisterActivity : AppBaseActivity() {
     private fun loadRegisterData() {
         showProgress(true)
         callApi(
-            getRestApis().register(et_name.text.toString(), et_number.text.toString()),
+            getRestApis().register(etName!!.text.toString(), etNumber!!.text.toString(),device_id!!,device_type!!,device_token!!),
             onApiSuccess = {
                 if (it.status!!) {
                     showProgress(false)
                     launchActivity<HomeActivity> {
                         try {
-                            getSharedPrefInstance().setValue(Constants.SharedPref.IS_LOGGED_IN, true)
-                            //getSharedPrefInstance().setValue(Constants.SharedPref.KEY_USER_DATA, it.data)
-                            getSharedPrefInstance().setValue(Constants.SharedPref.USER_TOKEN, it.token)
-                            if (it.data.isNotEmpty()) {
-                                for (i in 0 until it.data.size) {
-                                    getSharedPrefInstance().setValue(
-                                        Constants.SharedPref.USER_NAME,
-                                        it.data[i]!!.name
-                                    )
-                                    getSharedPrefInstance().setValue(
-                                        Constants.SharedPref.USER_NUMBER,
-                                        it.data[i]!!.name
-                                    )
-                                    getSharedPrefInstance().setValue(
-                                        Constants.SharedPref.USER_EMAIL,
-                                        it.data[i]!!.email
-                                    )
-                                }
+                            sessionManager!!.setStringValue(Constants.SharedPref.USER_TOKEN,it.token!!)
+
+                            var dataarraylist= arrayListOf<UserDataItem?>()
+                            dataarraylist=it.data
+                            for (i in 0 until dataarraylist.size) {
+                                sessionManager!!.setStringValue(Constants.SharedPref.USER_NAME,dataarraylist[i]!!.name!!)
+                                sessionManager!!.setStringValue(Constants.SharedPref.USER_NUMBER,dataarraylist[i]!!.mobile!!)
+                                sessionManager!!.setStringValue(Constants.SharedPref.USER_EMAIL,dataarraylist[i]!!.email!!)
+
                             }
-                        }
-                        catch (e:Exception)
-                        {
-                            //toast("Da")
+                            sessionManager!!.setBooleanValue(Constants.SharedPref.IS_LOGGED_IN, true)
+                            finish()
+                        } catch (e: java.lang.Exception) {
+
                         }
 
-                        finish()
                     }
                 }
             },
