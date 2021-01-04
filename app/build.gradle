@@ -8,14 +8,14 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "com.app.festivalpost"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 40
-        versionName "2.0.1"
+        versionCode 41
+        versionName "2.0.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -81,7 +81,7 @@ android {
             enable true
             reset()
             include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            universalApk true
+            universalApk false
         }
     }
 
@@ -91,7 +91,7 @@ android {
 
 
 }
-/*ext.abiCodes = ['x86':1, 'x86_64':2, 'armeabi-v7a':3, 'arm64-v8a':4]
+ext.abiCodes = ['x86':1, 'x86_64':2, 'armeabi-v7a':3, 'arm64-v8a':4]
 import com.android.build.OutputFile
 android.applicationVariants.all { variant ->
     variant.outputs.each {
@@ -99,7 +99,7 @@ android.applicationVariants.all { variant ->
             def baseAbiVersionCode = project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
             output.versionCodeOverride = baseAbiVersionCode + variant.versionCode
     }
-}*/
+}
 
 dependencies {
 

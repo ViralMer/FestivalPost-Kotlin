@@ -437,7 +437,7 @@
                         android:layout_height="30dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:src="@drawable/ic_add_text"
+                        android:src="@drawable/ic_baseline_add_photo_alternate_24_new"
                         />
                     <TextView
                         android:id="@+id/tvback"

@@ -87,8 +87,8 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     var width = 0
     var height = 0
     private var day = 0
-    var sessionManager : SessionManager?=null
-    var token : String?=null
+    var sessionManager: SessionManager? = null
+    var token: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_detail)
@@ -97,8 +97,8 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
             WindowManager.LayoutParams.FLAG_SECURE
         )
         openAddImageDialog()
-        sessionManager= SessionManager(this)
-        token=sessionManager!!.getValueString(USER_TOKEN)
+        sessionManager = SessionManager(this)
+        token = sessionManager!!.getValueString(USER_TOKEN)
         setActionbar()
 
 
@@ -129,16 +129,18 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         ivlogo = frame_view.findViewById(R.id.ivframelogo1)
         ivlogo1 = findViewById(R.id.ivframelogo1)
 
-        val bundle=intent.extras
+        val bundle = intent.extras
         if (bundle!!.containsKey("object")) {
             videoid = bundle.getString("video_id")
             videoTitle = bundle.getSerializable("object") as VideoItem?
-        }
-        else if (bundle!!.containsKey("video_id")) {
+        } else if (bundle!!.containsKey("video_id")) {
             videoid = bundle.getString("video_id")
         }
         if (bundle!!.containsKey("video_date")) {
-            day = getCountOfDays(sessionManager!!.getValueString(CURRENT_DATE), bundle.getString("video_date"))
+            day = getCountOfDays(
+                sessionManager!!.getValueString(CURRENT_DATE),
+                bundle.getString("video_date")
+            )
         }
 
 
@@ -148,20 +150,17 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         height = displayMetrics.heightPixels
         width = displayMetrics.widthPixels
-        if (width>1080)
-        {
-            val params=frameMain!!.layoutParams
-            params.height=1080
-            params.width=1080
-        }
-        else{
-            val params=frameMain!!.layoutParams
-                params.height=width
-            params.width=width
+        if (width > 1080) {
+            val params = frameMain!!.layoutParams
+            params.height = 1080
+            params.width = 1080
+        } else {
+            val params = frameMain!!.layoutParams
+            params.height = width
+            params.width = width
         }
 
         videoView!!.setShowController(true)
-
 
 
     }
@@ -191,11 +190,13 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         }
 
         tvaction.setOnClickListener {
+            videoView!!.stopPlayer()
             val currentBusinessItem =
-                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, this)
             if (currentBusinessItem == null) {
                 val materialAlertDialogBuilder = AlertDialog.Builder(this)
-                val inflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val inflater =
+                    this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
                 val tvTitle: TextView
                 val tvMessage: TextView
@@ -239,15 +240,13 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                 ignoreCase = true
             )
         ) {
-            video_type=videoListItem!!.type!!
+            video_type = videoListItem!!.type!!
             video_path = videoListItem!!.video!!
             videoView!!.setSource(video_path)
             frameLayout1!!.visibility = View.VISIBLE
 
         }
     }
-
-
 
 
     private fun fillData() {
@@ -383,15 +382,15 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
     private fun loadAccoutData() {
         showProgress(true)
         callApi(
-            getRestApis().getVideoLanguageData(videoid!!, "0",token!!), onApiSuccess = {
+            getRestApis().getVideoLanguageData(videoid!!, "0", token!!), onApiSuccess = {
                 showProgress(false)
                 Log.d("videoItemList", "" + it.data.size)
                 val adapter = ChooseVideoAdapter(this@VideoDetailActivity, it.data)
                 rvdata!!.adapter = adapter
-                videoListItemArrayList=it.data
+                videoListItemArrayList = it.data
 
                 videoListItem = videoListItemArrayList[0]
-                videoListItem!!.isIs_selected=true
+                videoListItem!!.isIs_selected = true
 
                 if (videoListItem!!.image != null && !videoListItem!!.image.equals(
                         "",
@@ -408,7 +407,7 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                 showProgress(false)
 
 
-                            }, onNetworkError = {
+            }, onNetworkError = {
                 showProgress(false)
             })
     }
@@ -457,9 +456,6 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         val dayCount = diff.toFloat() / (24 * 60 * 60 * 1000)
         return dayCount.toInt()
     }
-
-
-
 
 
 }

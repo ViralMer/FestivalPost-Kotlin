@@ -131,36 +131,38 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_already_account"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvsignin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center"
+                    android:text="@string/tv_sign_in"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
         </LinearLayout>
 
 
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/txt_already_account"
-            android:textColor="@color/colorBlack"
-            android:textSize="16dp" />
-
-        <TextView
-            android:id="@+id/tvsignin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:gravity="center"
-            android:text="@string/tv_sign_in"
-            android:textColor="@color/colorBlack"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
 </LinearLayout>

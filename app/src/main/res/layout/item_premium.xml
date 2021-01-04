@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/_250sdp"
+        android:layout_height="@dimen/_350sdp"
         android:layout_marginStart="@dimen/spacing_middle"
         android:layout_marginTop="@dimen/spacing_middle"
         android:layout_marginEnd="@dimen/spacing_middle"
@@ -20,21 +20,34 @@
             android:id="@+id/tvPlanName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/lbl_basic_plan"
+            android:text="@string/lbl_premium_plan"
             android:fontFamily="@font/sf_ui_medium"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:textColor="@color/black"
+            android:visibility="gone"
             android:textSize="@dimen/_28sdp"
             android:gravity="center"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_plan_two"
+            android:fontFamily="@font/sf_ui_medium"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_50sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_24sdp"
+            android:gravity="center"
+            android:textAllCaps="false"
             />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="@dimen/_15sdp"
             android:layout_gravity="center"
             >
 
@@ -48,7 +61,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_24sdp"
             android:gravity="center"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             />
 
             <TextView
@@ -66,24 +79,38 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_offer"
+            android:fontFamily="@font/sf_ui_medium"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_11sdp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:padding="@dimen/_5sdp"
+
+            android:gravity="center|start"
+            android:layout_marginLeft="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_45sdp"
-            android:layout_gravity="center"
+            android:layout_gravity="center|start"
             >
 
             <TextView
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_use_all_videos"
+                android:text="@string/lbl_use_all_videos1"
                 android:fontFamily="@font/sf_ui_medium"
-                android:layout_gravity="center"
+                android:layout_gravity="center|start"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_20sdp"
+                android:textSize="@dimen/_16sdp"
                 android:gravity="center"
 
                 />
@@ -92,13 +119,61 @@
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_use_all_images"
+                android:text="@string/lbl_use_all_images2"
                 android:fontFamily="@font/sf_ui_medium"
-                android:layout_gravity="center"
+                android:layout_gravity="center|start"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_20sdp"
+                android:textSize="@dimen/_16sdp"
                 android:gravity="center"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_use_all_videos3"
+                android:fontFamily="@font/sf_ui_medium"
+                android:layout_gravity="center|start"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                android:gravity="center"
+
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_use_all_videos4"
+                android:fontFamily="@font/sf_ui_medium"
+                android:layout_gravity="center|start"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                android:gravity="center|start"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_use_all_videos5"
+                android:fontFamily="@font/sf_ui_medium"
+                android:layout_gravity="center|start"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                android:gravity="center"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_use_all_videos6"
+                android:fontFamily="@font/sf_ui_medium"
+                android:layout_gravity="center|start"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                android:gravity="center|start"
 
                 />
 

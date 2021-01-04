@@ -185,12 +185,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         recyclerView = findViewById(R.id.rvdata)
         ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
         if (photo_path != null && !photo_path.equals("", ignoreCase = true)) {
-            Glide.with(this@ChooseFrameForPhotoActivityNew).load(photo_path)
-                .placeholder(R.drawable.placeholder_img).error(
-                    R.drawable.placeholder_img
-                ).into(
-                    ivbackground!!
-                )
+            Glide.with(this@ChooseFrameForPhotoActivityNew).load(photo_path).into(ivbackground!!)
         }
 
         layroot = findViewById<View>(R.id.layroot) as LinearLayout
@@ -313,9 +308,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             ) {
                 //setFrameNEW(photoItem);
                 Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem.dynamic_images)
-                    .placeholder(
-                        R.drawable.placeholder_img
-                    ).error(R.drawable.placeholder_img).into(
+                    .into(
                         ivframebg!!
                     )
             }
@@ -1978,12 +1971,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                     )
                 ) {
                     //setFrameNEW(photoItem);
-                    Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem.dynamic_images)
-                        .placeholder(
-                            R.drawable.placeholder_img
-                        ).error(R.drawable.placeholder_img).into(
-                            ivframebg!!
-                        )
+                    Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem.dynamic_images).into(ivframebg!!)
                 }
             }
         }

@@ -238,7 +238,7 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
                         photoItem!!.is_selected=true
                         photo_path = photoItem.post_content!!
                         image_type = photoItem.image_type!!
-                        Glide.with(this).load(photoItem.post_content)
+                        Glide.with(applicationContext!!).load(photoItem.post_content)
                             .placeholder(R.drawable.placeholder_img).error(
                                 R.drawable.placeholder_img
                             ).into(

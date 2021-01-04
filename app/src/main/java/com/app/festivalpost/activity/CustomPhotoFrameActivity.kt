@@ -263,12 +263,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
         Log.d("Phot_PATH",""+photo_path!!)
         if (photo_path != null) {
-            Glide.with(this@CustomPhotoFrameActivity).load(photo_path)
-                .placeholder(R.drawable.placeholder_img).error(
-                    R.drawable.placeholder_img
-                ).into(
-                    imageview_id!!
-                )
+            Glide.with(this@CustomPhotoFrameActivity).load(photo_path).into(imageview_id!!)
         }
         frameLayout!!.setOnClickListener(View.OnClickListener {
             linearLogo!!.setBackgroundResource(0)
@@ -351,12 +346,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 )
             ) {
                 //setFrameNEW(photoItem);
-                Glide.with(this@CustomPhotoFrameActivity).load(photoItem.dynamic_images)
-                    .placeholder(
-                        R.drawable.placeholder_img
-                    ).error(R.drawable.placeholder_img).into(
-                        ivframebg!!
-                    )
+                Glide.with(this@CustomPhotoFrameActivity).load(photoItem.dynamic_images).into(ivframebg!!)
             }
 
         }
@@ -2044,12 +2034,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                     ignoreCase = true
                 )
             ) {
-                Glide.with(this@CustomPhotoFrameActivity).load(framePreview!!.dynamic_images)
-                    .placeholder(
-                        R.drawable.placeholder_img
-                    ).error(R.drawable.placeholder_img).into(
-                        ivframebg!!
-                    )
+                Glide.with(this@CustomPhotoFrameActivity).load(framePreview!!.dynamic_images).into(ivframebg!!)
             }
         }
     }

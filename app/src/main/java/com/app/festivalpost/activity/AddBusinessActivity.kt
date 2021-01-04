@@ -556,9 +556,12 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             .setView(layout)
             .setCancelable(true)
         alertDialog = builder.create()
-        alertDialog!!.show()
+        if (!isFinishing) {
+            alertDialog!!.show()
+        }
 
 
     }
+
 
 }

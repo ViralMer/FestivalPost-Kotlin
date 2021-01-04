@@ -51,14 +51,9 @@ class CustomFestivalItemAdapter(var context: Context, var originaldata: ArrayLis
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvTitle: TextView
-        val tvNew: TextView
-        val imageView: ImageView
+        val tvTitle: TextView = view.findViewById<View>(R.id.tvTitle) as TextView
+        val tvNew: TextView = view.findViewById<View>(R.id.tvDate) as TextView
+        val imageView: RoundedImageView = view.findViewById<View>(R.id.ivphoto) as RoundedImageView
 
-        init {
-            tvTitle = view.findViewById<View>(R.id.tvTitle) as TextView
-            tvNew = view.findViewById<View>(R.id.tvDate) as TextView
-            imageView = view.findViewById<View>(R.id.ivphoto) as RoundedImageView
-        }
     }
 }

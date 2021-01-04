@@ -77,6 +77,7 @@ class MyVideoFragment : BaseFragment() {
                 }
 
                 adapter = VideoPostAdapter(activity!!, dataArrayList)
+                dataArrayList.reverse()
                 rvdata!!.adapter = adapter
             }
         }

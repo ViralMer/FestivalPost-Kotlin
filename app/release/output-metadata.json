@@ -10,8 +10,8 @@
     {
       "type": "UNIVERSAL",
       "filters": [],
-      "versionCode": 38,
-      "versionName": "2.0.1",
+      "versionCode": 41,
+      "versionName": "2.0.2",
       "outputFile": "app-universal-release.apk"
     },
     {
@@ -22,8 +22,8 @@
           "value": "x86"
         }
       ],
-      "versionCode": 38,
-      "versionName": "2.0.1",
+      "versionCode": 41,
+      "versionName": "2.0.2",
       "outputFile": "app-x86-release.apk"
     },
     {
@@ -34,8 +34,8 @@
           "value": "x86_64"
         }
       ],
-      "versionCode": 38,
-      "versionName": "2.0.1",
+      "versionCode": 41,
+      "versionName": "2.0.2",
       "outputFile": "app-x86_64-release.apk"
     },
     {
@@ -46,8 +46,8 @@
           "value": "armeabi-v7a"
         }
       ],
-      "versionCode": 38,
-      "versionName": "2.0.1",
+      "versionCode": 41,
+      "versionName": "2.0.2",
       "outputFile": "app-armeabi-v7a-release.apk"
     },
     {
@@ -58,8 +58,8 @@
           "value": "arm64-v8a"
         }
       ],
-      "versionCode": 38,
-      "versionName": "2.0.1",
+      "versionCode": 41,
+      "versionName": "2.0.2",
       "outputFile": "app-arm64-v8a-release.apk"
     }
   ]

@@ -41,6 +41,7 @@ import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.potyvideo.library.AndExoPlayerView
 import kotlinx.android.synthetic.main.activity_choose_video_frame.*
 import java.io.File
 import java.io.FileOutputStream
@@ -144,6 +145,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
     var width = 0
     var height = 0
     var sessionManager:SessionManager?=null
+    var ivVideo:AndExoPlayerView?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -169,8 +171,9 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         linearfonttype = findViewById<View>(R.id.linearFonttype) as LinearLayout
         layroot = findViewById<View>(R.id.layroot) as LinearLayout
         llframe = findViewById<View>(R.id.llframe) as LinearLayout
-        recyclerView = findViewById(R.id.rvdata)
-        ivvideo!!.setSource(video_path)
+        recyclerView = findViewById<RecyclerView>(R.id.rvdata)
+        ivVideo =findViewById(R.id.ivvideo) as AndExoPlayerView
+        ivVideo!!.setSource(video_path)
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -250,12 +253,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 )
             ) {
                 //setFrameNEW(photoItem);
-                Glide.with(this).load(photoItem.dynamic_images)
-                    .placeholder(
-                        R.drawable.placeholder_img
-                    ).error(R.drawable.placeholder_img).into(
-                        ivframebg!!
-                    )
+                Glide.with(this).load(photoItem.dynamic_images).into(ivframebg!!)
             }
 
         }
@@ -1434,6 +1432,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         tvtitle.text = resources.getString(R.string.txt_select_frame)
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.setOnClickListener {
+            ivVideo!!.stopPlayer()
             linearAddress!!.setBackgroundResource(0)
             linearEmail!!.setBackgroundResource(0)
             linearPhone!!.setBackgroundResource(0)
@@ -1491,10 +1490,6 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                                         PremiumActivity::class.java
                                     )
                                     startActivity(intent)
-                                    /*val businessItem: BusinessItem = Global.getCurrentBusinessNEW()
-                                    intent.putExtra("videoData", businessItem)
-                                    startActivity(intent)*/
-
                                 }
                                 .setNegativeButton(
                                     "Cancel"

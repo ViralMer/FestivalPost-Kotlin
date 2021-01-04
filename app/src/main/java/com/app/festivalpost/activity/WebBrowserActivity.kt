@@ -114,7 +114,7 @@ class WebBrowserActivity : AppCompatActivity() {
 
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
-            Log.d("Page finished", "finishe")
+            Log.d("Page finished", "finished")
             if (pd != null && pd!!.isShowing) {
                 pd!!.dismiss()
             }

@@ -147,18 +147,22 @@ class HomeFragment : BaseFragment() {
 
 
 
-        NUM_PAGES = sliderArrayList.size
+
 
         // Auto start of viewpager
 
         // Auto start of viewpager
         val handler = Handler()
         val Update = Runnable {
-            if (currentPage === NUM_PAGES) {
+            if (currentPage == NUM_PAGES) {
                 currentPage = 0
+                Log.d("CurrentPage", "$currentPage NumberOfPage:$NUM_PAGES")
 
             }
             viewPager!!.setCurrentItem(currentPage++, true)
+            Log.d("CurrentPage1","$currentPage  NumberOfPage1:$NUM_PAGES")
+
+
         }
         val swipeTimer = Timer()
         swipeTimer.schedule(object : TimerTask() {
@@ -207,51 +211,61 @@ class HomeFragment : BaseFragment() {
 
             }
             ivphoto.onClick {
+                if(festivalItem.adv_link=="") {
 
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(festivalItem.adv_link)
-                activity!!.startActivity(i)
+                }
+                else{
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(festivalItem.adv_link)
+                    activity!!.startActivity(i)
+                }
             }
 
+            if (festivalItem.adv_number=="")
+            {
+                ivWhatsapp.hide()
+            }
+            else{
+                ivWhatsapp.show()
+            }
             ivWhatsapp.onClick {
-
-                 if(isPackageInstalled("com.whatsapp.w4b",activity!!.packageManager))
-                {
-                    val url =
-                        "https://api.whatsapp.com/send?phone="+festivalItem.adv_number+"&text=Inquiry from Festival Post&source=&data=&app_absent="
-                    try {
-                        val pm = activity!!.packageManager
-                        pm.getPackageInfo("com.whatsapp.w4b", PackageManager.GET_ACTIVITIES)
-                        val i = Intent(Intent.ACTION_VIEW)
-                        i.data = Uri.parse(url)
-                        i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
-                        startActivity(i)
-                    } catch (e: PackageManager.NameNotFoundException) {
-                        Toast.makeText(
-                            activity!!,
-                            "Whatsapp Business app not installed in your phone",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        e.printStackTrace()
-                    }
-                }
-                else if (isPackageInstalled("com.whatsapp",activity!!.packageManager)) {
-                    val url =
-                        "https://api.whatsapp.com/send?phone="+festivalItem.adv_number+"&text=Inquiry from Festival Post&source=&data=&app_absent="
-                    try {
-                        val pm = activity!!.packageManager
-                        pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
-                        val i = Intent(Intent.ACTION_VIEW)
-                        i.data = Uri.parse(url)
-                        i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
-                        startActivity(i)
-                    } catch (e: PackageManager.NameNotFoundException) {
-                        Toast.makeText(
-                            activity!!,
-                            "Whatsapp app not installed in your phone",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        e.printStackTrace()
+                if (festivalItem.adv_number != null) {
+                    if (isPackageInstalled("com.whatsapp.w4b", activity!!.packageManager)) {
+                        val url =
+                            "https://api.whatsapp.com/send?phone=" + festivalItem.adv_number + "&text=Inquiry from Festival Post&source=&data=&app_absent="
+                        try {
+                            val pm = activity!!.packageManager
+                            pm.getPackageInfo("com.whatsapp.w4b", PackageManager.GET_ACTIVITIES)
+                            val i = Intent(Intent.ACTION_VIEW)
+                            i.data = Uri.parse(url)
+                            i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
+                            startActivity(i)
+                        } catch (e: PackageManager.NameNotFoundException) {
+                            Toast.makeText(
+                                activity!!,
+                                "Whatsapp Business app not installed in your phone",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            e.printStackTrace()
+                        }
+                    } else if (isPackageInstalled("com.whatsapp", activity!!.packageManager)) {
+                        val url =
+                            "https://api.whatsapp.com/send?phone=" + festivalItem.adv_number + "&text=Inquiry from Festival Post&source=&data=&app_absent="
+                        try {
+                            val pm = activity!!.packageManager
+                            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+                            val i = Intent(Intent.ACTION_VIEW)
+                            i.data = Uri.parse(url)
+                            i.putExtra(Intent.EXTRA_TEXT, "Inquiry from FestivalPost")
+                            startActivity(i)
+                        } catch (e: PackageManager.NameNotFoundException) {
+                            Toast.makeText(
+                                activity!!,
+                                "Whatsapp app not installed in your phone",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -333,18 +347,19 @@ class HomeFragment : BaseFragment() {
                     festivalArrayList = res.festival
                     categoryArrayList = res.cateogry
 
+                    NUM_PAGES = sliderArrayList.size
+
                     rcvCustomFestival!!.layoutManager = LinearLayoutManager(
                         activity,
                         LinearLayoutManager.HORIZONTAL,
                         false
                     )
-                    val customFestivalAdapter =
-                        CustomFestivalItemAdapter(activity!!, festivalArrayList)
+                    val customFestivalAdapter = CustomFestivalItemAdapter(activity!!, festivalArrayList)
                     rcvCustomFestival!!.adapter = customFestivalAdapter
 
+
                     rcvCustomCategory!!.layoutManager = GridLayoutManager(activity, 3)
-                    val customCategoryAdapter =
-                        CategoryItemAdapter(activity!!, categoryArrayList)
+                    val customCategoryAdapter = CategoryItemAdapter(activity!!, categoryArrayList)
                     rcvCustomCategory!!.adapter = customCategoryAdapter
 
                     if (sliderArrayList.size > 0) {
@@ -353,6 +368,25 @@ class HomeFragment : BaseFragment() {
                         dots.setDotDrawable(R.drawable.bg_circle_primary, R.drawable.black_dot)
                         PagerAdapter().notifyDataSetChanged()
                     }
+
+                    viewPager!!.setOnPageChangeListener(object :ViewPager.OnPageChangeListener{
+                        override fun onPageScrolled(
+                            position: Int,
+                            positionOffset: Float,
+                            positionOffsetPixels: Int
+                        ) {
+                            currentPage=position
+                        }
+
+                        override fun onPageSelected(position: Int) {
+
+                        }
+
+                        override fun onPageScrollStateChanged(state: Int) {
+
+                        }
+
+                    })
 
                     if (festivalArrayList.size > 0) {
                         linearFestival!!.show()

@@ -580,11 +580,12 @@
     <string name="lbl_loading">Loading</string>
     <string name="lbl_enter_otp">Enter Otp</string>
     <string name="lbl_basic_plan">Basic plan</string>
-    <string name="lbl_first_plan">$ 1199 / </string>
+    <string name="lbl_first_plan">$ 1199 Rs./ </string>
     <string name="lbl_three_months">3 months</string>
     <string name="lbl_use_all_videos">Use all videos</string>
     <string name="lbl_use_all_images">Use all images</string>
     <string name="txt_choose_plans"><font color='#48A8BC'>C</font>hoose Plans</string>
+    <string name="txt_choose_premium"><font color='#48A8BC'>P</font>remium</string>
     <string name="lbl_purchase">Purchase</string>
     <string name="hint_choose_font">Choose your Font</string>
     <string name="free">Free</string>
@@ -602,5 +603,15 @@
     <string name="lbl_select_video">Select Video</string>
     <string name="lbl_one_year">/ 1 Year </string>
     <string name="hint_select_your_business_category">Select your  business category</string>
+    <string name="lbl_use_all_videos_new"><![CDATA[- 3000+ images (Festival, Greetings, Quotes, Business ethics, Wonders, Motivational & many more). - 300+ Videos (Festival, Motivational, God, Greetings & many more). - Use All Custom frame. - Greetings, product, celebration, Offer, Save the date & many more. - Remove Watermark. - Save unlimited Festival images and videos.]]></string>
+    <string name="lbl_use_all_videos1"><![CDATA[- 3000+ images ]]></string>
+    <string name="lbl_use_all_images2"><![CDATA[- 300+ Videos ]]></string>
+    <string name="lbl_use_all_videos3">- Use All Custom frame</string>
+    <string name="lbl_use_all_videos4"><![CDATA[- Use all Greetings frames]]></string>
+    <string name="lbl_use_all_videos5">- Remove Watermark</string>
+    <string name="lbl_use_all_videos6">- Save unlimited Festival images and videos.</string>
+    <string name="lbl_premium_plan">Premium Plan</string>
+    <string name="lbl_plan_two"><strike>3299 Rs.</strike></string>
+    <string name="lbl_offer">*Offer valid till 26th January</string>
 
 </resources>

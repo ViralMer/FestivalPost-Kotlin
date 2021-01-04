@@ -276,6 +276,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
             override fun onVerificationFailed(e: FirebaseException) {
                 Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_LONG)
                     .show()
+                showProgress(false)
             }
         }
 

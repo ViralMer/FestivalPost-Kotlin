@@ -290,9 +290,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             ) {
                 //setFrameNEW(photoItem);
                 Glide.with(this).load(photoItem.dynamic_images)
-                    .placeholder(
-                        R.drawable.placeholder_img
-                    ).error(R.drawable.placeholder_img).into(
+                    .into(
                         ivframebg!!
                     )
             }

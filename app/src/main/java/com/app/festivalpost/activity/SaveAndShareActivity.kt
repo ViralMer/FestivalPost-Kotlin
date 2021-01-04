@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
+import android.os.AsyncTask.execute
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.apifunctions.ApiEndpoints
@@ -26,6 +28,7 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
+import com.app.festivalpost.models.BusinessItem
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
@@ -43,7 +46,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
-class SaveAndShareActivity() : AppCompatActivity() {
+class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
     var apiManager: ApiManager? = null
     var status = false
     var message = ""
@@ -51,6 +54,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
     var bmp: Bitmap? = null
     var image_type: String? = null
     var sessionManager: SessionManager? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +64,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
         )
         setContentView(R.layout.activity_save_and_share)
         sessionManager=SessionManager(this)
+        apiManager = ApiManager(this@SaveAndShareActivity)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
@@ -88,7 +93,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
                 }
             }
         }
-        val businessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,this)
+        val businessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, this)
         if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!
         ) {
             if (image_type != "0") {
@@ -119,7 +124,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
             View.OnClickListener {
                 sharePhoto = false
 
-                    savePhoto()
+                savePhoto()
 
             })
         val btnshare=findViewById<View>(R.id.btnshare)
@@ -145,30 +150,40 @@ class SaveAndShareActivity() : AppCompatActivity() {
                         imagePath = ""
                         if (bmp != null) {
                             imagePath = SaveImage(bmp!!)
-                            Log.d("Stored", imagePath!!)
+                            /*if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!)
+                            {
+                                SavePhotoAsync(imagePath!!).execute()
+                                Log.d("ImageCalled",""+imagePath)
+                            }
+                            else {*/
+                                if (sharePhoto) {
+                                    if (imagePath != null && !imagePath.equals(
+                                            "",
+                                            ignoreCase = true
+                                        )
+                                    ) {
+                                        val uri = Uri.parse(imagePath)
+                                        val share = Intent(Intent.ACTION_SEND)
+                                        share.type = "image/*"
+                                        share.putExtra(Intent.EXTRA_STREAM, uri)
+                                        startActivity(Intent.createChooser(share, "Share Design!"))
+                                        scanner(imagePath!!)
 
-                            if (sharePhoto) {
-                                if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
-                                    val uri = Uri.parse(imagePath)
-                                    val share = Intent(Intent.ACTION_SEND)
-                                    share.type = "image/*"
-                                    share.putExtra(Intent.EXTRA_STREAM, uri)
-                                    startActivity(Intent.createChooser(share, "Share Design!"))
+                                    }
 
+                                } else {
+                                    val detailAct =
+                                        Intent(this@SaveAndShareActivity, HomeActivity::class.java)
+                                    detailAct.flags =
+                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(detailAct)
+                                    scanner(imagePath!!)
+                                    finish()
                                 }
 
-                            }
-                            else{
                                 toast("Image Saved Successfully")
-                                val detailAct =
-                                    Intent(this@SaveAndShareActivity, HomeActivity::class.java)
-                                detailAct.flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(detailAct)
-                                finish()
                             }
-
-                        }
+                        /*}*/
                     } else {
                         Toast.makeText(
                             this@SaveAndShareActivity,
@@ -239,7 +254,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
                         Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                         Uri.parse(
                             ("file://"
-                                    + filePath)
+                                    + file.absolutePath)
                         )
                     )
                 )
@@ -249,28 +264,14 @@ class SaveAndShareActivity() : AppCompatActivity() {
                         Intent.ACTION_MEDIA_MOUNTED,
                         Uri.parse(
                             ("file://"
-                                    + filePath)
+                                    + file.absolutePath)
                         )
                     )
                 )
             }
-
-            sendBroadcast(
-                Intent(
-                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(
-                        "file://$filePath"
-                    )
-                )
-            )
             MediaScannerConnection.scanFile(
                 this,
-                arrayOf(file.toString()),
-                arrayOf(file.name),
-                null
-            )
-            MediaScannerConnection.scanFile(
-                this,
-                arrayOf(file.toString()),
+                arrayOf(file.absolutePath),
                 arrayOf("image/*"),
                 null
             )
@@ -336,7 +337,7 @@ class SaveAndShareActivity() : AppCompatActivity() {
                     Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                     Uri.parse(
                         ("file://"
-                                + Environment.getExternalStorageDirectory())
+                                + Environment.getExternalStorageDirectory() + "/FestivalPost")
                     )
                 )
             )
@@ -346,10 +347,119 @@ class SaveAndShareActivity() : AppCompatActivity() {
                     Intent.ACTION_MEDIA_MOUNTED,
                     Uri.parse(
                         ("file://"
-                                + Environment.getExternalStorageDirectory())
+                                + Environment.getExternalStorageDirectory() + "/FestivalPost")
                     )
                 )
             )
         }
     }
+
+    internal inner class SavePhotoAsync(image: String) :
+        AsyncTask<Void?, Void?, Void?>() {
+        private var image = ""
+        override fun onPreExecute() {
+            super.onPreExecute()
+            showProgress(true)
+        }
+
+        override fun doInBackground(vararg voids: Void?): Void? {
+
+            val businessItem = com.emegamart.lelys.utils.extensions.get<CurrentBusinessItem>(
+                KEY_CURRENT_BUSINESS,
+                this@SaveAndShareActivity
+            )
+        apiManager!!.savephotos(
+                ApiEndpoints.savephotos,
+                image,
+                businessItem!!.busi_id.toString()
+            )
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            super.onPostExecute(result)
+            showProgress(false)
+        }
+
+        init {
+            this.image = image
+        }
+    }
+
+    override fun isConnected(requestService: String?, isConnected: Boolean) {
+        Handler(Looper.getMainLooper()).post {
+            Global.dismissProgressDialog(this@SaveAndShareActivity)
+            if (!isConnected) {
+                Global.noInternetConnectionDialog(this@SaveAndShareActivity)
+            }
+        }
+    }
+
+    override fun onSuccessResponse(requestService: String?, responseString: String?, responseCode: Int) {
+        Handler(Looper.getMainLooper()).post {
+            Global.dismissProgressDialog(this@SaveAndShareActivity)
+            if (requestService.equals(ApiEndpoints.savephotos, ignoreCase = true)) {
+                try {
+                    Log.d("response", responseString!!)
+                    processResponse(responseString)
+                    if (status) {
+                        Global.showSuccessDialog(this@SaveAndShareActivity, message)
+                        val detailAct = Intent(
+                            this@SaveAndShareActivity,
+                            HomeActivity::class.java
+                        )
+                        detailAct.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(detailAct)
+                        finish()
+                        if (sharePhoto) {
+                            if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {
+                                val uri = Uri.parse(imagePath)
+                                val share = Intent(Intent.ACTION_SEND)
+                                share.type = "image/*"
+                                share.putExtra(Intent.EXTRA_STREAM, uri)
+                                startActivity(
+                                    Intent.createChooser(
+                                        share,
+                                        "Share Design!"
+                                    )
+                                )
+                            }
+                        }
+                    } else {
+                        Global.showFailDialog(this@SaveAndShareActivity, message)
+                    }
+                } catch (e: java.lang.Exception) {
+                }
+            }
+        }
+    }
+
+    override fun onErrorResponse(
+        requestService: String?,
+        responseString: String?,
+        responseCode: Int
+    ) {
+        Handler(Looper.getMainLooper()).post {
+            Global.dismissProgressDialog(this@SaveAndShareActivity)
+            Global.showFailDialog(this@SaveAndShareActivity, responseString)
+        }
+    }
+
+    fun processResponse(responseString: String?) {
+        status = false
+        message = ""
+        try {
+            val jsonObject = JSONObject(responseString)
+            if (jsonObject.has("status")) {
+                status = jsonObject.getBoolean("status")
+            }
+            if (jsonObject.has("message")) {
+                message = jsonObject.getString("message")
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }

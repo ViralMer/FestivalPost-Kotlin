@@ -44,6 +44,7 @@ class MyPostFragment : BaseFragment() {
 
         rvdata = view.findViewById<View>(R.id.rvdata) as RecyclerView
         val mLayoutManager = GridLayoutManager(activity!!, 3)
+
         rvdata!!.layoutManager = mLayoutManager
 
         linearLayout = view.findViewById(R.id.rlNoData)
@@ -144,7 +145,8 @@ class MyPostFragment : BaseFragment() {
         override fun onPostExecute(result: ArrayList<FileListItem>?) {
             super.onPostExecute(result)
             hideProgress()
-            adapter = PostAdapter(activity!!, dataArrayList)
+            adapter = PostAdapter(activity!!,dataArrayList)
+            dataArrayList.reverse()
             rvdata!!.adapter = adapter
         }
 

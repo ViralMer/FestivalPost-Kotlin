@@ -103,7 +103,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
                 business_id=businessItem!!.busi_id.toString()
             }
         }
-        planItemArrayList!!.add(PlanItemDetails("1","Basic Plan","1199"))
+        planItemArrayList!!.add(PlanItemDetails("1","Premium Plan","\u20B9 "+1199))
 
         viewPager = findViewById(R.id.planviewPager)
         viewPager!!.adapter = PagerAdapter()
