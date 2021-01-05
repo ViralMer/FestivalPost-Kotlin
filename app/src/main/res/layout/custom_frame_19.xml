@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/ivframebg"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/square_size"
+        android:layout_height="@dimen/_300sdp"
         android:background="@drawable/frame_19"
         android:orientation="vertical" />
 
@@ -15,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/linearLogo"
@@ -24,7 +25,7 @@
             android:layout_margin="@dimen/_5sdp"
             android:layout_gravity="right"
 
-            android:visibility="gone"
+            android:visibility="visible"
             >
 
             <ImageView
@@ -79,6 +80,7 @@ android:layout_height="@dimen/_60sdp"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="1"
+
                     android:textStyle="bold"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/_10sdp" />

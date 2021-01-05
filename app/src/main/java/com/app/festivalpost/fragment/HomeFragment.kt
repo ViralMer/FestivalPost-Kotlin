@@ -71,8 +71,7 @@ class HomeFragment : BaseFragment() {
     private var sessionManager: SessionManager? = null
 
 
-
-    var token : String?=null
+    var token: String? = null
     var businessDialogItemAdapter: BusinessDialogItemAdapter? = null
     var currentBusinessItemList = arrayListOf<CurrentBusinessItem?>()
     var rcvBusinessItem: RecyclerView? = null
@@ -86,10 +85,10 @@ class HomeFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view=  inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
         openAddImageDialog()
-        sessionManager= SessionManager(activity!!)
-        token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
+        sessionManager = SessionManager(activity!!)
+        token = sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         rcvCustomCategory = view.findViewById(R.id.customCategory)
         rcvCustomFestival = view.findViewById(R.id.customFestival)
         viewPager = view.findViewById(R.id.sliderviewPager)
@@ -102,7 +101,7 @@ class HomeFragment : BaseFragment() {
 
 
         tvPremium!!.onClick {
-            activity!!.launchActivity<PremiumActivity> {  }
+            activity!!.launchActivity<PremiumActivity> { }
         }
 
         imageLogo1!!.onClick {
@@ -112,15 +111,16 @@ class HomeFragment : BaseFragment() {
         }
 
         tvviewall!!.onClick {
-            activity!!.launchActivity<FestivalViewAllActivitty> {  }
+            activity!!.launchActivity<FestivalViewAllActivitty> { }
         }
 
         tvCustom!!.onClick {
             val currentBusinessItem =
-                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,activity!!)
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, activity!!)
             if (currentBusinessItem == null) {
                 val materialAlertDialogBuilder = AlertDialog.Builder(activity!!)
-                val inflater = activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val inflater =
+                    activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
                 val tvTitle: TextView
                 val tvMessage: TextView
@@ -135,7 +135,7 @@ class HomeFragment : BaseFragment() {
                 materialAlertDialogBuilder.setView(view).setCancelable(true)
                 val b = materialAlertDialogBuilder.create()
                 btnCancel.setOnClickListener { b.dismiss() }
-                btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> {  } }
+                btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> { } }
                 b.show()
             } else {
                 activity!!.launchActivity<ChooseFrameActivityNew> { }
@@ -146,9 +146,6 @@ class HomeFragment : BaseFragment() {
         loadHomePageData()
 
 
-
-
-
         // Auto start of viewpager
 
         // Auto start of viewpager
@@ -156,11 +153,8 @@ class HomeFragment : BaseFragment() {
         val Update = Runnable {
             if (currentPage == NUM_PAGES) {
                 currentPage = 0
-                Log.d("CurrentPage", "$currentPage NumberOfPage:$NUM_PAGES")
-
             }
             viewPager!!.setCurrentItem(currentPage++, true)
-            Log.d("CurrentPage1","$currentPage  NumberOfPage1:$NUM_PAGES")
 
 
         }
@@ -179,11 +173,7 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
     }
-
-
-
 
 
     inner class PagerAdapter : androidx.viewpager.widget.PagerAdapter() {
@@ -205,27 +195,25 @@ class HomeFragment : BaseFragment() {
                     ignoreCase = true
                 )
             ) {
-                Glide.with(activity!!).load(festivalItem.adv_image).error(R.drawable.placeholder_img).placeholder(
-                    R.drawable.placeholder_img
-                ).into(ivphoto)
+                Glide.with(activity!!).load(festivalItem.adv_image)
+                    .error(R.drawable.placeholder_img).placeholder(
+                        R.drawable.placeholder_img
+                    ).into(ivphoto)
 
             }
             ivphoto.onClick {
-                if(festivalItem.adv_link=="") {
+                if (festivalItem.adv_link == "") {
 
-                }
-                else{
+                } else {
                     val i = Intent(Intent.ACTION_VIEW)
                     i.data = Uri.parse(festivalItem.adv_link)
                     activity!!.startActivity(i)
                 }
             }
 
-            if (festivalItem.adv_number=="")
-            {
+            if (festivalItem.adv_number == "") {
                 ivWhatsapp.hide()
-            }
-            else{
+            } else {
                 ivWhatsapp.show()
             }
             ivWhatsapp.onClick {
@@ -276,7 +264,10 @@ class HomeFragment : BaseFragment() {
             return view
         }
 
-        private fun isPackageInstalled(packagename: String, packageManager: PackageManager): Boolean {
+        private fun isPackageInstalled(
+            packagename: String,
+            packageManager: PackageManager
+        ): Boolean {
             return try {
                 packageManager.getPackageGids(packagename)
                 true
@@ -322,16 +313,16 @@ class HomeFragment : BaseFragment() {
                     sessionManager!!.setBooleanValue(IS_PREMIUM, res.premium!!)
                     sessionManager!!.setStringValue(CURRENT_DATE, res.current_date!!)
                     sessionManager!!.setStringValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
-                    if (res.current_business.status=="1") {
-                        put(res.current_business, KEY_CURRENT_BUSINESS,activity!!)
-                    }
-                    else{
-                        put(null, KEY_CURRENT_BUSINESS,activity!!)
+                    if (res.current_business.status == "1") {
+                        put(res.current_business, KEY_CURRENT_BUSINESS, activity!!)
+                    } else {
+                        put(null, KEY_CURRENT_BUSINESS, activity!!)
                     }
 
 
-                    val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,activity!!)
-                    if (currentBusinessItem!=null) {
+                    val currentBusinessItem =
+                        get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, activity!!)
+                    if (currentBusinessItem != null) {
                         if (currentBusinessItem!!.plan_name == "Free") {
                             tvPremium!!.show()
                         } else {
@@ -354,7 +345,8 @@ class HomeFragment : BaseFragment() {
                         LinearLayoutManager.HORIZONTAL,
                         false
                     )
-                    val customFestivalAdapter = CustomFestivalItemAdapter(activity!!, festivalArrayList)
+                    val customFestivalAdapter =
+                        CustomFestivalItemAdapter(activity!!, festivalArrayList)
                     rcvCustomFestival!!.adapter = customFestivalAdapter
 
 
@@ -369,13 +361,13 @@ class HomeFragment : BaseFragment() {
                         PagerAdapter().notifyDataSetChanged()
                     }
 
-                    viewPager!!.setOnPageChangeListener(object :ViewPager.OnPageChangeListener{
+                    viewPager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                         override fun onPageScrolled(
                             position: Int,
                             positionOffset: Float,
                             positionOffsetPixels: Int
                         ) {
-                            currentPage=position
+                            currentPage = position
                         }
 
                         override fun onPageSelected(position: Int) {
@@ -410,7 +402,7 @@ class HomeFragment : BaseFragment() {
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         activity!!.finish()
-                        sessionManager!!.setBooleanValue(IS_LOGGED_IN,false)
+                        sessionManager!!.setBooleanValue(IS_LOGGED_IN, false)
 
                     }
                     linearFestival!!.hide()
@@ -431,13 +423,12 @@ class HomeFragment : BaseFragment() {
     }
 
 
-
     private fun showBusinessCategoryDialog(context: Context) {
         val layout = LayoutInflater.from(context).inflate(R.layout.layout_business_dialog, null)
         rcvBusinessItem = layout.findViewById<View>(R.id.rcvManageBusiness) as RecyclerView
 
-        businessDialogItemAdapter= BusinessDialogItemAdapter(activity!!, currentBusinessItemList)
-        rcvBusinessItem!!.adapter=businessDialogItemAdapter
+        businessDialogItemAdapter = BusinessDialogItemAdapter(activity!!, currentBusinessItemList)
+        rcvBusinessItem!!.adapter = businessDialogItemAdapter
         val builder = AlertDialog.Builder(context)
             .setView(layout)
             .setCancelable(true)
@@ -445,14 +436,12 @@ class HomeFragment : BaseFragment() {
         alertDialog!!.show()
 
 
-
-
     }
 
     override fun onResume() {
         super.onResume()
         try {
-            val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS,activity!!)
+            val currentBusinessItem = get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, activity!!)
             if (currentBusinessItem != null) {
                 if (currentBusinessItem!!.busi_logo != null) {
                     Glide.with(this).load(currentBusinessItem!!.busi_logo)
@@ -468,27 +457,17 @@ class HomeFragment : BaseFragment() {
                 }
 
             }
-        }
-        catch (e:Exception)
-        {
+        } catch (e: Exception) {
 
         }
 
     }
 
 
-
-
-
-
-
-
-    companion object{
+    companion object {
         var alertDialog: AlertDialog? = null
         var imageLogo1: AppCompatImageView? = null
     }
-
-
 
 
 }

@@ -5,10 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -19,7 +16,6 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
-import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
@@ -83,6 +79,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
     var backpressed = true
     var background = false
     var ivframelogo: ImageView? = null
+    var frameNew: FrameLayout? = null
     var ivframebg: ImageView? = null
     var ivcall: ImageView? = null
     var ivEmail: ImageView? = null
@@ -195,12 +192,8 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         height = displayMetrics.heightPixels
         width = displayMetrics.widthPixels
-        val params=layroot!!.layoutParams
-        params.height=width
-        params.width=width
-        val params1=llframe!!.layoutParams
-        params1.height=width
-        params1.width=width
+
+
 
         photoEditorView = findViewById<View>(R.id.photoEditorView) as PhotoEditorView
         mPhotoEditor = PhotoEditor.Builder(this, photoEditorView!!)
@@ -256,25 +249,25 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         }
         Log.d("FrmaeSize", "" + framePreviewArrayList.size)
         try {
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17,"frame_17.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18,"frame_18.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_19,"frame_19.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_20,"frame_20.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_21,"frame_21.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_1,"frame_01.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_3,"frame_03.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_4,"frame_04.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_5,"frame_05.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_6,"frame_06.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_7,"frame_07.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_8,"frame_08.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9,"frame_01.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11,"frame_03.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12,"frame_04.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_13,"frame_05.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_14,"frame_06.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_15,"frame_07.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16,"frame_08.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17, "frame_17.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18, "frame_18.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_19, "frame_19.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_20, "frame_20.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_21, "frame_21.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_1, "frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_3, "frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_4, "frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_5, "frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_6, "frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_7, "frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_8, "frame_08.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9, "frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11, "frame_03.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12, "frame_04.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_13, "frame_05.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_14, "frame_06.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_15, "frame_07.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16, "frame_08.png"))
 
         } catch (e: OutOfMemoryError) {
 
@@ -851,25 +844,30 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                     val handler = Handler()
                     handler.postDelayed({
                         Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
+
                         val params = ivframebg!!.layoutParams
+                        val params1 = layroot!!.layoutParams
                         params.width = width
+                        params1.width = width
                         params.height = width
+                        params1.height = width
                         layroot!!.isDrawingCacheEnabled = true
+
                         layroot!!.buildDrawingCache(true)
                         val savedBmp = Bitmap.createBitmap(
                             layroot!!.drawingCache, 0, 0, width, width
                         )
                         layroot!!.isDrawingCacheEnabled = false
-                        //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                        val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)
                         try {
                             //Write file
                             val filename = "bitmap.png"
                             val stream = openFileOutput(filename, MODE_PRIVATE)
-                            savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                            newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                             //Cleanup
                             stream.close()
-                            savedBmp.recycle()
+                            newsaveBmp.recycle()
 
                             //Pop intent
                             val in1 = Intent(
@@ -891,24 +889,27 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                     handler.postDelayed({
                         //Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
                         val params = ivframebg!!.layoutParams
+                        val params1 = layroot!!.layoutParams
                         params.width = width
+                        params1.width = width
                         params.height = width
+                        params1.height = width
                         layroot!!.isDrawingCacheEnabled = true
                         layroot!!.buildDrawingCache(true)
                         val savedBmp = Bitmap.createBitmap(
                             layroot!!.drawingCache, 0, 0, width, width
                         )
                         layroot!!.isDrawingCacheEnabled = false
-                        //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                        val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)
                         try {
                             //Write file
                             val filename = "bitmap.png"
                             val stream = openFileOutput(filename, MODE_PRIVATE)
-                            savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                            newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                             //Cleanup
                             stream.close()
-                            savedBmp.recycle()
+                            newsaveBmp.recycle()
 
                             //Pop intent
                             val in1 = Intent(
@@ -932,24 +933,26 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 handler.postDelayed({
                     //Global.dismissProgressDialog(this@ChooseFrameForPhotoActivityNew)
                     val params = ivframebg!!.layoutParams
+
                     params.width = width
                     params.height = width
+
                     layroot!!.isDrawingCacheEnabled = true
                     layroot!!.buildDrawingCache(true)
                     val savedBmp = Bitmap.createBitmap(
-                        layroot!!.drawingCache, 0, 0, width, width
+                        layroot!!.drawingCache
                     )
                     layroot!!.isDrawingCacheEnabled = false
-                    //val newsaveBmp=getResizedBitmap(savedBmp,1024,1024)
+                    val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)
                     try {
                         //Write file
                         val filename = "bitmap.png"
                         val stream = openFileOutput(filename, MODE_PRIVATE)
-                        savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                        newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                         //Cleanup
                         stream.close()
-                        savedBmp.recycle()
+                        newsaveBmp.recycle()
 
                         //Pop intent
                         val in1 = Intent(
@@ -1122,7 +1125,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             websiteLine.setVisibility(View.VISIBLE);
         }*/
 
-        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, this)
 
         imagemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNewNotRotate.OnGestureControl {
@@ -1142,7 +1145,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
                 emailValue = false
                 phoneValue = false
-                background =false
+                background = false
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
@@ -1165,7 +1168,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivemailclose!!.visibility = View.GONE
                 ivnameClose!!.visibility = View.GONE
                 emailValue = false
-                background =false
+                background = false
                 phoneValue = false
                 websiteValue = false
                 addressValue = false
@@ -1196,7 +1199,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 addressValue = false
                 textallSelected = false
                 nameValue = false
-                background =false
+                background = false
             }
 
             override fun onLongClick() {}
@@ -1220,7 +1223,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
-                background =false
+                background = false
                 nameValue = false
             }
         })
@@ -1245,7 +1248,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
-                background =false
+                background = false
                 nameValue = false
             }
 
@@ -1267,7 +1270,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
                 emailValue = true
                 phoneValue = false
-                background =false
+                background = false
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
@@ -1295,7 +1298,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 phoneValue = false
                 websiteValue = true
                 addressValue = false
-                background =false
+                background = false
                 textallSelected = false
                 nameValue = false
             }
@@ -1319,7 +1322,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 emailValue = false
                 phoneValue = false
                 websiteValue = true
-                background =false
+                background = false
                 addressValue = false
                 textallSelected = false
                 nameValue = false
@@ -1340,7 +1343,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 addressValue = true
                 textallSelected = false
                 nameValue = false
-                background =false
+                background = false
                 linearLogo!!.setBackgroundResource(0)
                 frameAddress!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.VISIBLE
@@ -1365,7 +1368,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = true
                 textallSelected = false
-                background =false
+                background = false
                 nameValue = false
                 frameAddress!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.VISIBLE
@@ -1388,7 +1391,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearLogo!!.setBackgroundResource(0)
                 emailValue = false
                 phoneValue = false
-                background =false
+                background = false
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
@@ -1416,7 +1419,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 websiteValue = false
                 addressValue = false
                 textallSelected = false
-                background =false
+                background = false
                 nameValue = true
                 frameName!!.visibility = View.VISIBLE
                 ivaddressclose!!.visibility = View.GONE
@@ -1971,7 +1974,9 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                     )
                 ) {
                     //setFrameNEW(photoItem);
-                    Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem.dynamic_images).into(ivframebg!!)
+                    Glide.with(this@ChooseFrameForPhotoActivityNew).load(photoItem.dynamic_images).into(
+                        ivframebg!!
+                    )
                 }
             }
         }
@@ -2141,6 +2146,25 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         // RESIZE THE BIT MAP
         matrix.postScale(scaleWidth, scaleHeight)
         // "RECREATE" THE NEW BITMAP
-        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false)
+        return Bitmap.createBitmap(bm, 0, 0, newWidth, newHeight, matrix, false)
+    }
+
+    fun scaleBitmap(bitmap: Bitmap, wantedWidth: Int, wantedHeight: Int): Bitmap? {
+        val originalWidth = bitmap.width.toFloat()
+        val originalHeight = bitmap.height.toFloat()
+        val output = Bitmap.createBitmap(wantedWidth, wantedHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val m = Matrix()
+        val scalex = wantedWidth / originalWidth
+        val scaley = wantedHeight / originalHeight
+        val xTranslation = 0.0f
+        val yTranslation = (wantedHeight - originalHeight * scaley) / 2.0f
+        m.postTranslate(xTranslation, yTranslation)
+        m.preScale(scalex, scaley)
+        // m.setScale((float) wantedWidth / bitmap.getWidth(), (float) wantedHeight / bitmap.getHeight());
+        val paint = Paint()
+        paint.setFilterBitmap(true)
+        canvas.drawBitmap(bitmap, m, paint)
+        return output
     }
 }

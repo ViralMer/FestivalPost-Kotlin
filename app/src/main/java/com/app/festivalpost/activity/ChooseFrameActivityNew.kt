@@ -6,14 +6,12 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
@@ -153,6 +151,8 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
     var alertDialog: AlertDialog? = null
     var sessionManager: SessionManager? = null
     var token : String?=null
+    var width = 0
+    var height = 0
 
 
     override fun onResume() {
@@ -172,6 +172,11 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         StrictMode.setThreadPolicy(policy)
         frameLayout = findViewById(R.id.frameLayout)
         setActionbar()
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        height = displayMetrics.heightPixels
+        width = displayMetrics.widthPixels
+
         sessionManager= SessionManager(this)
         token=sessionManager!!.getValueString(USER_TOKEN)
         selectedFontTypeface = Typeface.createFromAsset(assets, "fonts/aileron_light.otf")
@@ -1639,16 +1644,17 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                     layroot!!.drawingCache
                 )
                 layroot!!.isDrawingCacheEnabled = false
-                //val newsaveBmp = getResizedBitmap(savedBmp, 1080, 1080)
+                val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)
                 try {
                     //Write file
                     val filename = "bitmap.png"
                     val stream = openFileOutput(filename, MODE_PRIVATE)
-                    savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    //savedBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    newsaveBmp!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                     //Cleanup
                     stream.close()
-                    savedBmp.recycle()
+                    newsaveBmp.recycle()
 
                     //Pop intent
                     val in1 = Intent(this@ChooseFrameActivityNew, SaveAndShareActivity::class.java)
@@ -1769,11 +1775,10 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 val realpath = getFilePath(imagereturnintent)
                 profilePath = realpath
                 val imgparams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
                 )
                 imgparams.height = Global.pxtoSdp(applicationContext, 300)
-                imgparams.width = Global.pxtoSdp(applicationContext, 300)
                 ivbackground!!.layoutParams = imgparams
                 ivbackground!!.setImageURI(imageuri)
                 Log.d("Real Path : ", "" + realpath)
@@ -1968,5 +1973,24 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         matrix.postScale(scaleWidth, scaleHeight)
         // "RECREATE" THE NEW BITMAP
         return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false)
+    }
+
+    fun scaleBitmap(bitmap: Bitmap, wantedWidth: Int, wantedHeight: Int): Bitmap? {
+        val originalWidth = bitmap.width.toFloat()
+        val originalHeight = bitmap.height.toFloat()
+        val output = Bitmap.createBitmap(wantedWidth, wantedHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val m = Matrix()
+        val scalex = wantedWidth / originalWidth
+        val scaley = wantedHeight / originalHeight
+        val xTranslation = 0.0f
+        val yTranslation = (wantedHeight - originalHeight * scaley) / 2.0f
+        m.postTranslate(xTranslation, yTranslation)
+        m.preScale(scalex, scaley)
+        // m.setScale((float) wantedWidth / bitmap.getWidth(), (float) wantedHeight / bitmap.getHeight());
+        val paint = Paint()
+        paint.setFilterBitmap(true)
+        canvas.drawBitmap(bitmap, m, paint)
+        return output
     }
 }

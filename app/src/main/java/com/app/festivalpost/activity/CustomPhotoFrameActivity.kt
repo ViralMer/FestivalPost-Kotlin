@@ -254,12 +254,14 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         height = displayMetrics.heightPixels
         width = displayMetrics.widthPixels
-        val params=layroot!!.layoutParams
+  /*      val params=layroot!!.layoutParams
+
         params.height=width
         params.width=width
-        val params1=llframe!!.layoutParams
+  */      /*val params1=llframe!!.layoutParams
         params1.height=width
         params1.width=width
+*/
         ivbackground = findViewById<View>(R.id.ivbackground) as ImageView
         Log.d("Phot_PATH",""+photo_path!!)
         if (photo_path != null) {
@@ -862,7 +864,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                 }
                 val savedBmp = Bitmap.createBitmap(frameLayout!!.drawingCache)
                 frameLayout!!.isDrawingCacheEnabled = false
-                val newsaveBmp=getResizedBitmap(savedBmp,1080,1080)
+                val newsaveBmp=scaleBitmap(savedBmp,1080,1080)
                 try {
                     //Write file
                     val filename = "bitmap.png"
@@ -949,6 +951,16 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
         linearWebsite!!.setBackgroundResource(0)
         linearLogo!!.setBackgroundResource(0)
         linearName!!.setBackgroundResource(0)
+
+        /*val imgparams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        imgparams.height = width
+        imgparams.width =  width
+        ivframebg!!.layoutParams=imgparams*/
+
+
         imagemultiTouchListenerNew.setOnGestureControl(object :
             MultiTouchListenerNewNotRotate.OnGestureControl {
             override fun onClick() {
@@ -1891,6 +1903,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             websiteValue = false
             textallSelected = false
             textviewSelected = false
+            nameValue=false
         }
         btncancel.setOnClickListener { dialog.dismiss() }
         dialog.show()
@@ -2240,5 +2253,24 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             //showProgress(false)
             super.onPostExecute(aVoid)
         }
+    }
+
+    fun scaleBitmap(bitmap: Bitmap, wantedWidth: Int, wantedHeight: Int): Bitmap? {
+        val originalWidth = bitmap.width.toFloat()
+        val originalHeight = bitmap.height.toFloat()
+        val output = Bitmap.createBitmap(wantedWidth, wantedHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val m = Matrix()
+        val scalex = wantedWidth / originalWidth
+        val scaley = wantedHeight / originalHeight
+        val xTranslation = 0.0f
+        val yTranslation = (wantedHeight - originalHeight * scaley) / 2.0f
+        m.postTranslate(xTranslation, yTranslation)
+        m.preScale(scalex, scaley)
+        // m.setScale((float) wantedWidth / bitmap.getWidth(), (float) wantedHeight / bitmap.getHeight());
+        val paint = Paint()
+        paint.setFilterBitmap(true)
+        canvas.drawBitmap(bitmap, m, paint)
+        return output
     }
 }

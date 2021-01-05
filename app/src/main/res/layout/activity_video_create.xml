@@ -400,7 +400,7 @@
             android:layout_height="wrap_content"
             android:weightSum="2"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/_40sdp"
+            android:layout_margin="@dimen/_10sdp"
             android:orientation="horizontal"
             >
 

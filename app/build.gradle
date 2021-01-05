@@ -14,8 +14,8 @@ android {
         applicationId "com.app.festivalpost"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 41
-        versionName "2.0.2"
+        versionCode 43
+        versionName "2.0.3"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -135,6 +135,8 @@ dependencies {
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
     //implementation 'com.netcompss:ffmpeg4android_lib:41.08'
     implementation 'com.hbb20:ccp:2.4.2'
     implementation 'com.jaredrummler:colorpicker:1.1.0'

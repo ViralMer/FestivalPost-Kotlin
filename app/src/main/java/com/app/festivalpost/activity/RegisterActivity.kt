@@ -260,8 +260,7 @@ class RegisterActivity : AppBaseActivity() {
             override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                 val code = phoneAuthCredential.smsCode
                 if (code != null) {
-                    etOtp!!.setText(code)
-                    verifyCode(code)
+                    //verifyCode(code)
                 }
             }
 

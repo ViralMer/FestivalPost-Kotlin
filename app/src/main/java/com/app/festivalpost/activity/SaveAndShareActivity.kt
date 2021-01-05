@@ -9,14 +9,12 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
@@ -57,7 +55,11 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
     var image_type: String? = null
     var sessionManager: SessionManager? = null
     var banner_container: LinearLayout? = null
+    var linearSave: LinearLayout? = null
     private var adView: AdView? = null
+    var width = 0
+    var height = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -70,11 +72,19 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
-
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        height = displayMetrics.heightPixels
+        width = displayMetrics.widthPixels
         banner_container = findViewById(R.id.banner_container)
+        linearSave = findViewById(R.id.linearSave)
         adView = AdView(this, "IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID", AdSize.BANNER_HEIGHT_50)
 
-
+        /*val params= FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        params.width=width
+        params.height=width
+        linearSave!!.layoutParams=params
+*/
         // Find the Ad Container
         // Add the ad view to your activity layout
         if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {

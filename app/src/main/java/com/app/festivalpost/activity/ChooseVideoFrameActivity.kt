@@ -5,10 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
 import android.os.Bundle
@@ -81,6 +78,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
     var storeValue: String? = null
     var framePreview: FramePreview? = null
     var ivframelogo: ImageView? = null
+    var frameNew: FrameLayout? = null
     var ivframebg: ImageView? = null
     var ivcall: ImageView? = null
     var ivEmail: ImageView? = null
@@ -175,10 +173,6 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         ivVideo =findViewById(R.id.ivvideo) as AndExoPlayerView
         ivVideo!!.setSource(video_path)
 
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        height = displayMetrics.heightPixels
-        width = displayMetrics.widthPixels
 
 
 
@@ -523,6 +517,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         )
         ivframelogo = frame_view.findViewById(R.id.ivframelogo)
         ivframebg = frame_view.findViewById(R.id.ivframebg)
+
         ivcall = frame_view.findViewById(R.id.ivPhone)
         ivEmail = frame_view.findViewById(R.id.ivEmail)
         ivWebsite = frame_view.findViewById(R.id.ivWebsite)
@@ -572,6 +567,16 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         linearWebsite!!.setBackgroundResource(0)
         linearLogo!!.setBackgroundResource(0)
         linearName!!.setBackgroundResource(0)
+
+        /*val imgparams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        imgparams.height = width
+        imgparams.width =  width
+        ivframebg!!.layoutParams=imgparams
+        frameNew!!.layoutParams=imgparams
+*/
 
 
         /*if (index1==1)
@@ -1460,7 +1465,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                     layroot!!.drawingCache
                 )
                 layroot!!.isDrawingCacheEnabled = false
-                val newsaveBmp=getResizedBitmap(savedBmp,1080,1080)
+                val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)
                 try {
                     //Write file
                     val filename = "video_bitmap.png"
@@ -1867,6 +1872,25 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun scaleBitmap(bitmap: Bitmap, wantedWidth: Int, wantedHeight: Int): Bitmap? {
+        val originalWidth = bitmap.width.toFloat()
+        val originalHeight = bitmap.height.toFloat()
+        val output = Bitmap.createBitmap(wantedWidth, wantedHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val m = Matrix()
+        val scalex = wantedWidth / originalWidth
+        val scaley = wantedHeight / originalHeight
+        val xTranslation = 0.0f
+        val yTranslation = (wantedHeight - originalHeight * scaley) / 2.0f
+        m.postTranslate(xTranslation, yTranslation)
+        m.preScale(scalex, scaley)
+        // m.setScale((float) wantedWidth / bitmap.getWidth(), (float) wantedHeight / bitmap.getHeight());
+        val paint = Paint()
+        paint.setFilterBitmap(true)
+        canvas.drawBitmap(bitmap, m, paint)
+        return output
     }
 
 }

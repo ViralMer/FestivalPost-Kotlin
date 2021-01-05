@@ -2,6 +2,7 @@ package com.app.festivalpost
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -98,4 +99,6 @@ open class AppBaseActivity : AppCompatActivity(),View.OnFocusChangeListener {
             v.background = resources.getDrawable(R.drawable.edit_text_border)
         }
     }
+
+    open fun onActivityResult(requestCode: Int?, resultCode: Int?, data: Intent?) {}
 }

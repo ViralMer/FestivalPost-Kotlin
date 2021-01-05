@@ -1,35 +1,29 @@
 package com.app.festivalpost.activity
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
-import com.app.festivalpost.apifunctions.ApiEndpoints
-import com.app.festivalpost.apifunctions.ApiManager
-import com.app.festivalpost.apifunctions.ApiResponseListener
-import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.UserDataItem
+import com.app.festivalpost.photoeditor.SmsBroadcastReceiver
+import com.app.festivalpost.photoeditor.SmsBroadcastReceiver.SmsBroadcastReceiverListener
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
-import com.google.android.gms.tasks.TaskExecutors
+import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
@@ -37,13 +31,17 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.iid.FirebaseInstanceId
 import com.hbb20.CountryCodePicker
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.et_name
 import kotlinx.android.synthetic.main.activity_login.et_number
 import kotlinx.android.synthetic.main.activity_login.spinner
 import kotlinx.android.synthetic.main.activity_register.*
-import org.json.JSONObject
 import java.util.concurrent.TimeUnit
+
 
 class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
@@ -64,6 +62,11 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     var device_id : String?=null
     var device_type : String?=null
 
+   // var smsBroadcastReceiver:SmsBroadcastReceiver?=null
+    val REQ_USER_CONSENT:Int?=1234
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -72,7 +75,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         sessionManager= SessionManager(this)
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         ivBack = toolbar.findViewById(R.id.ivBack)
-
+        //smsBroadcastReceiver = SmsBroadcastReceiver()
         user_token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         device_token=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
         device_id=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
@@ -86,7 +89,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         mAuth = FirebaseAuth.getInstance();
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
-            sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN,token)
+            sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN, token)
 
         }
         val isLoogedIn=sessionManager!!.getBooleanValue(Constants.SharedPref.IS_LOGGED_IN)
@@ -131,40 +134,53 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         showProgress(true)
         callApi(
 
-            getRestApis().login(etNumber!!.text.toString(),device_id!!,device_type!!,device_token!!),
+            getRestApis().login(
+                etNumber!!.text.toString(),
+                device_id!!,
+                device_type!!,
+                device_token!!
+            ),
             onApiSuccess = {
                 showProgress(false)
-                if (it.status!!)
-                {
-                launchActivity<HomeActivity> {
-                    try {
-                        sessionManager!!.setStringValue(Constants.SharedPref.USER_TOKEN,it.token!!)
+                if (it.status!!) {
+                    launchActivity<HomeActivity> {
+                        try {
+                            sessionManager!!.setStringValue(
+                                Constants.SharedPref.USER_TOKEN,
+                                it.token!!
+                            )
 
-                        var dataarraylist= arrayListOf<UserDataItem?>()
-                        dataarraylist=it.data
-                        for (i in 0 until dataarraylist.size) {
-                            sessionManager!!.setStringValue(Constants.SharedPref.USER_NAME,dataarraylist[i]!!.name!!)
-                            sessionManager!!.setStringValue(Constants.SharedPref.USER_NUMBER,dataarraylist[i]!!.mobile!!)
-                            sessionManager!!.setStringValue(Constants.SharedPref.USER_EMAIL,dataarraylist[i]!!.email!!)
+                            var dataarraylist = arrayListOf<UserDataItem?>()
+                            dataarraylist = it.data
+                            for (i in 0 until dataarraylist.size) {
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_NAME,
+                                    dataarraylist[i]!!.name!!
+                                )
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_NUMBER,
+                                    dataarraylist[i]!!.mobile!!
+                                )
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_EMAIL,
+                                    dataarraylist[i]!!.email!!
+                                )
+
+                            }
+                            sessionManager!!.setBooleanValue(
+                                Constants.SharedPref.IS_LOGGED_IN,
+                                true
+                            )
+                            finish()
+                        } catch (e: java.lang.Exception) {
 
                         }
-                        sessionManager!!.setBooleanValue(Constants.SharedPref.IS_LOGGED_IN, true)
-                        finish()
-                    } catch (e: java.lang.Exception) {
 
                     }
 
-                }
 
-
-
-
-
-                }
-                else{
-                    if (it.message!!.equals("Mobile number not registered. Please register first")) {
-                        toast(it.message)
-                    }
+                } else {
+                    toast(it.message!!)
                 }
 
 
@@ -257,19 +273,20 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                 showProgress(false)
                 verificationId = s
                 token = forceResendingToken
+                //startSmsUserConsent()
                 Toast.makeText(
                     this@LoginActivity,
                     "OTP sent to your mobile number.",
                     Toast.LENGTH_SHORT
                 ).show()
                 showPopupDialog(this@LoginActivity)
+                //startSmsUserConsent()
             }
 
             override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                 val code = phoneAuthCredential.smsCode
                 if (code != null) {
-                    etOtp!!.setText(code)
-                    verifyCode(code)
+                    //verifyCode(code)
                 }
             }
 
@@ -330,6 +347,84 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         alertDialog.show()
 
 
+    }
+
+    private fun saveReadSmsPermission() {
+        Dexter.withContext(this)
+            .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if (report.areAllPermissionsGranted()) {
+                        //verifyCode("")
+
+                    } else {
+
+
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: List<PermissionRequest>,
+                    token: PermissionToken
+                ) {
+                    token.continuePermissionRequest()
+                }
+            }).check()
+    }
+
+    private fun startSmsUserConsent() {
+        val client = SmsRetriever.getClient(this)
+        //We can add sender phone number or leave it blank
+        // I'm adding null here
+        client.startSmsUserConsent(null).addOnSuccessListener {
+
+        }.addOnFailureListener {
+
+        }
+    }
+
+    /*private fun registerBroadcastReceiver() {
+        smsBroadcastReceiver = SmsBroadcastReceiver()
+        smsBroadcastReceiver!!.smsBroadcastReceiverListener = object : SmsBroadcastReceiverListener {
+            override fun onSuccess(intent: Intent?) {
+                startActivityForResult(intent, REQ_USER_CONSENT!!)
+            }
+
+            override fun onFailure() {}
+        }
+        val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
+        registerReceiver(smsBroadcastReceiver, intentFilter)
+    }*/
+
+    override fun onStart() {
+        super.onStart()
+        //registerBroadcastReceiver();
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //unregisterReceiver(smsBroadcastReceiver);
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_USER_CONSENT) {
+            if (resultCode == RESULT_OK && data != null) {
+                //That gives all message to us.
+                // We need to get the code from inside with regex
+                val message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
+                Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
+                /*textViewMessage.setText(
+                    String.format(
+                        "%s - %s",
+                        getString(android.R.string.received_message),
+                        message
+                    )
+                )*/
+                //getOtpFromMessage(message)
+            }
+        }
     }
 
 

@@ -613,5 +613,6 @@
     <string name="lbl_premium_plan">Premium Plan</string>
     <string name="lbl_plan_two"><strike>3299 Rs.</strike></string>
     <string name="lbl_offer">*Offer valid till 26th January</string>
+    <string name="hint_otp">Enter your otp</string>
 
 </resources>

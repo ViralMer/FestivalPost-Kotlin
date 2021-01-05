@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
+    android:id="@+id/frameNew"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/ivframebg"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/square_size"
+        android:layout_height="@dimen/_300sdp"
         android:background="@drawable/frame_21"
+
         android:orientation="vertical" />
 
     <FrameLayout

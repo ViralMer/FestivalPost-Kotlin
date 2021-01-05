@@ -68,7 +68,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/_5sdp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_300sdp"
         android:layout_gravity="center">
 
         <LinearLayout

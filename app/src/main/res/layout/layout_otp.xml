@@ -71,7 +71,7 @@
         android:layout_marginRight="@dimen/_15sdp"
         android:inputType="number"
         android:background="@drawable/edit_text_border"
-        android:hint="@string/hint_name"
+        android:hint="@string/hint_otp"
         android:padding="@dimen/_10sdp" />
 
 
