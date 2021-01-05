@@ -8,17 +8,16 @@ import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
-import android.os.AsyncTask.execute
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
@@ -28,14 +27,16 @@ import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
 import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
-import com.app.festivalpost.models.BusinessItem
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
+import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
 import com.app.festivalpost.utils.SessionManager
 import com.emegamart.lelys.utils.extensions.get
 import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.toast
+import com.facebook.ads.AdSize
+import com.facebook.ads.AdView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -46,6 +47,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
+
 class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
     var apiManager: ApiManager? = null
     var status = false
@@ -54,8 +56,8 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
     var bmp: Bitmap? = null
     var image_type: String? = null
     var sessionManager: SessionManager? = null
-
-
+    var banner_container: LinearLayout? = null
+    private var adView: AdView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -63,13 +65,24 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
             WindowManager.LayoutParams.FLAG_SECURE
         )
         setContentView(R.layout.activity_save_and_share)
-        sessionManager=SessionManager(this)
+        sessionManager = SessionManager(this)
         apiManager = ApiManager(this@SaveAndShareActivity)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
 
+        banner_container = findViewById(R.id.banner_container)
+        adView = AdView(this, "IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID", AdSize.BANNER_HEIGHT_50)
 
+
+        // Find the Ad Container
+        // Add the ad view to your activity layout
+        if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
+            banner_container!!.addView(adView)
+            adView!!.loadAd()
+        }
+
+        // Request an ad
 
         val bundle = intent.extras
         if (bundle != null) {
@@ -150,12 +163,10 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                         imagePath = ""
                         if (bmp != null) {
                             imagePath = SaveImage(bmp!!)
-                            /*if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!)
-                            {
+                            if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
                                 SavePhotoAsync(imagePath!!).execute()
-                                Log.d("ImageCalled",""+imagePath)
-                            }
-                            else {*/
+                                Log.d("ImageCalled", "" + imagePath)
+                            } else {
                                 if (sharePhoto) {
                                     if (imagePath != null && !imagePath.equals(
                                             "",
@@ -180,9 +191,10 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                                     scanner(imagePath!!)
                                     finish()
                                 }
-
-                                toast("Image Saved Successfully")
                             }
+
+                            toast("Image Saved Successfully")
+                        }
                         /*}*/
                     } else {
                         Toast.makeText(
@@ -369,10 +381,11 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                 this@SaveAndShareActivity
             )
         apiManager!!.savephotos(
-                ApiEndpoints.savephotos,
-                image,
-                businessItem!!.busi_id.toString()
-            )
+            ApiEndpoints.savephotos,
+            image,
+            businessItem!!.busi_id.toString(),
+            sessionManager!!.getValueString(USER_TOKEN)
+        )
             return null
         }
 
@@ -395,7 +408,11 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
         }
     }
 
-    override fun onSuccessResponse(requestService: String?, responseString: String?, responseCode: Int) {
+    override fun onSuccessResponse(
+        requestService: String?,
+        responseString: String?,
+        responseCode: Int
+    ) {
         Handler(Looper.getMainLooper()).post {
             Global.dismissProgressDialog(this@SaveAndShareActivity)
             if (requestService.equals(ApiEndpoints.savephotos, ignoreCase = true)) {
@@ -461,5 +478,6 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
             e.printStackTrace()
         }
     }
+
 
 }

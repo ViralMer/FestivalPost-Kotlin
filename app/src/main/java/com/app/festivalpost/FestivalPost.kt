@@ -12,6 +12,7 @@ import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TOKEN
 import com.app.festivalpost.utils.Constants.KeyIntent.DEVICE_TYPE
 import com.app.festivalpost.utils.SessionManager
 import com.emegamart.lelys.utils.SharedPrefUtils
+import com.facebook.ads.AudienceNetworkAds
 
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +34,7 @@ class FestivalPost : MultiDexApplication() {
         sessionManager= SessionManager(this)
         FirebaseApp.initializeApp(appInstance)
         val deviceInfo = DeviceInfo1(this)
-
+        AudienceNetworkAds.initialize(this);
         sessionManager!!.setStringValue(DEVICE_TYPE,"Android")
         sessionManager!!.setStringValue(DEVICE_ID,deviceInfo.deviceUDID)
 

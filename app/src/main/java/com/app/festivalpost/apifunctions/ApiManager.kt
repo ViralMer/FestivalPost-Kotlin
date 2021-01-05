@@ -576,7 +576,7 @@ class ApiManager {
         }
     }
 
-    fun savephotos(servicename: String, image: String, business_id: String?) {
+    fun savephotos(servicename: String, image: String, business_id: String?,token: String?) {
         if (ConnectivityReceiver.isConnected) {
             var result = ""
             val charset = "UTF-8"
@@ -585,6 +585,7 @@ class ApiManager {
                     MultipartUtility(BuildConfig.URL_NAME.toString() + servicename, charset)
 
                 multipart.addFormField("business_id", business_id)
+                multipart.addFormField("token", token)
                 if (image != "") {
                     multipart.addFilePart("image", File(image))
                 }
