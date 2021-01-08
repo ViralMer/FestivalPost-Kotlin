@@ -3,9 +3,11 @@ package com.app.festivalpost.fragment
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import com.app.festivalpost.BuildConfig
 import com.app.festivalpost.R
@@ -28,12 +31,29 @@ import com.app.festivalpost.utils.Constants.SharedPref.USER_NAME
 import com.app.festivalpost.utils.Constants.SharedPref.USER_NUMBER
 import com.app.festivalpost.utils.Constants.SharedPref.USER_TOKEN
 import com.app.festivalpost.utils.SessionManager
+import com.arthenica.mobileffmpeg.Config.getPackageName
 import com.emegamart.lelys.utils.extensions.launchActivity
 import com.emegamart.lelys.utils.extensions.onClick
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.review.ReviewInfo
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+
 
 class AccountFragment : BaseFragment() {
 
     var sessionManager: SessionManager? = null
+    var reviewInfo: ReviewInfo? = null
+    var manager: ReviewManager? = null
+    private var appUpdateManager: AppUpdateManager?=null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +73,32 @@ class AccountFragment : BaseFragment() {
         val iv_edit = view.findViewById<View>(R.id.iv_edit) as AppCompatImageView
 
         sessionManager = SessionManager(activity!!)
+        initializeFirebase()
+        appUpdateManager = AppUpdateManagerFactory.create(activity!!)
+        val appUpdateInfoTask = appUpdateManager!!.appUpdateInfo
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                // For a flexible update, use AppUpdateType.FLEXIBLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                // Request the update.
+                appUpdateManager!!.startUpdateFlowForResult(
+                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
+                    appUpdateInfo,
+                    // Or 'AppUpdateType.FLEXIBLE' for flexible updates.
+                    AppUpdateType.IMMEDIATE,
+                    // The current activity making the update request.
+                    activity!!,
+                    // Include a request code to later monitor this update request.
+                    123)
+            }
+        }
+
+
+
+
+
 
         linearShareus.onClick {
             try {
@@ -72,6 +118,10 @@ class AccountFragment : BaseFragment() {
                 //e.toString();
             }
         }
+
+        checkUpdate()
+
+
         linearRateus.onClick {
             val uri = Uri.parse("market://details?id=" + activity!!.packageName)
             val goToMarket = Intent(Intent.ACTION_VIEW, uri)
@@ -80,6 +130,25 @@ class AccountFragment : BaseFragment() {
             } catch (e: ActivityNotFoundException) {
                 Toast.makeText(activity, "Couldn't launch the market", Toast.LENGTH_LONG).show()
             }
+
+
+            ///////////********** In App Review Code ***********////////////////////
+            /*manager= ReviewManagerFactory.create(activity!!)
+            val request = manager!!.requestReviewFlow()
+            request.addOnCompleteListener { request1 ->
+                if (request.isSuccessful) {
+                    // We got the ReviewInfo object
+                    val reviewInfo = request1.result
+                    val flow = manager!!.launchReviewFlow(activity!!, reviewInfo)
+                    flow.addOnCompleteListener { _ ->
+                        // The flow has finished. The API does not indicate whether the user
+                        // reviewed or not, or even whether the review dialog was shown. Thus, no
+                        // matter the result, we continue our app flow.
+                    }
+                } else {
+                    // There was some problem, continue regardless of the result.
+                }
+            }*/
         }
 
         layTerms.setOnClickListener(View.OnClickListener {
@@ -121,7 +190,7 @@ class AccountFragment : BaseFragment() {
             }
         }
 
-        iv_edit.onClick { activity!!.launchActivity<EditProfileActivity> {  } }
+        iv_edit.onClick { activity!!.launchActivity<EditProfileActivity> { } }
 
         linearMyPost.onClick {
             activity!!.launchActivity<MyPostActivity> {
@@ -140,9 +209,35 @@ class AccountFragment : BaseFragment() {
 
         return view
     }
+    fun initializeFirebase() {
+        if (FirebaseApp.getApps(activity!!).isEmpty()) {
+            FirebaseApp.initializeApp(activity!!, FirebaseOptions.fromResource(activity!!)!!)
+        }
+        val config = FirebaseRemoteConfig.getInstance()
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setDeveloperModeEnabled(BuildConfig.DEBUG)
+            .build()
+        config.setConfigSettings(configSettings)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun checkUpdate() {
+        // Returns an intent object that you use to check for an update.
+        val appUpdateInfoTask = appUpdateManager?.appUpdateInfo
+        // Checks that the platform will allow the specified type of update.
+        Log.d("TAG", "Checking for updates")
+        appUpdateInfoTask?.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                // Request the update.
+                Log.d("TAG", "Update available")
+            } else {
+                Log.d("TAG", "No Update available")
+            }
+        }
     }
 
 
@@ -234,6 +329,17 @@ class AccountFragment : BaseFragment() {
         alertDialog.show()
 
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 123) {
+            if (resultCode != AppCompatActivity.RESULT_OK) {
+                // If the update is cancelled or fails, you can request to start the update again.
+                Log.e("TAG", "Update flow failed! Result code: $resultCode")
+            }
+        }
     }
 
 

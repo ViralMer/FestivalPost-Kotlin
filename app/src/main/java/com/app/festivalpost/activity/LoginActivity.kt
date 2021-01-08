@@ -1,10 +1,10 @@
 package com.app.festivalpost.activity
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.app.Activity
+import android.content.*
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
@@ -16,14 +16,14 @@ import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.UserDataItem
-import com.app.festivalpost.photoeditor.SmsBroadcastReceiver
-import com.app.festivalpost.photoeditor.SmsBroadcastReceiver.SmsBroadcastReceiverListener
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
 import com.google.android.gms.auth.api.phone.SmsRetriever
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.Status
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
@@ -41,6 +41,8 @@ import kotlinx.android.synthetic.main.activity_login.et_number
 import kotlinx.android.synthetic.main.activity_login.spinner
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.concurrent.TimeUnit
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
@@ -50,49 +52,50 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     private var etOtp: AppCompatEditText? = null
     private var mAuth: FirebaseAuth? = null
     var token: PhoneAuthProvider.ForceResendingToken? = null
-    var sessionManager:SessionManager?=null
+    var sessionManager: SessionManager? = null
 
-    private var etNumber:AppCompatEditText?=null
-    private var spinnerCountry:CountryCodePicker?=null
-    private var linearlogin:LinearLayout?=null
-    private var tvsignup:TextView?=null
+    private var etNumber: AppCompatEditText? = null
+    private var spinnerCountry: CountryCodePicker? = null
+    private var linearlogin: LinearLayout? = null
+    private var tvsignup: TextView? = null
 
-    var user_token : String?=null
-    var device_token : String?=null
-    var device_id : String?=null
-    var device_type : String?=null
+    var user_token: String? = null
+    var device_token: String? = null
+    var device_id: String? = null
+    var device_type: String? = null
 
-   // var smsBroadcastReceiver:SmsBroadcastReceiver?=null
-    val REQ_USER_CONSENT:Int?=1234
-
-
+    private val SMS_CONSENT_REQUEST = 2
+    private lateinit var smsVerificationReceiver: BroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         FirebaseApp.initializeApp(this)
 
-        sessionManager= SessionManager(this)
+        sessionManager = SessionManager(this)
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         ivBack = toolbar.findViewById(R.id.ivBack)
-        //smsBroadcastReceiver = SmsBroadcastReceiver()
-        user_token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
-        device_token=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
-        device_id=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
-        device_type=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
-        etNumber=findViewById(R.id.et_number)
-        spinnerCountry=findViewById(R.id.spinner)
-        linearlogin= findViewById<LinearLayout>(R.id.linearLogin)
-        tvsignup= findViewById<TextView>(R.id.tvsignup)
+        user_token = sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
+        device_token = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
+        device_id = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
+        device_type = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
+        etNumber = findViewById(R.id.et_number)
+        spinnerCountry = findViewById(R.id.spinner)
+        linearlogin = findViewById<LinearLayout>(R.id.linearLogin)
+        tvsignup = findViewById<TextView>(R.id.tvsignup)
         etNumber!!.onFocusChangeListener = this
-
+        //startSmsUserConsent()
         mAuth = FirebaseAuth.getInstance();
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
             sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN, token)
 
         }
-        val isLoogedIn=sessionManager!!.getBooleanValue(Constants.SharedPref.IS_LOGGED_IN)
+        SmsRetriever.getClient(this).startSmsUserConsent(null)
+        smsReceiver()
+        val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
+        registerReceiver(smsVerificationReceiver, intentFilter)
+        val isLoogedIn = sessionManager!!.getBooleanValue(Constants.SharedPref.IS_LOGGED_IN)
 
         if (isLoogedIn!!) {
             launchActivity<HomeActivity> { }
@@ -283,12 +286,16 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                 //startSmsUserConsent()
             }
 
-            override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
+            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+
+            }
+
+            /*override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                 val code = phoneAuthCredential.smsCode
                 if (code != null) {
                     //verifyCode(code)
                 }
-            }
+            }*/
 
             override fun onVerificationFailed(e: FirebaseException) {
                 Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_LONG)
@@ -318,7 +325,8 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         etOtp = layout.findViewById<View>(R.id.et_otp) as AppCompatEditText
         val tvresendOtp = layout.findViewById<View>(R.id.tvresendOtp) as TextView
         val btn_done = layout.findViewById<View>(R.id.btn_done) as TextView
-        val ib_cancel = layout.findViewById<View>(R.id.ib_cancel) as ImageView
+        val btn_cancel = layout.findViewById<View>(R.id.btn_cancel) as TextView
+
 
 
         val builder = AlertDialog.Builder(context)
@@ -340,7 +348,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         }
 
 
-        ib_cancel.onClick {
+        btn_cancel.onClick {
             alertDialog.dismiss()
         }
 
@@ -349,80 +357,85 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
     }
 
-    private fun saveReadSmsPermission() {
-        Dexter.withContext(this)
-            .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                    if (report.areAllPermissionsGranted()) {
-                        //verifyCode("")
-
-                    } else {
-
-
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: List<PermissionRequest>,
-                    token: PermissionToken
-                ) {
-                    token.continuePermissionRequest()
-                }
-            }).check()
-    }
 
     private fun startSmsUserConsent() {
         val client = SmsRetriever.getClient(this)
         //We can add sender phone number or leave it blank
         // I'm adding null here
-        client.startSmsUserConsent(null).addOnSuccessListener {
+        client.startSmsUserConsent(etNumber!!.editableText.toString()).addOnSuccessListener {
 
         }.addOnFailureListener {
-
+            Log.d("OnFailure", "" + it.message.toString())
         }
     }
 
-    /*private fun registerBroadcastReceiver() {
-        smsBroadcastReceiver = SmsBroadcastReceiver()
-        smsBroadcastReceiver!!.smsBroadcastReceiverListener = object : SmsBroadcastReceiverListener {
-            override fun onSuccess(intent: Intent?) {
-                startActivityForResult(intent, REQ_USER_CONSENT!!)
-            }
-
-            override fun onFailure() {}
-        }
-        val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
-        registerReceiver(smsBroadcastReceiver, intentFilter)
-    }*/
-
-    override fun onStart() {
-        super.onStart()
-        //registerBroadcastReceiver();
-    }
 
 
     override fun onDestroy() {
         super.onDestroy()
-        //unregisterReceiver(smsBroadcastReceiver);
+
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(smsVerificationReceiver)
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_USER_CONSENT) {
-            if (resultCode == RESULT_OK && data != null) {
-                //That gives all message to us.
-                // We need to get the code from inside with regex
-                val message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
-                Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
-                /*textViewMessage.setText(
-                    String.format(
-                        "%s - %s",
-                        getString(android.R.string.received_message),
-                        message
-                    )
-                )*/
-                //getOtpFromMessage(message)
+        when (requestCode) {
+            // ...
+            SMS_CONSENT_REQUEST ->
+                // Obtain the phone number from the result
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    // Get SMS message content
+                    val message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
+                    // Extract one-time code from the message and complete verification
+                    // `message` contains the entire text of the SMS message, so you will need
+                    // to parse the string.
+                     getOtpFromMessage(message!!) // define this function
+                    //etOtp!!.text=oneTimeCode.toString()
+                    // send one time code to the server
+                } else {
+                    // Consent denied. User can type OTC manually.
+                }
+        }
+    }
+
+    private fun getOtpFromMessage(message: String) {
+        // This will match any 6 digit number in the message
+        val pattern: Pattern = Pattern.compile("(|^)\\d{6}")
+        val matcher: Matcher = pattern.matcher(message)
+        if (matcher.find()) {
+            etOtp!!.setText(matcher.group(0))
+        }
+    }
+
+    private fun smsReceiver() {
+        smsVerificationReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (SmsRetriever.SMS_RETRIEVED_ACTION == intent.action) {
+                    val extras = intent.extras
+                    val smsRetrieverStatus = extras?.get(SmsRetriever.EXTRA_STATUS) as Status
+
+                    when (smsRetrieverStatus.statusCode) {
+                        CommonStatusCodes.SUCCESS -> {
+                            // Get consent intent
+                            val consentIntent =
+                                extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
+                            try {
+                                // Start activity to show consent dialog to user, activity must be started in
+                                // 5 minutes, otherwise you'll receive another TIMEOUT intent
+                                startActivityForResult(consentIntent, SMS_CONSENT_REQUEST)
+                            } catch (e: ActivityNotFoundException) {
+                                // Handle the exception ...
+                            }
+                        }
+                        CommonStatusCodes.TIMEOUT -> {
+                            // Time out occurred, handle the error.
+                        }
+                    }
+                }
             }
         }
     }

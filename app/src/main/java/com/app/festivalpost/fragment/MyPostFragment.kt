@@ -103,12 +103,12 @@ class MyPostFragment : BaseFragment() {
             dataArrayList = arrayListOf<FileListItem>()
             try {
                 Log.d("data arraylist", "" + dataArrayList.size)
-                val root = Environment.getExternalStorageDirectory().absolutePath
+                val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)!!.absolutePath
                 val myDir = File(root + "/" + Constant.FOLDER_NAME)
                 myDir.mkdirs()
                 myDir.mkdir()
                 val path: String =
-                    Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString().toString() + "/FestivalPost"
 
                 Log.d("Files", "Path: $path")
                 val directory = File(path)

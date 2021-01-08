@@ -36,6 +36,7 @@ import com.emegamart.lelys.utils.extensions.toast
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_custom.*
 import org.json.JSONObject
+import java.lang.Exception
 import java.util.*
 
 class CustomFragment : BaseFragment() {
@@ -49,6 +50,7 @@ class CustomFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -74,15 +76,18 @@ class CustomFragment : BaseFragment() {
 
             getRestApis().getCustomCategoryPosts(token!!), onApiSuccess = {
                 hideProgress()
-                frameContentItemArrayList = it.data
-                Log.d("CustomCategorySize",""+frameContentItemArrayList.size)
-                if (frameContentItemArrayList.isNotEmpty()) {
-                    linearCustomCategory!!.show()
-                    val customFrameAdapter =
-                        CustomFrameAdapter(activity!!, frameContentItemArrayList)
-                    customFrame!!.adapter = customFrameAdapter
-                } else {
-                    toast("No Data Found")
+                try {
+                    if (it.data.isNotEmpty()) {
+                        linearCustomCategory!!.show()
+                        val customFrameAdapter =
+                            CustomFrameAdapter(activity!!, it.data)
+                        customFrame!!.adapter = customFrameAdapter
+                    } else {
+                        toast("No Data Found")
+                    }
+                }
+                catch (e:Exception) {
+
                 }
 
 

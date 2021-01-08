@@ -45,7 +45,7 @@ class DayVideoAdapter(var context: Context, var originaldata: ArrayList<VideoIte
                     R.drawable.placeholder_img
                 ).into(holder.ivphoto)
         }
-        holder.tvname.text = festivalItem.video_name
+        holder.tvname.text = festivalItem.video_date
         holder.tvdate.text = festivalItem.video_date
         holder.layMain.tag = position
         holder.layMain.setOnClickListener { view ->
@@ -54,6 +54,7 @@ class DayVideoAdapter(var context: Context, var originaldata: ArrayList<VideoIte
             val detailact = Intent(context, VideoDetailActivity::class.java)
             detailact.putExtra("object", festivalItem)
             detailact.putExtra("video_id", festivalItem.video_id)
+            detailact.putExtra("video_date", festivalItem.video_date)
             context.startActivity(detailact)
 
         }

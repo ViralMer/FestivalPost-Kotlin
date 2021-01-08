@@ -53,6 +53,7 @@ class DayAdapter(var context: Context, var originaldata: ArrayList<HomePageItem?
             val detailact = Intent(context, ChoosePhotoActivity::class.java)
             detailact.putExtra("category_name", f!!.fest_name)
             detailact.putExtra("category_id", f!!.fest_id)
+            detailact.putExtra("category_date", f!!.fest_date)
             detailact.putExtra("object", f)
             context.startActivity(detailact)
 

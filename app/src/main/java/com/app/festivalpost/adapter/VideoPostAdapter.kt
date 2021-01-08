@@ -53,7 +53,7 @@ class VideoPostAdapter(var context: Context, var originaldata: ArrayList<FileLis
         var path: String? = null
         try {
 
-            path = Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
+            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath.toString().toString() + "/FestivalPost"
             val thumb: Bitmap = ThumbnailUtils.createVideoThumbnail(
                 path + "/" + festivalItem.path,
                 MediaStore.Images.Thumbnails.MINI_KIND

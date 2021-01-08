@@ -2,18 +2,19 @@ package com.app.festivalpost.activity
 
 import android.Manifest
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.net.Uri
 import android.os.*
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
@@ -22,11 +23,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
-
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.ChooseVideoAdapter
-import com.app.festivalpost.apifunctions.ApiEndpoints
-import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoItem
@@ -455,6 +453,40 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
         val diff = date2.timeInMillis - date1.timeInMillis
         val dayCount = diff.toFloat() / (24 * 60 * 60 * 1000)
         return dayCount.toInt()
+    }
+
+    fun saveVideo()
+    {
+        val values = ContentValues()
+//        values.put(MediaStore.MediaColumns.DISPLAY_NAME, "$name.jpg")
+        //va/lues.put(MediaStore.MediaColumns.MIME_TYPE, "video/.mp4")
+        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        //val uri: Uri = cr.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
+        //getDataColumn(context, uri, null, null);
+    }
+
+    fun getDataColumn(
+        context: Context, uri: Uri?, selection: String?,
+        selectionArgs: Array<String?>?
+    ): String? {
+        var cursor: Cursor? = null
+        val column = MediaStore.MediaColumns.DATA
+        val projection = arrayOf(
+            column
+        )
+        try {
+            cursor = context.contentResolver.query(
+                uri!!, projection, selection, selectionArgs,
+                null
+            )
+            if (cursor != null && cursor.moveToFirst()) {
+                val column_index: Int = cursor.getColumnIndexOrThrow(column)
+                return cursor.getString(column_index)
+            }
+        } finally {
+            if (cursor != null) cursor.close()
+        }
+        return null
     }
 
 

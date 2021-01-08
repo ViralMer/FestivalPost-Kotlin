@@ -2,15 +2,14 @@ package com.app.festivalpost.fragment
 
 import android.Manifest
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
-import android.os.Looper.getMainLooper
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +24,6 @@ import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.*
 import com.app.festivalpost.adapter.*
-import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
@@ -38,8 +36,6 @@ import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.emegamart.lelys.utils.extensions.*
 import com.google.gson.Gson
 import com.karumi.dexter.Dexter
@@ -49,8 +45,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_home.*
-import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 
 
@@ -283,143 +277,211 @@ class HomeFragment : BaseFragment() {
 
 
     private fun openAddImageDialog() {
-        Dexter.withContext(activity)
-            .withPermissions(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                }
+        if(Build.VERSION.SDK_INT == 30 ){
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_MEDIA_LOCATION,
+                )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                        if (report.areAllPermissionsGranted()) {
+                            Log.d("Permission", "Permission Granted")
+                        } else {
+                            Log.d("Permission", "Permission Not Granted1")
+                            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                val intent =
+                                    Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                                startActivity(intent)
+                            }*/
+                            //showSettingsDialog()
+                        }
+                    }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: List<PermissionRequest>,
-                    token: PermissionToken
-                ) {
-                    token.continuePermissionRequest()
-                }
-            }).check()
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: List<PermissionRequest>,
+                        token: PermissionToken
+                    ) {
+                        token.continuePermissionRequest()
+                    }
+                }).check()
+        }
+        else {
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_MEDIA_LOCATION
+                )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: List<PermissionRequest>,
+                        token: PermissionToken
+                    ) {
+                        token.continuePermissionRequest()
+                    }
+                }).check()
+        }
+    }
+
+
+    private fun showSettingsDialog() {
+        val builder = AlertDialog.Builder(activity!!)
+        builder.setTitle("Need Permissions")
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.")
+        builder.setPositiveButton("GOTO SETTINGS", object : DialogInterface.OnClickListener {
+            override fun onClick(dialog: DialogInterface, which: Int) {
+                dialog.cancel()
+                openSettings()
+            }
+        })
+        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener {
+            override fun onClick(dialog: DialogInterface, which: Int) {
+                dialog.cancel()
+            }
+        })
+        builder.show()
+    }
+
+    // navigating user to app settings
+    private fun openSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", activity!!.applicationContext.packageName, null)
+        intent.data = uri
+        startActivityForResult(intent, 101)
     }
 
 
     private fun loadHomePageData() {
         showProgress()
-        callApi(
-            getRestApis().getHomePageData(token!!),
-            onApiSuccess = { res ->
-                hideProgress()
-                if (res.status!!) {
-                    sessionManager!!.setBooleanValue(LOG_OUT, res.logout!!)
-                    sessionManager!!.setBooleanValue(IS_PREMIUM, res.premium!!)
-                    sessionManager!!.setStringValue(CURRENT_DATE, res.current_date!!)
-                    sessionManager!!.setStringValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
-                    if (res.current_business.status == "1") {
-                        put(res.current_business, KEY_CURRENT_BUSINESS, activity!!)
-                    } else {
-                        put(null, KEY_CURRENT_BUSINESS, activity!!)
-                    }
-
-
-                    val currentBusinessItem =
-                        get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, activity!!)
-                    if (currentBusinessItem != null) {
-                        if (currentBusinessItem!!.plan_name == "Free") {
-                            tvPremium!!.show()
+        try {
+            callApi(
+                getRestApis().getHomePageData(token!!),
+                onApiSuccess = { res ->
+                    hideProgress()
+                    if (res.status!!) {
+                        sessionManager!!.setBooleanValue(LOG_OUT, res.logout!!)
+                        sessionManager!!.setBooleanValue(IS_PREMIUM, res.premium!!)
+                        sessionManager!!.setStringValue(CURRENT_DATE, res.current_date!!)
+                        sessionManager!!.setStringValue(KEY_FRAME_LIST, Gson().toJson(res.frameList))
+                        if (res.current_business.status == "1") {
+                            put(res.current_business, KEY_CURRENT_BUSINESS, activity!!)
                         } else {
-                            tvPremium!!.hide()
-                        }
-                        Glide.with(this).load(currentBusinessItem!!.busi_logo)
-                            .placeholder(R.drawable.placeholder_img).error(
-                                R.drawable.placeholder_img
-                            ).into(imageLogo!!)
-                    }
-
-                    sliderArrayList = res.slider
-                    festivalArrayList = res.festival
-                    categoryArrayList = res.cateogry
-
-                    NUM_PAGES = sliderArrayList.size
-
-                    rcvCustomFestival!!.layoutManager = LinearLayoutManager(
-                        activity,
-                        LinearLayoutManager.HORIZONTAL,
-                        false
-                    )
-                    val customFestivalAdapter =
-                        CustomFestivalItemAdapter(activity!!, festivalArrayList)
-                    rcvCustomFestival!!.adapter = customFestivalAdapter
-
-
-                    rcvCustomCategory!!.layoutManager = GridLayoutManager(activity, 3)
-                    val customCategoryAdapter = CategoryItemAdapter(activity!!, categoryArrayList)
-                    rcvCustomCategory!!.adapter = customCategoryAdapter
-
-                    if (sliderArrayList.size > 0) {
-                        viewPager!!.adapter = PagerAdapter()
-                        dots.attachViewPager(viewPager)
-                        dots.setDotDrawable(R.drawable.bg_circle_primary, R.drawable.black_dot)
-                        PagerAdapter().notifyDataSetChanged()
-                    }
-
-                    viewPager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                        override fun onPageScrolled(
-                            position: Int,
-                            positionOffset: Float,
-                            positionOffsetPixels: Int
-                        ) {
-                            currentPage = position
+                            put(null, KEY_CURRENT_BUSINESS, activity!!)
                         }
 
-                        override fun onPageSelected(position: Int) {
+
+                        val currentBusinessItem =
+                            get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, activity!!)
+                        if (currentBusinessItem != null) {
+                            if (currentBusinessItem!!.plan_name == "Free") {
+                                tvPremium!!.show()
+                            } else {
+                                tvPremium!!.hide()
+                            }
+                            Glide.with(this).load(currentBusinessItem!!.busi_logo)
+                                .placeholder(R.drawable.placeholder_img).error(
+                                    R.drawable.placeholder_img
+                                ).into(imageLogo!!)
+                        }
+
+                        sliderArrayList = res.slider
+                        festivalArrayList = res.festival
+                        categoryArrayList = res.cateogry
+
+                        NUM_PAGES = sliderArrayList.size
+
+                        rcvCustomFestival!!.layoutManager = LinearLayoutManager(
+                            activity,
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        val customFestivalAdapter =
+                            CustomFestivalItemAdapter(activity!!, festivalArrayList)
+                        rcvCustomFestival!!.adapter = customFestivalAdapter
+
+
+                        rcvCustomCategory!!.layoutManager = GridLayoutManager(activity, 3)
+                        val customCategoryAdapter = CategoryItemAdapter(activity!!, categoryArrayList)
+                        rcvCustomCategory!!.adapter = customCategoryAdapter
+
+                        if (sliderArrayList.size > 0) {
+                            viewPager!!.adapter = PagerAdapter()
+                            dots.attachViewPager(viewPager)
+                            dots.setDotDrawable(R.drawable.bg_circle_primary, R.drawable.black_dot)
+                            PagerAdapter().notifyDataSetChanged()
+                        }
+
+                        viewPager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                            override fun onPageScrolled(
+                                position: Int,
+                                positionOffset: Float,
+                                positionOffsetPixels: Int
+                            ) {
+                                currentPage = position
+                            }
+
+                            override fun onPageSelected(position: Int) {
+
+                            }
+
+                            override fun onPageScrollStateChanged(state: Int) {
+
+                            }
+
+                        })
+
+                        if (festivalArrayList.size > 0) {
+                            linearFestival!!.show()
+                        } else {
+                            linearFestival!!.hide()
 
                         }
 
-                        override fun onPageScrollStateChanged(state: Int) {
-
+                        if (categoryArrayList.size > 0) {
+                            linearCategory!!.show()
+                        } else {
+                            linearCategory!!.hide()
                         }
 
-                    })
-
-                    if (festivalArrayList.size > 0) {
-                        linearFestival!!.show()
                     } else {
+                        if (res.message == "user not valid") {
+                            val intent = Intent(
+                                activity, LoginActivity::class.java
+                            )
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            activity!!.finish()
+                            sessionManager!!.setBooleanValue(IS_LOGGED_IN, false)
+
+                        }
                         linearFestival!!.hide()
-
-                    }
-
-                    if (categoryArrayList.size > 0) {
-                        linearCategory!!.show()
-                    } else {
                         linearCategory!!.hide()
                     }
-
-                } else {
-                    if (res.message == "user not valid") {
-                        val intent = Intent(
-                            activity, LoginActivity::class.java
-                        )
-                        intent.flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                        activity!!.finish()
-                        sessionManager!!.setBooleanValue(IS_LOGGED_IN, false)
-
-                    }
-                    linearFestival!!.hide()
+                },
+                onApiError = {
+                    if (activity == null) return@callApi
+                    hideProgress()
                     linearCategory!!.hide()
-                }
-            },
-            onApiError = {
-                if (activity == null) return@callApi
-                hideProgress()
-                linearCategory!!.hide()
-                linearFestival!!.hide()
+                    linearFestival!!.hide()
 
-            },
-            onNetworkError = {
-                if (activity == null) return@callApi
-                hideProgress()
-            })
+                },
+                onNetworkError = {
+                    if (activity == null) return@callApi
+                    hideProgress()
+                })
+        }
+        catch (e:Exception)
+        {
+
+        }
+
     }
 
 

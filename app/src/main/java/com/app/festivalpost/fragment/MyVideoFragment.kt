@@ -49,12 +49,12 @@ class MyVideoFragment : BaseFragment() {
 
         Log.d("data arraylist", "" + dataArrayList.size)
         try {
-            val root = Environment.getExternalStorageDirectory().absolutePath
+            val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)!!.absolutePath
             val myDir = File(root + "/" + Constant.FOLDER_NAME)
             myDir.mkdirs()
             myDir.mkdir()
             val path: String =
-                Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString().toString() + "/FestivalPost"
             Log.d("Files", "Path: $path")
             val directory = File(path)
             val files: Array<File> = directory.listFiles()

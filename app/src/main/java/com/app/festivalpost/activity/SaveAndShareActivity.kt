@@ -1,6 +1,8 @@
 package com.app.festivalpost.activity
 
 import android.Manifest
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
@@ -8,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
@@ -15,6 +18,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
@@ -43,6 +47,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -78,7 +85,7 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
         width = displayMetrics.widthPixels
         banner_container = findViewById(R.id.banner_container)
         linearSave = findViewById(R.id.linearSave)
-        adView = AdView(this, "IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID", AdSize.BANNER_HEIGHT_50)
+        adView = AdView(this, "IMG_16_9_APP_INSTALL#701945100529313_701945953862561", AdSize.BANNER_HEIGHT_50)
 
         /*val params= FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
         params.width=width
@@ -87,10 +94,10 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
 */
         // Find the Ad Container
         // Add the ad view to your activity layout
-        if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
+        /*if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {*/
             banner_container!!.addView(adView)
             adView!!.loadAd()
-        }
+        /*}*/
 
         // Request an ad
 
@@ -166,31 +173,41 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
     var imagePath: String? = ""
     private fun savePhoto() {
         Dexter.withContext(this@SaveAndShareActivity)
-            .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_MEDIA_LOCATION)
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
                         imagePath = ""
                         if (bmp != null) {
-                            imagePath = SaveImage(bmp!!)
+                            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                            {*/
+                                saveImage(bmp!!,imageName)
+                            /*}*/
+                            /*else{
+
+                                imagePath = SaveImage(bmp!!)
+                            }*/
+
                             if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
-                                SavePhotoAsync(imagePath!!).execute()
-                                Log.d("ImageCalled", "" + imagePath)
+                                SavePhotoAsync(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$imageName.jpg").execute()
+
                             } else {
                                 if (sharePhoto) {
-                                    if (imagePath != null && !imagePath.equals(
+                                    /*if (imagePath != null && !imagePath.equals(
                                             "",
                                             ignoreCase = true
                                         )
-                                    ) {
-                                        val uri = Uri.parse(imagePath)
+                                    ) {*/
+                                        val uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$imageName.jpg")
                                         val share = Intent(Intent.ACTION_SEND)
                                         share.type = "image/*"
                                         share.putExtra(Intent.EXTRA_STREAM, uri)
                                         startActivity(Intent.createChooser(share, "Share Design!"))
-                                        scanner(imagePath!!)
+                                        toast("Image Shared Successfully")
+                                        scanner(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$imageName.jpg")
 
-                                    }
+
+                                    /*}*/
 
                                 } else {
                                     val detailAct =
@@ -198,12 +215,13 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                                     detailAct.flags =
                                         Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(detailAct)
-                                    scanner(imagePath!!)
-                                    finish()
+                                    scanner(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$imageName.jpg")
+                                    toast("Image Saved Successfully")
+
                                 }
+                                finish()
                             }
 
-                            toast("Image Saved Successfully")
                         }
                         /*}*/
                     } else {
@@ -212,6 +230,10 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                             "Please grant permission to save image",
                             Toast.LENGTH_SHORT
                         ).show()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                            startActivity(intent)
+                        }
                         showSettingsDialog()
                     }
                 }
@@ -275,8 +297,7 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                     Intent(
                         Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                         Uri.parse(
-                            ("file://"
-                                    + file.absolutePath)
+                            (file.absolutePath)
                         )
                     )
                 )
@@ -345,9 +366,10 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
 
     }
 
+
     private fun scanner(path: String) {
         MediaScannerConnection.scanFile(
-            this@SaveAndShareActivity, arrayOf(path), null
+            this@SaveAndShareActivity, arrayOf(path), arrayOf("image/*")
         ) { path, uri -> Log.i("TAG", "Finished scanning $path") }
     }
 
@@ -358,8 +380,7 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                 Intent(
                     Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                     Uri.parse(
-                        ("file://"
-                                + Environment.getExternalStorageDirectory() + "/FestivalPost")
+                        (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost")
                     )
                 )
             )
@@ -368,8 +389,7 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                 Intent(
                     Intent.ACTION_MEDIA_MOUNTED,
                     Uri.parse(
-                        ("file://"
-                                + Environment.getExternalStorageDirectory() + "/FestivalPost")
+                        (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost")
                     )
                 )
             )
@@ -488,6 +508,38 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
             e.printStackTrace()
         }
     }
+
+    @Throws(IOException::class)
+    private fun saveImage(bitmap: Bitmap, @NonNull name: String) {
+        val fos: OutputStream?
+        fos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver: ContentResolver = contentResolver
+            val contentValues = ContentValues()
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "$name.jpg")
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES+"/FestivalPost")
+            val imageUri: Uri =
+                resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
+            resolver.openOutputStream(Objects.requireNonNull(imageUri))
+        } else {
+            val folder=File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost")
+            if (!folder.exists()) {
+                folder.mkdirs()
+                folder.mkdir()
+            }
+            val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost"
+
+            val image = File(imagesDir, "$name.jpg")
+
+            FileOutputStream(image)
+        }
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+        Objects.requireNonNull(fos)!!.close()
+    }
+
+    private val imageName: String
+        private get() = "image_" + SimpleDateFormat("yyyy_MMM_dd_HH_mm_ss", Locale.ENGLISH).format(Date())
+
 
 
 }

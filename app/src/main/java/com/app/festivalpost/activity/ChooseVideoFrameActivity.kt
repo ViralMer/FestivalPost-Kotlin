@@ -1437,7 +1437,9 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
         tvtitle.text = resources.getString(R.string.txt_select_frame)
         tvaction!!.text = resources.getString(R.string.txt_next)
         tvaction!!.setOnClickListener {
+            showProgress(true)
             ivVideo!!.stopPlayer()
+
             linearAddress!!.setBackgroundResource(0)
             linearEmail!!.setBackgroundResource(0)
             linearPhone!!.setBackgroundResource(0)
@@ -1467,6 +1469,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                 layroot!!.isDrawingCacheEnabled = false
                 val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)
                 try {
+                    showProgress(true)
                     //Write file
                     val filename = "video_bitmap.png"
                     val stream = openFileOutput(filename, MODE_PRIVATE)
@@ -1508,12 +1511,14 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                             "/data/data/com.app.festivalpost/files/$filename"
                         )
                         download()
+
                     }
 
                     //Pop intent
 
-                showProgress(false)
+
                 } catch (e: Exception) {
+                    showProgress(false)
                     e.printStackTrace()
                 }
             }, 1500)

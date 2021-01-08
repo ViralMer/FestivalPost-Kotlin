@@ -19,6 +19,7 @@ import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.hide
 import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.show
+import com.emegamart.lelys.utils.extensions.toast
 import java.util.*
 
 class FestivalViewAllVideoActivity : AppBaseActivity() {
@@ -89,12 +90,16 @@ class FestivalViewAllVideoActivity : AppBaseActivity() {
         callApi(
             getRestApis().getAllFestivalVideo(dateVal,token!!), onApiSuccess = {
                 showProgress(false)
-                lvdata!!.show()
-                dayVideoAdapter=null
-                videoitemList=it.video
-                dayVideoAdapter=DayVideoAdapter(this,it.video)
-                lvdata!!.adapter = dayVideoAdapter
-                dayVideoAdapter!!.notifyDataSetChanged()
+                if (it.status!!) {
+                    lvdata!!.show()
+                    dayVideoAdapter = null
+                    videoitemList = it.video
+                    dayVideoAdapter = DayVideoAdapter(this, it.video)
+                    lvdata!!.adapter = dayVideoAdapter
+                    dayVideoAdapter!!.notifyDataSetChanged()
+                }else{
+                    toast(it.message!!)
+                }
 
             }, onApiError = {
                 showProgress(false)

@@ -124,6 +124,11 @@ class ChoosePhotoActivity : AppBaseActivity(), OnItemClickListener {
                     detailact.putExtra("image_type", image_type)
                     startActivity(detailact)
                 } else {
+                    /*val detailact =
+                        Intent(this@ChoosePhotoActivity, ChooseFrameForPhotoActivityNew::class.java)
+                    detailact.putExtra("photo_path", photo_path)
+                    detailact.putExtra("image_type", image_type)
+                    startActivity(detailact)*/
                     Global.getAlertDialog(
                         this@ChoosePhotoActivity,
                         "Sorry!!",

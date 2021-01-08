@@ -379,6 +379,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
 
     override fun onPaymentError(p0: Int, p1: String?, p2: PaymentData?) {
         Log.d("Data RazorPay",""+p0.toString()+ " p1: "+p1.toString()+ " p2:"+p2)
+
     }
 
     private fun loadAccoutData(orderID:String,paymentId:String,businessId:String,plan_id:String) {

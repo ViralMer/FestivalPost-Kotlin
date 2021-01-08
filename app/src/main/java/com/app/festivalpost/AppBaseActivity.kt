@@ -57,6 +57,7 @@ open class AppBaseActivity : AppCompatActivity(),View.OnFocusChangeListener {
             show -> {
                 if (!isFinishing && !progressDialog!!.isShowing) {
                     progressDialog?.setCanceledOnTouchOutside(false)
+                    progressDialog?.setCancelable(false)
                     progressDialog?.show()
 
                 }

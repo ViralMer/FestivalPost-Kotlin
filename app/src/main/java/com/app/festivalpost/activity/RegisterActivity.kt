@@ -115,7 +115,7 @@ class RegisterActivity : AppBaseActivity() {
         etOtp = layout.findViewById<View>(R.id.et_otp) as AppCompatEditText
         val tvresendOtp = layout.findViewById<View>(R.id.tvresendOtp) as TextView
         val btn_done = layout.findViewById<View>(R.id.btn_done) as TextView
-
+        val btn_cancel = layout.findViewById<View>(R.id.btn_cancel) as TextView
 
 
         val builder = AlertDialog.Builder(context)
@@ -127,6 +127,10 @@ class RegisterActivity : AppBaseActivity() {
 
         btn_done.onClick {
             performSubmit()
+        }
+
+        btn_cancel.onClick {
+            alertDialog.dismiss()
         }
 
         tvresendOtp.onClick { resendVerificationCode("+" +spinner.selectedCountryCode+""+et_number.text.toString(),token!!) }
@@ -258,10 +262,10 @@ class RegisterActivity : AppBaseActivity() {
             }
 
             override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
-                val code = phoneAuthCredential.smsCode
+                /*val code = phoneAuthCredential.smsCode
                 if (code != null) {
                     //verifyCode(code)
-                }
+                }*/
             }
 
             override fun onVerificationFailed(e: FirebaseException) {

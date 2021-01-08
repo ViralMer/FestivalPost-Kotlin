@@ -55,7 +55,7 @@ class PostAdapter(var context: Context, var originaldata: ArrayList<FileListItem
         holder.tvname.text = sessionManager.getValueString(USER_NAME)
 
         val path: String =
-            Environment.getExternalStorageDirectory().toString().toString() + "/FestivalPost"
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath.toString().toString() + "/FestivalPost"
         val bitmap = BitmapFactory.decodeFile(path + "/" + festivalItem.path)
         holder.ivphoto.setImageBitmap(bitmap)
         holder.layMain.tag = festivalItem

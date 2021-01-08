@@ -32,7 +32,7 @@ import java.util.Comparator;
  * @version 2013-12-11
  * @author paulburke (ipaulpro)
  */
-public class FileUtils {
+public class    FileUtils {
     public FileUtils() {} //private constructor to enforce Singleton pattern
 
     /** TAG for log messages. */

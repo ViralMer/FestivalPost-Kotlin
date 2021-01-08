@@ -1,11 +1,15 @@
 package com.app.festivalpost.activity
 
+/*import com.arthenica.mobileffmpeg.Config
+import com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL
+import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
+import com.arthenica.mobileffmpeg.FFmpeg*/
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -23,7 +27,6 @@ import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.HomeActivity
 import com.app.festivalpost.globals.Constant
-import com.app.festivalpost.globals.Global
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoListItem
 import com.app.festivalpost.utils.Constants
@@ -32,13 +35,8 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
 import com.arthenica.mobileffmpeg.FFmpeg
-/*import com.arthenica.mobileffmpeg.Config
-import com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL
-import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
-import com.arthenica.mobileffmpeg.FFmpeg*/
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.get
-
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -78,17 +76,19 @@ class VideoCreateActivity : AppBaseActivity() {
     var bmp: Bitmap? = null
     var height = 0
 
-    var imageview : AppCompatImageView?=null
-    var sessionManager : SessionManager?=null
+    var imageview: AppCompatImageView? = null
+    var sessionManager: SessionManager? = null
 
 
     var mFilename: String? = null
     var mBuilder: Notification.Builder? = null
     var mNotifyManager: NotificationManager? = null
     var progressBar: ProgressDialog? = null
+
     //var loadJNI: LoadJNI? = null
     var vkLogPath: String? = null
     var workFolder: String? = null
+
     @SuppressLint("SdCardPath")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +96,7 @@ class VideoCreateActivity : AppBaseActivity() {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
         openAddImageDialog()
-        sessionManager= SessionManager(this)
+        sessionManager = SessionManager(this)
         videoView = findViewById(R.id.ivvideo)
         setActionbar()
         val bundle = intent.extras
@@ -123,21 +123,19 @@ class VideoCreateActivity : AppBaseActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         height = displayMetrics.heightPixels
         width = displayMetrics.widthPixels
-        if (width>1080)
-        {
-            val params=frameMain!!.layoutParams
-            params.height=1080
-            params.width=1080
+        if (width > 1080) {
+            val params = frameMain!!.layoutParams
+            params.height = 1080
+            params.width = 1080
+        } else {
+            val params = frameMain!!.layoutParams
+            params.height = width
+            params.width = width
+            val params1 = frameLayout!!.layoutParams
+            params1.height = width
+            params1.width = width
         }
-        else{
-            val params=frameMain!!.layoutParams
-            params.height=width
-            params.width=width
-            val params1=frameLayout!!.layoutParams
-            params1.height=width
-            params1.width=width
-        }
-         val filename = "video_bitmap.png"
+        val filename = "video_bitmap.png"
         try {
             val `is` = openFileInput(filename)
             bmp = BitmapFactory.decodeStream(`is`)
@@ -148,7 +146,7 @@ class VideoCreateActivity : AppBaseActivity() {
 
         imageview!!.setImageBitmap(bmp)
 
-        videoView!!.setSource("/data/data/com.app.festivalpost/files/video_demo.mp4")
+        videoView!!.setSource(filesDir.absolutePath+"/video_demo.mp4")
         videoView!!.setPlayWhenReady(true)
 
 
@@ -156,7 +154,6 @@ class VideoCreateActivity : AppBaseActivity() {
 
         btnSave = findViewById(R.id.btnsubmit)
         btnShare = findViewById(R.id.btnshare)
-
 
 
 //        int colorInt=Integer.parseInt(color);
@@ -170,19 +167,19 @@ class VideoCreateActivity : AppBaseActivity() {
             videoView!!.stopPlayer()
             if (save) {
             } else {
-                AsyncTaskExampleNew().execute()
                 save = true
+                AsyncTaskExampleNew().execute()
+
             }
         })
     }
 
     private fun saveVideoToInternalStorage() {
+        val musicDirectory = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost")
+        musicDirectory.mkdirs()
+        musicDirectory.mkdir()
 
-        videoPath = File(Constant.FOLDER_NAME, videoName).absolutePath
-        Log.d("IMAGEPATH2", "/storage/emulated/0$videoPath")
-        videoPath = File(Constant.FOLDER_NAME, videoName).absolutePath
 
-        
 
         val inputCode1: Array<String> = arrayOf(
             "-i",
@@ -193,31 +190,51 @@ class VideoCreateActivity : AppBaseActivity() {
             "overlay=(W-w):(H-h)",
             "-codec:a",
             "copy",
-            "/storage/emulated/0/FestivalPost/$videoName"
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName"
         )
 
-        val rc= FFmpeg.execute(inputCode1)
+        val rc = FFmpeg.execute(inputCode1)
 
         if (rc == RETURN_CODE_SUCCESS) {
             Log.i(Config.TAG, "Command execution completed successfully.");
         } else if (rc == RETURN_CODE_CANCEL) {
             Log.i(Config.TAG, "Command execution cancelled by user.");
         } else {
-            Log.i(Config.TAG, String.format("Command execution failed with rc=%d and the output below.", rc));
+            Log.i(
+                Config.TAG, String.format(
+                    "Command execution failed with rc=%d and the output below.",
+                    rc
+                )
+            );
             Config.printLastCommandOutput(Log.INFO);
         }
 
 
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            sendBroadcast(
+                Intent(
+                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                    Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
+                )
+            )
+        } else {
+            sendBroadcast(
+                Intent(
+                    Intent.ACTION_MEDIA_MOUNTED,
+                    Uri.parse
+                        (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
 
+                )
+            )
+        }
 
         MediaScannerConnection.scanFile(
-            applicationContext, arrayOf("/storage/emulated/0$videoPath"), arrayOf("video/mp4")
+            applicationContext,
+            arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName"),
+            arrayOf("video/mp4")
         ) { path, uri ->
-            Log.v(
-                "FragCameraScan",
-                "file $path was scanned seccessfully: $uri"
-            )
+
         }
     }
 
@@ -241,15 +258,16 @@ class VideoCreateActivity : AppBaseActivity() {
         Dexter.withActivity(this)
             .withPermissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_MEDIA_LOCATION
             )
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        val root = Environment.getExternalStorageDirectory().absolutePath
+                        /*val root = Environment.getExternalStorageDirectory().absolutePath
                         val myDir = File(root + "/" + Constant.FOLDER_NAME)
                         myDir.mkdirs()
-                        myDir.mkdir()
+                        myDir.mkdir()*/
                     } else {
                         //showSettingsDialog();
                     }
@@ -287,8 +305,8 @@ class VideoCreateActivity : AppBaseActivity() {
         override fun onPostExecute(aVoid: Void?) {
             showProgress(false)
             frameLayout!!.visibility = View.GONE
-            videoView!!.setSource("/storage/emulated/0$videoPath")
-
+            videoView!!.setSource(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
+            scanner()
             Toast.makeText(this@VideoCreateActivity, "Video Saved Successfully", Toast.LENGTH_SHORT)
                 .show()
             val detailAct = Intent(this@VideoCreateActivity, HomeActivity::class.java)
@@ -296,12 +314,18 @@ class VideoCreateActivity : AppBaseActivity() {
             startActivity(detailAct)
             finish()
             if (save) {
-                val sharingIntent = Intent(Intent.ACTION_SEND)
-                sharingIntent.type = "video/mp4" //If it is a 3gp video use ("video/3gp")
-                val uri = Uri.parse("/storage/emulated/0/$videoPath")
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                startActivity(Intent.createChooser(sharingIntent, "Share Video!"))
+
+                    val sharingIntent = Intent(Intent.ACTION_SEND)
+                    sharingIntent.type = "video/mp4" //If it is a 3gp video use ("video/3gp")
+                    val uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/"+videoName)
+                    sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                    Log.d("uriPArse",""+uri.toString())
+                    startActivity(Intent.createChooser(sharingIntent, "Share Video!"))
+
+
             }
+
+
             super.onPostExecute(aVoid)
         }
     }
@@ -326,7 +350,7 @@ class VideoCreateActivity : AppBaseActivity() {
     }
 
     fun setVideoData(videoData: VideoListItem?) {
-        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
+        val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, this)
         if (businessItem!!.busi_name != "") {
             tvframename1!!.visibility = View.VISIBLE
             tvframename1!!.text = businessItem.busi_name
@@ -357,6 +381,24 @@ class VideoCreateActivity : AppBaseActivity() {
             tvframeweb1!!.text = businessItem.busi_website
             textWebsite1!!.visibility = View.VISIBLE
         }
+    }
+
+    private fun scanner() {
+        sendBroadcast(
+            Intent(
+                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
+            )
+        )
+        MediaScannerConnection.scanFile(
+            this, arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName"), arrayOf("video/mp4")
+        ) { path, uri -> Log.i("TAG", "Finished scanning $path") }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scanner()
+        Log.d("onDestroy", "OnDestroy");
     }
 
     companion object {
