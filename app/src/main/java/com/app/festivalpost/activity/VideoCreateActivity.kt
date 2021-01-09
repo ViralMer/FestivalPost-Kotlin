@@ -37,6 +37,8 @@ import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.bumptech.glide.Glide
 import com.emegamart.lelys.utils.extensions.get
+import com.facebook.ads.AdSize
+import com.facebook.ads.AdView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -67,6 +69,7 @@ class VideoCreateActivity : AppBaseActivity() {
     var textWebsite1: TextView? = null
     var ivlogo: ImageView? = null
     var ivlogo1: ImageView? = null
+    var banner_container: LinearLayout? = null
     var frameLayout: FrameLayout? = null
     var frameMain: FrameLayout? = null
     var save = false
@@ -78,7 +81,7 @@ class VideoCreateActivity : AppBaseActivity() {
 
     var imageview: AppCompatImageView? = null
     var sessionManager: SessionManager? = null
-
+    private var adView: AdView? = null
 
     var mFilename: String? = null
     var mBuilder: Notification.Builder? = null
@@ -117,7 +120,7 @@ class VideoCreateActivity : AppBaseActivity() {
         textEmail1 = findViewById(R.id.viewPhone)
         textWebsite1 = findViewById(R.id.viewwebsite)
         imageview = findViewById(R.id.imageview)
-
+        banner_container = findViewById(R.id.banner_container)
         setVideoData(videoListItem)
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -145,11 +148,15 @@ class VideoCreateActivity : AppBaseActivity() {
         }
 
         imageview!!.setImageBitmap(bmp)
-
+        banner_container = findViewById(R.id.banner_container)
+        adView = AdView(this, "IMG_16_9_APP_INSTALL#701945100529313_701945953862561", AdSize.BANNER_HEIGHT_50)
         videoView!!.setSource(filesDir.absolutePath+"/video_demo.mp4")
         videoView!!.setPlayWhenReady(true)
 
-
+        if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
+            banner_container!!.addView(adView)
+            adView!!.loadAd()
+        }
 
 
         btnSave = findViewById(R.id.btnsubmit)

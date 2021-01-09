@@ -94,10 +94,10 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
 */
         // Find the Ad Container
         // Add the ad view to your activity layout
-        /*if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {*/
+        if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
             banner_container!!.addView(adView)
             adView!!.loadAd()
-        /*}*/
+        }
 
         // Request an ad
 

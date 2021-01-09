@@ -251,7 +251,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         }
         Log.d("FrmaeSize", "" + framePreviewArrayList.size)
         try {
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_33, "frame_3.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_33, "frame_33.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_34, "frame_34.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17, "frame_17.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18, "frame_18.png"))
@@ -569,24 +569,23 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             } else {
                 ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                 linearWebsite!!.visibility = View.VISIBLE
+
                 linearWebsite!!.setBackgroundResource(0)
                 if (index1 == 0 + plus) {
                     ivWebsite!!.visibility = View.VISIBLE
                     websiteLine!!.hide()
                 } else if (index1 == 1 + plus) {
+                    websiteLine!!.setVisibility(View.GONE);
+                    ivWebsite!!.visibility = View.GONE
+                    linearWebsite!!.visibility = View.GONE
+                }else if (index1 == 2 + plus) {
 
                     websiteLine!!.setVisibility(View.GONE);
                     ivWebsite!!.visibility = View.GONE
-                }else if (index1 == 2 + plus) {
-
-                    websiteLine!!.setVisibility(View.VISIBLE);
-                    ivWebsite!!.visibility = View.VISIBLE
                 } else if (index1 == 3 + plus) {
-
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
                 } else if (index1 == 4 + plus) {
-
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
                 } else {

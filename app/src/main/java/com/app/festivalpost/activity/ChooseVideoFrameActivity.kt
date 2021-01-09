@@ -420,19 +420,17 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                     ivWebsite!!.visibility = View.VISIBLE
                     websiteLine!!.hide()
                 } else if (index1 == 1 + plus) {
+                    websiteLine!!.setVisibility(View.GONE);
+                    ivWebsite!!.visibility = View.GONE
+                    linearWebsite!!.visibility = View.GONE
+                }else if (index1 == 2 + plus) {
 
                     websiteLine!!.setVisibility(View.GONE);
                     ivWebsite!!.visibility = View.GONE
-                }else if (index1 == 2 + plus) {
-
-                    websiteLine!!.setVisibility(View.VISIBLE);
-                    ivWebsite!!.visibility = View.VISIBLE
                 } else if (index1 == 3 + plus) {
-
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
                 } else if (index1 == 4 + plus) {
-
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
                 } else {
