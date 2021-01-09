@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
-        android:layout_marginTop="@dimen/_5sdp"
+
         android:visibility="visible">
 
         <LinearLayout
@@ -24,15 +24,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_margin="@dimen/_5sdp"
+            android:layout_margin="@dimen/_2sdp"
             android:visibility="visible">
 
             <ImageView
                 android:id="@+id/ivframelogo"
-                android:layout_width="@dimen/_70sdp"
+                android:layout_width="@dimen/_60sdp"
                 android:layout_height="@dimen/_60sdp"
                 android:layout_gravity="left|center"
-                android:layout_margin="@dimen/_5sdp" />
+                android:layout_margin="@dimen/_2sdp" />
 
         </LinearLayout>
 
@@ -46,7 +46,6 @@
             android:visibility="gone" />
 
     </FrameLayout>
-
 
 
     <FrameLayout
@@ -93,18 +92,15 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:gravity="start"
+        android:layout_gravity="bottom|start"
         android:layout_marginBottom="@dimen/_2sdp"
+        android:gravity="start"
         android:orientation="vertical">
-
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-
             android:orientation="vertical">
 
 
@@ -112,34 +108,39 @@
                 android:id="@+id/framePhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+
                 android:layout_marginBottom="@dimen/_2sdp"
-                android:visibility="visible">
+                android:visibility="gone">
 
 
                 <LinearLayout
                     android:id="@+id/linearPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+
                     android:background="@drawable/rounded_border_tv_new"
                     android:orientation="horizontal"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="visible"
+
                         >
 
                         <ImageView
                             android:id="@+id/ivPhone"
                             android:layout_width="@dimen/_6sdp"
-                            android:layout_height="@dimen/_6sdp"
+                            android:layout_height="@dimen/_7sdp"
+
                             android:layout_gravity="center"
-                            android:backgroundTint="@color/white"
                             android:layout_marginLeft="@dimen/_2sdp"
-                            android:background="@drawable/ic_baseline_call_24" />
+                            android:background="@drawable/ic_baseline_call_24"
+                            android:backgroundTint="@color/white"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/tvframephone"
@@ -149,9 +150,9 @@
                             android:ellipsize="end"
                             android:gravity="center"
                             android:maxLines="1"
-                            android:text="1234567890"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/_6sdp" />
+                            android:textSize="@dimen/_7sdp"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/viewPhone"
@@ -175,11 +176,13 @@
                         <ImageView
                             android:id="@+id/ivPhone1"
                             android:layout_width="@dimen/_6sdp"
-                            android:layout_height="@dimen/_6sdp"
+                            android:layout_height="@dimen/_7sdp"
+
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/_2sdp"
+                            android:background="@drawable/ic_baseline_call_24"
                             android:backgroundTint="@color/white"
-                            android:background="@drawable/ic_baseline_call_24" />
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/tvframephone1"
@@ -189,9 +192,9 @@
                             android:ellipsize="end"
                             android:gravity="center"
                             android:maxLines="1"
-                            android:text="1234567890"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/_6sdp" />
+                            android:textSize="@dimen/_7sdp"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/viewPhone1"
@@ -221,7 +224,7 @@
                 android:id="@+id/frameEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:visibility="gone"
 
                 >
 
@@ -231,13 +234,16 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_border_tv_new"
                     android:orientation="horizontal"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/ivEmail"
-                        android:layout_width="@dimen/_6sdp"
-                        android:layout_height="@dimen/_6sdp"
+                        android:layout_width="@dimen/_7sdp"
+
+                        android:layout_height="@dimen/_7sdp"
+
                         android:layout_gravity="center"
+                        android:layout_marginTop="2px"
                         android:layout_marginLeft="@dimen/_2sdp"
                         android:background="@drawable/ic_baseline_email_24"
 
@@ -247,13 +253,13 @@
                         android:id="@+id/tvframeemail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:layout_marginLeft="@dimen/_2sdp"
                         android:ellipsize="end"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:text="ganesh@gmail.com"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_6sdp" />
+                        android:textSize="@dimen/_7sdp" />
 
                     <TextView
                         android:id="@+id/viewwebsite"
@@ -295,8 +301,10 @@
 
                     <ImageView
                         android:id="@+id/ivWebsite"
-                        android:layout_width="@dimen/_6sdp"
-                        android:layout_height="@dimen/_6sdp"
+                        android:layout_width="@dimen/_7sdp"
+
+                        android:layout_height="@dimen/_7sdp"
+
                         android:layout_gravity="center"
 
                         android:layout_marginLeft="@dimen/_2sdp"
@@ -311,7 +319,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_6sdp" />
+                        android:textSize="@dimen/_7sdp" />
 
                 </LinearLayout>
 
@@ -344,8 +352,8 @@
         <LinearLayout
             android:layout_width="@dimen/_140sdp"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:layout_gravity="end"
+            android:gravity="end"
             android:orientation="horizontal">
 
             <FrameLayout
@@ -353,7 +361,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/linearLocation"
@@ -362,16 +370,19 @@
                     android:background="@drawable/rounded_border_tv_new"
 
                     android:orientation="horizontal"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/ivAddress"
-                        android:layout_width="@dimen/_6sdp"
-                        android:layout_height="@dimen/_6sdp"
+                        android:layout_width="@dimen/_7sdp"
+
+                        android:layout_height="@dimen/_7sdp"
+
                         android:layout_gravity="center"
                         android:layout_marginLeft="@dimen/_2sdp"
-                        android:backgroundTint="@color/white"
-                        android:background="@drawable/ic_baseline_location_on_24" />
+                        android:layout_marginTop="2px"
+                        android:background="@drawable/ic_baseline_location_on_24"
+                        android:backgroundTint="@color/white" />
 
                     <TextView
                         android:id="@+id/tvframelocation"
@@ -379,9 +390,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_2sdp"
                         android:ellipsize="end"
-                        android:text="302,Harikrishna Arcard Rajkot,nsdfjbkjsdbfkjsddjkdbfjksdb"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_6sdp" />
+                        android:textSize="@dimen/_7sdp" />
 
                 </LinearLayout>
 

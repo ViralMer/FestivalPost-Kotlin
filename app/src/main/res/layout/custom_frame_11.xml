@@ -23,7 +23,7 @@
             android:id="@+id/linearLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
+            android:layout_margin="@dimen/_2sdp"
             android:visibility="gone"
             android:layout_gravity="right"
             >
@@ -31,10 +31,10 @@
 
     <ImageView
         android:id="@+id/ivframelogo"
-        android:layout_width="@dimen/_70sdp"
+        android:layout_width="@dimen/_60sdp"
 android:layout_height="@dimen/_60sdp"
 
-        android:layout_margin="@dimen/_5sdp"
+        android:layout_margin="@dimen/_2sdp"
          />
 
       </LinearLayout>

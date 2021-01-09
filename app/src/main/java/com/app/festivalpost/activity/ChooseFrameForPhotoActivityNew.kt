@@ -78,6 +78,8 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
     var i = 0
     var backpressed = true
     var background = false
+    var ivcall1: ImageView? = null
+    var tvframephone1: TextView? = null
     var ivframelogo: ImageView? = null
     var frameNew: FrameLayout? = null
     var ivframebg: ImageView? = null
@@ -249,6 +251,8 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         }
         Log.d("FrmaeSize", "" + framePreviewArrayList.size)
         try {
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_33, "frame_3.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_34, "frame_34.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_17, "frame_17.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_18, "frame_18.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_19, "frame_19.png"))
@@ -261,13 +265,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_6, "frame_06.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_7, "frame_07.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_8, "frame_08.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9, "frame_01.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11, "frame_03.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12, "frame_04.png"))
+            /*framePreviewArrayList.add(FramePreview(R.layout.custom_frame_9, "frame_01.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_11, "frame_03.png"))*/
+            /*framePreviewArrayList.add(FramePreview(R.layout.custom_frame_12, "frame_04.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_13, "frame_05.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_14, "frame_06.png"))
             framePreviewArrayList.add(FramePreview(R.layout.custom_frame_15, "frame_07.png"))
-            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16, "frame_08.png"))
+            framePreviewArrayList.add(FramePreview(R.layout.custom_frame_16, "frame_08.png"))*/
 
         } catch (e: OutOfMemoryError) {
 
@@ -479,13 +483,22 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             } else {
                 ivemailselect!!.setImageResource(R.drawable.email_select)
                 if (index1 == 0 + plus) {
+                    phoneLine!!.visibility = View.GONE
+                    websiteLine!!.visibility=View.GONE
+                    ivEmail!!.visibility = View.VISIBLE
+                } else if (index1 == 1 + plus) {
+                    phoneLine!!.visibility = View.GONE;
+                    websiteLine!!.visibility=View.GONE
+                    ivEmail!!.visibility = View.VISIBLE
+                }
+                else if (index1 == 2 + plus) {
                     ivEmail!!.visibility = View.GONE
                     phoneLine!!.visibility = View.GONE
-                } else if (index1 == 1 + plus) {
+                } else if (index1 == 3 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
-                } else if (index1 == 2 + plus) {
+                } else if (index1 == 4 + plus) {
                     phoneLine!!.setVisibility(View.VISIBLE);
                     ivEmail!!.visibility = View.VISIBLE
 
@@ -558,13 +571,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 linearWebsite!!.visibility = View.VISIBLE
                 linearWebsite!!.setBackgroundResource(0)
                 if (index1 == 0 + plus) {
-                    ivWebsite!!.visibility = View.GONE
+                    ivWebsite!!.visibility = View.VISIBLE
                     websiteLine!!.hide()
                 } else if (index1 == 1 + plus) {
 
-                    websiteLine!!.setVisibility(View.VISIBLE);
-                    ivWebsite!!.visibility = View.VISIBLE
-                } else if (index1 == 2 + plus) {
+                    websiteLine!!.setVisibility(View.GONE);
+                    ivWebsite!!.visibility = View.GONE
+                }else if (index1 == 2 + plus) {
 
                     websiteLine!!.setVisibility(View.VISIBLE);
                     ivWebsite!!.visibility = View.VISIBLE
@@ -572,7 +585,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
-                } else if (index1 == 3 + plus) {
+                } else if (index1 == 4 + plus) {
 
                     websiteLine!!.visibility = View.GONE
                     ivWebsite!!.visibility = View.GONE
@@ -608,7 +621,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                 ivnameClose!!.visibility = View.GONE
             } else {
                 ivaddressselect!!.setImageResource(R.drawable.location_select)
-                if (index1 == 0 + plus) {
+                if (index1 == 2 + plus) {
                     linearAddress!!.hide()
                     ivLocation!!.visibility = View.GONE
                 } else {
@@ -1046,6 +1059,19 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             localFrameItem!!.layout_id,
             llframe, false
         )
+
+        if (index1==0+plus)
+        {
+            ivcall1 = frame_view.findViewById(R.id.ivPhone1)
+            tvframephone1 = frame_view.findViewById(R.id.tvframephone1)
+        }
+
+        if (index1==1+plus)
+        {
+            ivcall1 = frame_view.findViewById(R.id.ivPhone1)
+            tvframephone1 = frame_view.findViewById(R.id.tvframephone1)
+        }
+
         ivframelogo = frame_view.findViewById(R.id.ivframelogo)
         ivframebg = frame_view.findViewById(R.id.ivframebg)
         ivcall = frame_view.findViewById(R.id.ivPhone)
@@ -1440,7 +1466,100 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
         if (businessItem != null) {
             try {
 
-                if (index1 == 0+plus) {
+                if (index1 == 0 + plus) {
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
+                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
+                        Glide.with(this).load(businessItem.busi_logo)
+                            .into(ivframelogo!!)
+                    }
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_mobile_second != null && businessItem.busi_mobile_second != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall1!!.visibility = View.VISIBLE
+                        tvframephone1!!.visibility = View.VISIBLE
+                        tvframephone1!!.text = businessItem.busi_mobile_second
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
+                        linearAddress!!.visibility = View.VISIBLE
+                        ivLocation!!.visibility = View.VISIBLE
+                        tvframelocation!!.visibility = View.VISIBLE
+                        frameAddress!!.visibility = View.VISIBLE
+                        tvframelocation!!.text = businessItem.busi_address
+                        ivaddressselect!!.setImageResource(R.drawable.location_select)
+                    }
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
+                        ivemailselect!!.setImageResource(R.drawable.email_select)
+                    }
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
+                        ivwebsiteselect!!.setImageResource(R.drawable.website_select)
+                    }
+                }
+                else if (index1 == 1 + plus) {
+                    linearWebsite!!.hide()
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
+                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
+                        Glide.with(this).load(businessItem.busi_logo)
+                            .into(ivframelogo!!)
+                    }
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_mobile_second != null && businessItem.busi_mobile_second != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall1!!.visibility = View.VISIBLE
+                        tvframephone1!!.visibility = View.VISIBLE
+                        tvframephone1!!.text = businessItem.busi_mobile_second
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
+                        linearAddress!!.visibility = View.VISIBLE
+                        ivLocation!!.visibility = View.VISIBLE
+                        tvframelocation!!.visibility = View.VISIBLE
+                        frameAddress!!.visibility = View.VISIBLE
+                        tvframelocation!!.text = businessItem.busi_address
+                        ivaddressselect!!.setImageResource(R.drawable.location_select)
+                    }
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
+                        ivemailselect!!.setImageResource(R.drawable.email_select)
+                    }
+
+                } else if (index1 == 2 + plus) {
                     linearWebsite!!.hide()
                     linearEmail!!.hide()
                     linearAddress!!.hide()
@@ -1456,7 +1575,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         ivframelogo!!.visibility = View.VISIBLE
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
@@ -1467,7 +1586,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                } else if (index1 == 2+plus) {
+                } else if (index1 == 4+ plus) {
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.visibility = View.VISIBLE
                         frameName!!.visibility = View.VISIBLE
@@ -1480,7 +1599,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         ivframelogo!!.visibility = View.VISIBLE
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
+                        Glide.with(this).load(businessItem.busi_logo)
                             .into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
@@ -1512,42 +1631,13 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         ivWebsite!!.visibility = View.VISIBLE
                         tvframeweb!!.visibility = View.VISIBLE
                         frameWebsite!!.visibility = View.VISIBLE
-                        tvframeweb!!.text = businessItem.busi_website
+                        tvframeweb!!.text = businessItem.busi_address
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
-                } else if (index1 == 3+plus) {
-                    if (businessItem.busi_logo != "") {
-                        linearLogo!!.visibility = View.VISIBLE
-                        ivframelogo!!.visibility = View.VISIBLE
-                        frameLogo!!.visibility = View.VISIBLE
-                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
-                        Glide.with(this@ChooseFrameForPhotoActivityNew).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
-                    }
-                    if (businessItem.busi_mobile != "") {
-                        framePhone!!.visibility = View.VISIBLE
-                        linearPhone!!.visibility = View.VISIBLE
-                        ivcall!!.visibility = View.VISIBLE
-                        tvframephone!!.visibility = View.VISIBLE
-                        tvframephone!!.text = businessItem.busi_mobile
-                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
-                    }
-                    if (businessItem.busi_email != "") {
-                        linearEmail!!.visibility = View.VISIBLE
-                        ivEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.visibility = View.VISIBLE
-                        frameEmail!!.visibility = View.VISIBLE
-                        tvframeemail!!.text = businessItem.busi_email
-                        ivemailselect!!.setImageResource(R.drawable.email_select)
-                    }
-                } else if (index1 == 4+plus) {
-                    if (businessItem.busi_name != "") {
-                        linearName!!.visibility = View.VISIBLE
-                        frameName!!.visibility = View.VISIBLE
-                        tvframename!!.visibility = View.VISIBLE
-                        tvframename!!.text = businessItem.busi_name
-                        ivnameSelect!!.setImageResource(R.drawable.name_select)
-                    }
+                } else if (index1 == 5+plus) {
+                    linearAddress!!.hide()
+                    linearWebsite!!.hide()
+
                     if (businessItem.busi_logo != "") {
                         linearLogo!!.visibility = View.VISIBLE
                         ivframelogo!!.visibility = View.VISIBLE
@@ -1572,7 +1662,37 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
-                } /*else if (index1 == 5) {
+                }
+                else if (index1 == 6 + plus) {
+                    linearWebsite!!.hide()
+                    linearAddress!!.hide()
+                    if (businessItem.busi_logo != "") {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
+                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
+                        Glide.with(this).load(businessItem.busi_logo)
+                            .into(ivframelogo!!)
+                    }
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
+                        ivemailselect!!.setImageResource(R.drawable.email_select)
+                    }
+                }
+
+                /*else if (index1 == 5) {
 
                     if (!businessItem.getBusiLogo().equals("") && businessItem.getBusiLogo() != null) {
                         linearLogo.setVisibility(View.VISIBLE);
@@ -2021,8 +2141,26 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
             tvframeweb!!.typeface = allfonttypeface
             tvframelocation!!.typeface = allfonttypeface
             tvframename!!.typeface = allfonttypeface
+            if (index1 == 0 + plus)
+            {
+                tvframephone1!!.typeface=allfonttypeface
+            }
+            if(index1== 1+plus)
+            {
+                tvframephone1!!.typeface=allfonttypeface
+
+            }
         } else if (phoneValue) {
             phoneTypeface = Typeface.createFromAsset(assets, path)
+            if (index1 == 0 + plus)
+            {
+                tvframephone1!!.typeface=phoneTypeface
+            }
+            if(index1== 1+plus)
+            {
+                tvframephone1!!.typeface=phoneTypeface
+
+            }
             tvframephone!!.typeface = phoneTypeface
         } else if (emailValue) {
             emailTypeface = Typeface.createFromAsset(assets, path)
@@ -2068,18 +2206,55 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                     ivEmail!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
                     ivWebsite!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
                     ivLocation!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    if (index1 == 0 + plus)
+                    {
+                        ivcall1!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+                    }
+                    if(index1== 1 + plus)
+                    {
+                        ivcall1!!.backgroundTintList = ColorStateList.valueOf(allselectedcolor)
+
+                    }
                 }
                 tvframephone!!.setTextColor(allselectedcolor)
                 tvframeemail!!.setTextColor(allselectedcolor)
                 tvframeweb!!.setTextColor(allselectedcolor)
                 tvframelocation!!.setTextColor(allselectedcolor)
                 tvframename!!.setTextColor(allselectedcolor)
+                if (index1 == 0 + plus)
+                {
+                    tvframephone1!!.setTextColor(allselectedcolor)
+                }
+                if(index1== 1+plus)
+                {
+                    tvframephone1!!.setTextColor(allselectedcolor)
+
+                }
             }
         } else if (phoneValue) {
             phoneselected_color = color
+            if (index1 == 0 + plus)
+            {
+                tvframephone1!!.setTextColor(phoneselected_color)
+            }
+            if(index1== 1+plus)
+            {
+                tvframephone1!!.setTextColor(phoneselected_color)
+
+            }
             tvframephone!!.setTextColor(phoneselected_color)
+
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 ivcall!!.backgroundTintList = ColorStateList.valueOf(phoneselected_color)
+                if (index1 == 0 + plus)
+                {
+                    ivcall1!!.backgroundTintList = ColorStateList.valueOf(phoneselected_color)
+                }
+                if(index1== 1+plus)
+                {
+                    ivcall1!!.backgroundTintList = ColorStateList.valueOf(phoneselected_color)
+
+                }
             }
         } else if (emailValue) {
             emailselected_color = color

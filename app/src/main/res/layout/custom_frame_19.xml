@@ -22,7 +22,7 @@
             android:id="@+id/linearLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
+            android:layout_margin="@dimen/_2sdp"
             android:layout_gravity="right"
 
             android:visibility="visible"
@@ -30,10 +30,10 @@
 
             <ImageView
                 android:id="@+id/ivframelogo"
-                android:layout_width="@dimen/_70sdp"
+                android:layout_width="@dimen/_60sdp"
 android:layout_height="@dimen/_60sdp"
                 android:layout_gravity="center"
-                android:layout_margin="@dimen/_5sdp"
+                android:layout_margin="@dimen/_2sdp"
                  />
 
         </LinearLayout>
@@ -131,11 +131,12 @@ android:layout_height="@dimen/_60sdp"
 
                     <ImageView
                         android:id="@+id/ivPhone"
-                        android:layout_width="@dimen/_6sdp"
-                        android:layout_height="@dimen/_6sdp"
+                        android:layout_width="@dimen/_7sdp"
+                        android:layout_height="@dimen/_7sdp"
                         android:layout_gravity="center|center_vertical"
                         android:backgroundTint="@color/colorWhite"
-                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:layout_marginLeft="@dimen/_4sdp"
+                        android:layout_marginTop="2px"
                         android:background="@drawable/ic_baseline_call_24" />
 
                     <TextView
@@ -148,13 +149,13 @@ android:layout_height="@dimen/_60sdp"
                         android:maxLines="1"
 
                         android:textColor="@color/colorWhite"
-                        android:textSize="@dimen/_6sdp" />
+                        android:textSize="@dimen/_7sdp" />
 
                     <TextView
                         android:id="@+id/viewPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_4sdp"
+                        android:layout_marginLeft="@dimen/_2sdp"
                         android:visibility="visible"
                         android:text="|"
                         android:layout_marginBottom="@dimen/_1sdp"
@@ -195,12 +196,13 @@ android:layout_height="@dimen/_60sdp"
 
                     <ImageView
                         android:id="@+id/ivEmail"
-                        android:layout_width="@dimen/_6sdp"
-                        android:layout_height="@dimen/_6sdp"
+                        android:layout_width="@dimen/_7sdp"
+                        android:layout_height="@dimen/_7sdp"
                         android:layout_gravity="center"
                         android:layout_marginLeft="@dimen/_2sdp"
                         android:backgroundTint="@color/colorWhite"
                         android:visibility="visible"
+                        android:layout_marginTop="2px"
                         android:background="@drawable/ic_baseline_email_24" />
 
                     <TextView
@@ -212,13 +214,13 @@ android:layout_height="@dimen/_60sdp"
                         android:maxLines="1"
 
                         android:textColor="@color/colorWhite"
-                        android:textSize="@dimen/_6sdp" />
+                        android:textSize="@dimen/_7sdp" />
 
                     <TextView
                         android:id="@+id/viewwebsite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_4sdp"
+                        android:layout_marginLeft="@dimen/_2sdp"
                         android:visibility="visible"
                         android:text="|"
                         android:layout_marginTop="@dimen/_minus1sdp"
@@ -267,12 +269,13 @@ android:layout_height="@dimen/_60sdp"
 
                     <ImageView
                         android:id="@+id/ivWebsite"
-                        android:layout_width="@dimen/_6sdp"
-                        android:layout_height="@dimen/_6sdp"
+                        android:layout_width="@dimen/_7sdp"
+                        android:layout_height="@dimen/_7sdp"
                         android:layout_gravity="center"
                         android:backgroundTint="@color/colorWhite"
                         android:visibility="visible"
-                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:layout_marginTop="2px"
+                        android:layout_marginLeft="@dimen/_1sdp"
                         android:background="@drawable/ic_baseline_public_24" />
 
                     <TextView
@@ -284,7 +287,7 @@ android:layout_height="@dimen/_60sdp"
                         android:gravity="center"
                         android:maxLines="1"
                         android:textColor="@color/colorWhite"
-                        android:textSize="@dimen/_6sdp" />
+                        android:textSize="@dimen/_7sdp" />
 
                 </LinearLayout>
 
@@ -331,10 +334,11 @@ android:layout_height="@dimen/_60sdp"
 
                     <ImageView
                         android:id="@+id/ivAddress"
-                        android:layout_width="@dimen/_6sdp"
-                        android:layout_height="@dimen/_6sdp"
+                        android:layout_width="@dimen/_7sdp"
+                        android:layout_height="@dimen/_7sdp"
                         android:layout_gravity="center"
                         android:visibility="visible"
+                        android:layout_marginTop="2px"
                         android:layout_marginLeft="@dimen/_2sdp"
                         android:background="@drawable/ic_baseline_location_on_24" />
 
@@ -348,7 +352,7 @@ android:layout_height="@dimen/_60sdp"
                         android:maxLines="1"
                         android:text="Rajkot"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_6sdp" />
+                        android:textSize="@dimen/_7sdp" />
 
                 </LinearLayout>
 
