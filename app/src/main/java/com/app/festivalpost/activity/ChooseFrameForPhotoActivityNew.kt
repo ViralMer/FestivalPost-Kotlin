@@ -867,7 +867,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
 
                         layroot!!.buildDrawingCache(true)
                         val savedBmp = Bitmap.createBitmap(
-                            layroot!!.drawingCache, 0, 0, width, width
+                            layroot!!.drawingCache
                         )
                         layroot!!.isDrawingCacheEnabled = false
                         val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)
@@ -909,7 +909,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         layroot!!.isDrawingCacheEnabled = true
                         layroot!!.buildDrawingCache(true)
                         val savedBmp = Bitmap.createBitmap(
-                            layroot!!.drawingCache, 0, 0, width, width
+                            layroot!!.drawingCache
                         )
                         layroot!!.isDrawingCacheEnabled = false
                         val newsaveBmp = scaleBitmap(savedBmp, 1080, 1080)

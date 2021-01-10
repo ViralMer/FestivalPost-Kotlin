@@ -58,6 +58,7 @@ class VideoPostAdapter(var context: Context, var originaldata: ArrayList<FileLis
                 path + "/" + festivalItem.path,
                 MediaStore.Images.Thumbnails.MINI_KIND
             )!!
+
             holder.ivphoto.setImageBitmap(thumb)
         } catch (e: java.lang.Exception) {
 
@@ -103,6 +104,7 @@ class VideoPostAdapter(var context: Context, var originaldata: ArrayList<FileLis
                                 )
                                 val sharingIntent = Intent(Intent.ACTION_SEND)
                                 sharingIntent.type = "video/mp4" //If it is a 3gp video use ("video/3gp")
+                                Log.d("PAth",""+imageUrl)
                                 val uri = Uri.parse(imageUrl)
                                 sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
                                 context.startActivity(Intent.createChooser(sharingIntent, "Share Video!"))

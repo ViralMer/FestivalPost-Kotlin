@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
+import android.os.Environment.DIRECTORY_PICTURES
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MenuItem
@@ -26,7 +27,6 @@ import androidx.appcompat.widget.Toolbar
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.HomeActivity
-import com.app.festivalpost.globals.Constant
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.models.VideoListItem
 import com.app.festivalpost.utils.Constants
@@ -84,6 +84,7 @@ class VideoCreateActivity : AppBaseActivity() {
     private var adView: AdView? = null
 
     var mFilename: String? = null
+    var mVideoName: String? = null
     var mBuilder: Notification.Builder? = null
     var mNotifyManager: NotificationManager? = null
     var progressBar: ProgressDialog? = null
@@ -149,8 +150,12 @@ class VideoCreateActivity : AppBaseActivity() {
 
         imageview!!.setImageBitmap(bmp)
         banner_container = findViewById(R.id.banner_container)
-        adView = AdView(this, "IMG_16_9_APP_INSTALL#701945100529313_701945953862561", AdSize.BANNER_HEIGHT_50)
-        videoView!!.setSource(filesDir.absolutePath+"/video_demo.mp4")
+        adView = AdView(
+            this,
+            "IMG_16_9_APP_INSTALL#701945100529313_701945953862561",
+            AdSize.BANNER_HEIGHT_50
+        )
+        videoView!!.setSource(filesDir.absolutePath + "/video_demo.mp4")
         videoView!!.setPlayWhenReady(true)
 
         if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!) {
@@ -182,10 +187,10 @@ class VideoCreateActivity : AppBaseActivity() {
     }
 
     private fun saveVideoToInternalStorage() {
-        val musicDirectory = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost")
+        val musicDirectory = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost")
         musicDirectory.mkdirs()
         musicDirectory.mkdir()
-
+        mVideoName=videoName
 
 
         val inputCode1: Array<String> = arrayOf(
@@ -197,7 +202,7 @@ class VideoCreateActivity : AppBaseActivity() {
             "overlay=(W-w):(H-h)",
             "-codec:a",
             "copy",
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName"
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost/$mVideoName"
         )
 
         val rc = FFmpeg.execute(inputCode1)
@@ -222,7 +227,7 @@ class VideoCreateActivity : AppBaseActivity() {
             sendBroadcast(
                 Intent(
                     Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                    Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
+                    Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost/$mVideoName")
                 )
             )
         } else {
@@ -230,7 +235,7 @@ class VideoCreateActivity : AppBaseActivity() {
                 Intent(
                     Intent.ACTION_MEDIA_MOUNTED,
                     Uri.parse
-                        (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
+                        (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost/$mVideoName")
 
                 )
             )
@@ -238,7 +243,7 @@ class VideoCreateActivity : AppBaseActivity() {
 
         MediaScannerConnection.scanFile(
             applicationContext,
-            arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName"),
+            arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost/$mVideoName"),
             arrayOf("video/mp4")
         ) { path, uri ->
 
@@ -312,25 +317,26 @@ class VideoCreateActivity : AppBaseActivity() {
         override fun onPostExecute(aVoid: Void?) {
             showProgress(false)
             frameLayout!!.visibility = View.GONE
-            videoView!!.setSource(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
+            videoView!!.setSource(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost/$mVideoName")
             scanner()
             Toast.makeText(this@VideoCreateActivity, "Video Saved Successfully", Toast.LENGTH_SHORT)
                 .show()
             val detailAct = Intent(this@VideoCreateActivity, HomeActivity::class.java)
             detailAct.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(detailAct)
-            finish()
+
             if (save) {
 
+                    val uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$mVideoName")
                     val sharingIntent = Intent(Intent.ACTION_SEND)
                     sharingIntent.type = "video/mp4" //If it is a 3gp video use ("video/3gp")
-                    val uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/"+videoName)
                     sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                    Log.d("uriPArse",""+uri.toString())
+                    sharingIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    sharingIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    Log.d("uriPArse", "" + uri)
                     startActivity(Intent.createChooser(sharingIntent, "Share Video!"))
-
-
             }
+            finish()
 
 
             super.onPostExecute(aVoid)
@@ -394,11 +400,15 @@ class VideoCreateActivity : AppBaseActivity() {
         sendBroadcast(
             Intent(
                 Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName")
+                Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost/$mVideoName")
             )
         )
         MediaScannerConnection.scanFile(
-            this, arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost/$videoName"), arrayOf("video/mp4")
+            this,
+            arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost/$mVideoName"),
+            arrayOf(
+                "video/mp4"
+            )
         ) { path, uri -> Log.i("TAG", "Finished scanning $path") }
     }
 
@@ -410,5 +420,27 @@ class VideoCreateActivity : AppBaseActivity() {
 
     companion object {
         var NOTIFICATION_ID = 0
+    }
+
+    fun shareVideo(path: String) {
+        MediaScannerConnection.scanFile(
+            this, arrayOf(path),
+            null
+        ) { path, uri ->
+            val shareIntent = Intent(
+                Intent.ACTION_SEND
+            )
+            shareIntent.type = "video/mp4"
+
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+            shareIntent
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+            startActivity(
+                Intent.createChooser(
+                    shareIntent,
+                    "Share Video"
+                )
+            )
+        }
     }
 }

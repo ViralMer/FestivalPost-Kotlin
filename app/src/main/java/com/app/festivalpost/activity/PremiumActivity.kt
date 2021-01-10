@@ -1,5 +1,6 @@
 package com.app.festivalpost.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,10 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -67,6 +65,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     private var sessionManager: SessionManager? = null
     private var token: String? = null
     var device_type : String?=null
+    var payment_id : String?=null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -346,8 +345,8 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     private fun handleRazorPay() {
         val checkout = Checkout()
         checkout.setImage(R.mipmap.ic_launcher_new)
-        //checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
-        checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
+        checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
+        //checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
 
         try {
             val options = JSONObject()
@@ -365,9 +364,36 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onPaymentSuccess(p0: String?, p1: PaymentData?) {
+        payment_id=p0.toString()
         try{
-            loadAccoutData("1234",p0.toString(),business_id!!,"2")
+            val materialAlertDialogBuilder =
+                AlertDialog.Builder(this)
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.custom_error_dialog, null)
+            val tvTitle: TextView
+            val tvMessage: TextView
+            val btnOk: Button
+            tvTitle = view.findViewById(R.id.tvTitle)
+            tvMessage = view.findViewById(R.id.tvMessage)
+            btnOk = view.findViewById(R.id.btnOk)
+            btnOk.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+            btnOk.setTextColor(resources.getColor(R.color.colorBlack))
+            tvTitle.text = "Thank You"
+            tvTitle.setTextColor(R.color.black)
+            tvMessage.text = "Your business will be approved within 24 hours."
+            tvTitle.setTextColor(R.color.black)
+
+            materialAlertDialogBuilder.setView(view).setCancelable(false)
+            val b = materialAlertDialogBuilder.create()
+            btnOk.setOnClickListener {
+                b.dismiss()
+                loadAccoutData("1234",payment_id!!,business_id!!,"2")
+                //onBackPressed()
+            }
+            b.show()
+
             Log.d("Data RazorPay Succes",""+p0.toString())
         }
         catch (e:Exception)
