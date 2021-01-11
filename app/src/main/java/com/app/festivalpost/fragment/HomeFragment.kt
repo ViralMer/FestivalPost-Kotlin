@@ -277,7 +277,7 @@ class HomeFragment : BaseFragment() {
 
 
     private fun openAddImageDialog() {
-        if(Build.VERSION.SDK_INT == 30 ){
+        if(Build.VERSION.SDK_INT >= 29){
             Dexter.withContext(activity)
                 .withPermissions(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -312,9 +312,7 @@ class HomeFragment : BaseFragment() {
             Dexter.withContext(activity)
                 .withPermissions(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.ACCESS_MEDIA_LOCATION
-                )
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     }

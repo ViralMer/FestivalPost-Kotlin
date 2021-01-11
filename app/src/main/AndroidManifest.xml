@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
 
 
-    <!--<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />-->
+
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -44,7 +44,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
-        tools:targetApi="r">
+        >
         <activity android:name=".activity.FestivalViewAllActivitty"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
@@ -187,7 +187,7 @@
         -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_launcher" />
+            android:resource="@mipmap/ic_launcher_squrare_new" />
         <!--
  Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more.

@@ -75,6 +75,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         sessionManager = SessionManager(this)
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         ivBack = toolbar.findViewById(R.id.ivBack)
+        mAuth = FirebaseAuth.getInstance();
         user_token = sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         device_token = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
         device_id = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
@@ -91,10 +92,10 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
             sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN, token)
 
         }
-        SmsRetriever.getClient(this).startSmsUserConsent(null)
-        smsReceiver()
-        val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
-        registerReceiver(smsVerificationReceiver, intentFilter)
+        //SmsRetriever.getClient(this).startSmsUserConsent(null)
+        //smsReceiver()
+        //val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
+        //registerReceiver(smsVerificationReceiver, intentFilter)
         val isLoogedIn = sessionManager!!.getBooleanValue(Constants.SharedPref.IS_LOGGED_IN)
 
         if (isLoogedIn!!) {
@@ -120,14 +121,14 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     }
 
     private fun performLogin() {
-        if (etNumber!!.text.toString().equals("", ignoreCase = true)) {
+        if (etNumber!!.editableText.toString().equals("", ignoreCase = true)) {
             Global.getAlertDialog(
                 this@LoginActivity,
                 "Opps..!",
                 resources.getString(R.string.txt_fill_all_details)
             )
         } else {
-            sendVerificationCode("+" + spinnerCountry!!.selectedCountryCode + etNumber!!.text.toString())
+            sendVerificationCode("+" +spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
             //login()
         }
     }
@@ -138,7 +139,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         callApi(
 
             getRestApis().login(
-                etNumber!!.text.toString(),
+                etNumber!!.editableText.toString(),
                 device_id!!,
                 device_type!!,
                 device_token!!
@@ -213,7 +214,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     }
 
     private fun performSubmit() {
-        val code = etOtp!!.text.toString().trim()
+        val code = etOtp!!.editableText.toString()
         if (code.isEmpty() || code.length < 6) {
             Toast.makeText(
                 this,
@@ -229,6 +230,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     private fun verifyCode(code: String) {
         try {
             showProgress(true)
+
             val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
             signInWithCredential(credential)
         } catch (e: Exception) {
@@ -236,8 +238,9 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     }
 
     private fun signInWithCredential(credential: PhoneAuthCredential) {
-        mAuth!!.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
+        if (credential!=null) {
+
+            mAuth!!.signInWithCredential(credential).addOnCompleteListener { task ->
                 showProgress(false)
                 if (task.isSuccessful) {
                     login()
@@ -249,12 +252,17 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                     ).show()
                 }
             }
+        }
+        else{
+            toast("Please try again")
+        }
     }
 
 
     private fun sendVerificationCode(number: String?) {
         try {
             showProgress(true)
+
             PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 number!!,
                 60,
@@ -286,16 +294,17 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                 //startSmsUserConsent()
             }
 
-            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+            /*override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                //signInWithCredential(p0)
+            }*/
 
-            }
-
-            /*override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
+            override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                 val code = phoneAuthCredential.smsCode
                 if (code != null) {
-                    //verifyCode(code)
+                    verifyCode(code)
+                    etOtp!!.setText(code)
                 }
-            }*/
+            }
 
             override fun onVerificationFailed(e: FirebaseException) {
                 Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_LONG)
@@ -342,7 +351,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
         tvresendOtp.onClick {
             resendVerificationCode(
-                "+" + spinner.selectedCountryCode + "" + et_number.text.toString(),
+                "+" + spinner.selectedCountryCode + "" + etNumber!!.text.toString(),
                 token!!
             )
         }
@@ -358,17 +367,6 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     }
 
 
-    private fun startSmsUserConsent() {
-        val client = SmsRetriever.getClient(this)
-        //We can add sender phone number or leave it blank
-        // I'm adding null here
-        client.startSmsUserConsent(etNumber!!.editableText.toString()).addOnSuccessListener {
-
-        }.addOnFailureListener {
-            Log.d("OnFailure", "" + it.message.toString())
-        }
-    }
-
 
 
     override fun onDestroy() {
@@ -378,7 +376,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(smsVerificationReceiver)
+        //unregisterReceiver(smsVerificationReceiver)
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

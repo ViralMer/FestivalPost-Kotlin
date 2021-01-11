@@ -33,13 +33,12 @@ fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aErr
                     val body = response.body()
                     if (body != null) {
                         try {
-
                             onApiSuccess(body)
+                            logData(call.request(), Gson().toJson(body), response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis())
                         }
                         catch (e:JSONException)
                         {
                         }
-                        logData(call.request(), Gson().toJson(body), response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis())
                     } else {
                         onApiError("Please try again later.")
                         logData(call.request(), "Response body is null", response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis(), true)

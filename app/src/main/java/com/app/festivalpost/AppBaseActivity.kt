@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
@@ -58,7 +59,15 @@ open class AppBaseActivity : AppCompatActivity(),View.OnFocusChangeListener {
                 if (!isFinishing && !progressDialog!!.isShowing) {
                     progressDialog?.setCanceledOnTouchOutside(false)
                     progressDialog?.setCancelable(false)
-                    progressDialog?.show()
+                    try {
+
+                        progressDialog?.show()
+                    }
+                    catch (e:WindowManager.InvalidDisplayException) {
+                    }
+                    catch (e:WindowManager.BadTokenException) {
+                    }
+
 
                 }
             }

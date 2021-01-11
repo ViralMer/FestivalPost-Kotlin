@@ -345,8 +345,8 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     private fun handleRazorPay() {
         val checkout = Checkout()
         checkout.setImage(R.mipmap.ic_launcher_new)
-        checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
-        //checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
+        ///////checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
+        checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
 
         try {
             val options = JSONObject()
@@ -367,39 +367,10 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     @SuppressLint("ResourceAsColor")
     override fun onPaymentSuccess(p0: String?, p1: PaymentData?) {
         payment_id=p0.toString()
-        try{
-            val materialAlertDialogBuilder =
-                AlertDialog.Builder(this)
-            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val view = inflater.inflate(R.layout.custom_error_dialog, null)
-            val tvTitle: TextView
-            val tvMessage: TextView
-            val btnOk: Button
-            tvTitle = view.findViewById(R.id.tvTitle)
-            tvMessage = view.findViewById(R.id.tvMessage)
-            btnOk = view.findViewById(R.id.btnOk)
-            btnOk.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-            btnOk.setTextColor(resources.getColor(R.color.colorBlack))
-            tvTitle.text = "Thank You"
-            tvTitle.setTextColor(R.color.black)
-            tvMessage.text = "Your business will be approved within 24 hours."
-            tvTitle.setTextColor(R.color.black)
+        Toast.makeText(this,"Your business will approve within 24 hours.",Toast.LENGTH_LONG).show()
+        loadAccoutData("1234",payment_id!!,business_id!!,"2")
 
-            materialAlertDialogBuilder.setView(view).setCancelable(false)
-            val b = materialAlertDialogBuilder.create()
-            btnOk.setOnClickListener {
-                b.dismiss()
-                loadAccoutData("1234",payment_id!!,business_id!!,"2")
-                //onBackPressed()
-            }
-            b.show()
 
-            Log.d("Data RazorPay Succes",""+p0.toString())
-        }
-        catch (e:Exception)
-        {
-            Log.d("Exception Razorpay",""+e.message)
-        }
 
     }
 
@@ -414,7 +385,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
             getRestApis().purchaseplan(orderID,paymentId,businessId,plan_id,device_type!!,token!!), onApiSuccess = {
                 showProgress(false)
                 if (it.status!!) {
-                    toast("Purchase Plan Successfully")
+                    toast("Your business will approve within 24 hours.")
                     launchActivity<HomeActivity> {
                         finish()
                     }

@@ -152,7 +152,7 @@ class VideoCreateActivity : AppBaseActivity() {
         banner_container = findViewById(R.id.banner_container)
         adView = AdView(
             this,
-            "IMG_16_9_APP_INSTALL#701945100529313_701945953862561",
+            "637278886950456_679310799413931",
             AdSize.BANNER_HEIGHT_50
         )
         videoView!!.setSource(filesDir.absolutePath + "/video_demo.mp4")

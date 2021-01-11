@@ -169,7 +169,14 @@ class RegisterActivity : AppBaseActivity() {
         try {
             showProgress(true)
             val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
-            signInWithCredential(credential)
+            if (credential==null)
+            {
+                toast("Please try Again")
+            }
+            else{
+                signInWithCredential(credential)
+
+            }
         } catch (e: Exception) {
         }
     }
@@ -262,10 +269,12 @@ class RegisterActivity : AppBaseActivity() {
             }
 
             override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
-                /*val code = phoneAuthCredential.smsCode
+                //signInWithCredential(phoneAuthCredential)
+                val code = phoneAuthCredential.smsCode
                 if (code != null) {
-                    //verifyCode(code)
-                }*/
+                    etOtp!!.setText(code)
+                    verifyCode(code)
+                }
             }
 
             override fun onVerificationFailed(e: FirebaseException) {

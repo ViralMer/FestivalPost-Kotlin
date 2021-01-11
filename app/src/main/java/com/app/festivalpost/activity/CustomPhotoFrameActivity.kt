@@ -826,7 +826,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             linearPhone!!.setBackgroundResource(0)
             linearWebsite!!.setBackgroundResource(0)
             linearName!!.setBackgroundResource(0)
-            //mainframeBorder!!.setBackgroundResource(0)
+            mainframeBorder!!.setBackgroundResource(0)
             ivaddressclose!!.visibility = View.GONE
             ivphoneclose!!.visibility = View.GONE
             ivphotoclose!!.visibility = View.GONE
