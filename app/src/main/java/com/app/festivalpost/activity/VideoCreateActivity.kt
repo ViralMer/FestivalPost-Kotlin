@@ -267,11 +267,12 @@ class VideoCreateActivity : AppBaseActivity() {
     }
 
     fun openAddImageDialog() {
+
         Dexter.withActivity(this)
             .withPermissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_MEDIA_LOCATION
+
             )
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
