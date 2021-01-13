@@ -30,7 +30,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
         context = applicationContext
-        sessionManager= SessionManager(this)
+        sessionManager= SessionManager(context!!)
         sessionManager!!.setStringValue(DEVICE_TOKEN,token)
     }
 

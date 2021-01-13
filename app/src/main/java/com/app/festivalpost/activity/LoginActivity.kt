@@ -70,28 +70,31 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        FirebaseApp.initializeApp(this)
-
         sessionManager = SessionManager(this)
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         ivBack = toolbar.findViewById(R.id.ivBack)
         mAuth = FirebaseAuth.getInstance();
-        user_token = sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         device_token = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
         device_id = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
         device_type = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
+        Log.d("DEviceToken1",""+sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN) +" Device id: " +sessionManager!!.getValueString(
+            Constants.KeyIntent.DEVICE_ID
+        )+ " Devicce_type:"+device_type)
         etNumber = findViewById(R.id.et_number)
         spinnerCountry = findViewById(R.id.spinner)
         linearlogin = findViewById<LinearLayout>(R.id.linearLogin)
         tvsignup = findViewById<TextView>(R.id.tvsignup)
         etNumber!!.onFocusChangeListener = this
         //startSmsUserConsent()
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
+
+        /*FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
             sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN, token)
+            Log.d("DEviceToken12",""+sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN) +" Device id: " +sessionManager!!.getValueString(
+                Constants.KeyIntent.DEVICE_ID
+            )+ " Devicce_type:"+device_type)
 
-        }
+        }*/
         //SmsRetriever.getClient(this).startSmsUserConsent(null)
         //smsReceiver()
         //val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
@@ -128,8 +131,8 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                 resources.getString(R.string.txt_fill_all_details)
             )
         } else {
-            sendVerificationCode("+" +spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
-            //login()
+            //sendVerificationCode("+" +spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
+            login()
         }
     }
 
@@ -145,6 +148,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                 device_token!!
             ),
             onApiSuccess = {
+
                 showProgress(false)
                 if (it.status!!) {
                     launchActivity<HomeActivity> {

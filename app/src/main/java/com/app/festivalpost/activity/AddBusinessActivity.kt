@@ -236,13 +236,16 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
     private fun submitDetails() {
         if (edName!!.text.toString() == "") {
             Global.getAlertDialog(this, "Opps..!", "Please Enter Name")
-        } else if (edEmail!!.text.toString() != "" && !validEmail(edEmail!!.text.toString())) {
+        } /*else if (edEmail!!.text.toString() != "" && !validEmail(edEmail!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Enter valid e-mail!")
         } else if (edPhone!!.text.toString().length != 10) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter 10 Digit Mobile Number")
         }
         else if (edWebsite!!.text.toString() != "" && !validWebsite(edWebsite!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
+        }*/
+        else if (edPhone!!.text.toString().length > 15) {
+            Global.getAlertDialog(this, "Opps..!", "Please Enter Mobile Number")
         }
         else if (category_value==null) {
             Global.getAlertDialog(this, "Opps..!", "Please Select Category")

@@ -123,6 +123,7 @@
                 android:fontFamily="@font/sf_ui_medium"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginRight="@dimen/_5sdp"
+
                 android:background="@drawable/edit_text_border"
                 android:hint="@string/hint_business_name"
                 android:padding="@dimen/_10sdp" />
@@ -139,7 +140,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginRight="@dimen/_5sdp"
                 android:inputType="number"
-                android:maxLength="10"
+                android:maxLength="15"
                 android:background="@drawable/edit_text_border"
                 android:hint="@string/hint_mobile_one"
                 android:padding="@dimen/_10sdp" />
@@ -153,7 +154,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
                 android:inputType="number"
-                android:maxLength="10"
+                android:maxLength="15"
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:fontFamily="@font/sf_ui_medium"
                 android:layout_marginTop="@dimen/_5sdp"
@@ -172,6 +173,7 @@
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:fontFamily="@font/sf_ui_medium"
                 android:layout_marginTop="@dimen/_5sdp"
+                android:maxLength="40"
                 android:layout_marginRight="@dimen/_5sdp"
                 android:background="@drawable/edit_text_border"
                 android:hint="@string/hint_business_email"
@@ -181,7 +183,7 @@
                 android:id="@+id/et_business_website"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
-
+                android:maxLength="40"
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:fontFamily="@font/sf_ui_medium"
                 android:layout_marginTop="@dimen/_5sdp"
@@ -195,7 +197,7 @@
                 android:id="@+id/et_business_address"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
-
+                android:maxLength="70"
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:fontFamily="@font/sf_ui_medium"
                 android:layout_marginTop="@dimen/_5sdp"

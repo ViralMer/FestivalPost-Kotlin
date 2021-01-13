@@ -42,6 +42,7 @@ class FestivalPost : MultiDexApplication() {
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
             sessionManager!!.setStringValue(DEVICE_TOKEN,token)
+            Log.d("DEviceToken",""+sessionManager!!.getValueString(DEVICE_TOKEN) +" Device id: " +sessionManager!!.getValueString(DEVICE_ID))
             // send it to server
         }
 

@@ -42,6 +42,8 @@ fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aErr
                     } else {
                         onApiError("Please try again later.")
                         logData(call.request(), "Response body is null", response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis(), true)
+                        //val code=getErrorMessageByHttpCode(response.code())
+                        //Log.d("ResponseCode",""+code)
                     }
                 }
                 else -> {

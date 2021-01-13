@@ -56,14 +56,13 @@ class RegisterActivity : AppBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        FirebaseApp.initializeApp(this)
         sessionManager= SessionManager(this)
-        user_token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
+        mAuth = FirebaseAuth.getInstance()
         device_token=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
         device_id=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
         device_type=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
 
-        mAuth = FirebaseAuth.getInstance()
+
         val toolbar=findViewById<View>(R.id.toolbar) as Toolbar
         ivBack=toolbar.findViewById(R.id.ivBack)
 
@@ -84,11 +83,11 @@ class RegisterActivity : AppBaseActivity() {
             finish()
         }
 
-        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
+        /*FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
             sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN,token)
             // send it to server
-        }
+        }*/
 
         linearregister!!.onClick {
             performRegister()
@@ -147,7 +146,9 @@ class RegisterActivity : AppBaseActivity() {
          } else if (etNumber!!.text.toString().length != 10) {
              Global.getAlertDialog(this, "Opps..!", "Enter valid Number!")
          } else {
-             sendVerificationCode("+" + spinner.selectedCountryCode + et_number.text.toString())
+             sendVerificationCode("+" + spinner.selectedCountryCode + etNumber!!.editableText.toString())
+             //performSubmit()
+             //loadRegisterData()
          }
      }
 
@@ -201,7 +202,7 @@ class RegisterActivity : AppBaseActivity() {
     private fun loadRegisterData() {
         showProgress(true)
         callApi(
-            getRestApis().register(etName!!.text.toString(), etNumber!!.text.toString(),device_id!!,device_type!!,device_token!!),
+            getRestApis().register(etName!!.editableText.toString(), etNumber!!.editableText.toString(),device_id!!,device_type!!,device_token!!),
             onApiSuccess = {
                 if (it.status!!) {
                     showProgress(false)

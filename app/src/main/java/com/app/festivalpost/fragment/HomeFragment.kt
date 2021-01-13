@@ -108,6 +108,8 @@ class HomeFragment : BaseFragment() {
             activity!!.launchActivity<FestivalViewAllActivitty> { }
         }
 
+        loadHomePageData()
+
         tvCustom!!.onClick {
             val currentBusinessItem =
                 get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, activity!!)
@@ -137,7 +139,7 @@ class HomeFragment : BaseFragment() {
         }
 
 
-        loadHomePageData()
+
 
 
         // Auto start of viewpager

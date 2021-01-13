@@ -3,9 +3,7 @@ package com.app.festivalpost.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
@@ -68,6 +66,8 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     var payment_id : String?=null
 
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_premium)
@@ -97,11 +97,16 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
             {
                 business_id=bundle["business_id"] as String?
             }
-            else{
-                val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
-                business_id=businessItem!!.busi_id.toString()
-            }
+
+
+
         }
+        else{
+            val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
+            business_id=businessItem!!.busi_id.toString()
+        }
+
+
         planItemArrayList!!.add(PlanItemDetails("1","Premium Plan","\u20B9 "+1199))
 
         viewPager = findViewById(R.id.planviewPager)
@@ -345,8 +350,8 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     private fun handleRazorPay() {
         val checkout = Checkout()
         checkout.setImage(R.mipmap.ic_launcher_new)
-        ///////checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
-        checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
+        checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
+       //// checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
 
         try {
             val options = JSONObject()
@@ -368,11 +373,15 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     override fun onPaymentSuccess(p0: String?, p1: PaymentData?) {
         payment_id=p0.toString()
         Toast.makeText(this,"Your business will approve within 24 hours.",Toast.LENGTH_LONG).show()
-        loadAccoutData("1234",payment_id!!,business_id!!,"2")
+
+        AsyncTaskExampleNew().execute();
 
 
 
     }
+
+
+
 
     override fun onPaymentError(p0: Int, p1: String?, p2: PaymentData?) {
         Log.d("Data RazorPay",""+p0.toString()+ " p1: "+p1.toString()+ " p2:"+p2)
@@ -401,6 +410,28 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
                 openLottieDialog {  }
 
             })
+    }
+
+
+    inner class AsyncTaskExampleNew : AsyncTask<Void?, Void?, Void?>() {
+        override fun onPreExecute() {
+            showProgress(true)
+            super.onPreExecute()
+        }
+
+        override fun doInBackground(vararg p0: Void?): Void? {
+            try {
+                loadAccoutData("1234",payment_id!!,business_id!!,"2")
+            } catch (e: Exception) {
+                //p.dismiss();
+            }
+            return null
+        }
+
+        override fun onPostExecute(aVoid: Void?) {
+            showProgress(false)
+            super.onPostExecute(aVoid)
+        }
     }
 
 

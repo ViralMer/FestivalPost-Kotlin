@@ -336,8 +336,10 @@ class VideoCreateActivity : AppBaseActivity() {
                     sharingIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     Log.d("uriPArse", "" + uri)
                     startActivity(Intent.createChooser(sharingIntent, "Share Video!"))
+
             }
             finish()
+
 
 
             super.onPostExecute(aVoid)
