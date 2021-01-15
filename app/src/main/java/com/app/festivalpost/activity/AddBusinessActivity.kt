@@ -37,6 +37,7 @@ import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
+import com.emegamart.lelys.utils.extensions.launchActivity
 import com.emegamart.lelys.utils.extensions.onClick
 import com.emegamart.lelys.utils.extensions.toast
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -244,7 +245,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
         else if (edWebsite!!.text.toString() != "" && !validWebsite(edWebsite!!.text.toString())) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter valid Website address")
         }*/
-        else if (edPhone!!.text.toString().length > 15) {
+        else if (edPhone!!.text.toString().trim().length > 15 || edPhone!!.text.toString().trim().isEmpty()) {
             Global.getAlertDialog(this, "Opps..!", "Please Enter Mobile Number")
         }
         else if (category_value==null) {
@@ -431,7 +432,8 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
                     processResponse(responseString)
                     if (status) {
                         Global.showSuccessDialog(this@AddBusinessActivity, message)
-                        onBackPressed()
+                        launchActivity<HomeActivity> { finish() }
+                        //onBackPressed()
                     } else {
                         Global.showFailDialog(this@AddBusinessActivity, message)
                     }

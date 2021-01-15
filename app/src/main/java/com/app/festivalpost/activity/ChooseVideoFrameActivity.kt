@@ -1096,7 +1096,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener,FontOnIt
                         ivWebsite!!.visibility = View.VISIBLE
                         tvframeweb!!.visibility = View.VISIBLE
                         frameWebsite!!.visibility = View.VISIBLE
-                        tvframeweb!!.text = businessItem.busi_address
+                        tvframeweb!!.text = businessItem.busi_website
                         ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 } else if (index1 == 5+plus) {

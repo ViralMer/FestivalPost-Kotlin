@@ -87,7 +87,11 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
         banner_container = findViewById(R.id.banner_container)
         linearSave = findViewById(R.id.linearSave)
         ivimage = findViewById(R.id.ivimage)
-        adView = AdView(this, "IMG_16_9_APP_INSTALL#637278886950456_679310799413931", AdSize.BANNER_HEIGHT_50)
+        adView = AdView(
+            this,
+            "637278886950456_679310799413931",
+            AdSize.BANNER_HEIGHT_50
+        )
 
 
         // For auto play video ads, it's recommended to load the ad
@@ -97,7 +101,7 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
         // at least 30 seconds before it is shown
 
 
-        if (width<1080) {
+        if (width < 1080) {
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -127,8 +131,7 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                     e.printStackTrace()
                 }
             }
-            if (bundle.containsKey("image_type"))
-            {
+            if (bundle.containsKey("image_type")) {
                 try {
                     image_type = intent.getStringExtra("image_type")
 
@@ -170,16 +173,15 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                 savePhoto()
 
             })
-        val btnshare=findViewById<View>(R.id.btnshare)
+        val btnshare = findViewById<View>(R.id.btnshare)
         btnshare.onClick {
 
-                sharePhoto = true
-                savePhoto()
+            sharePhoto = true
+            savePhoto()
 
 
         }
     }
-
 
 
     var sharePhoto = false
@@ -216,59 +218,58 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
 
                                     }
                                 }
+
                                 else{
-                                    try {
-                                        SavePhotoAsync(
-                                            Environment.getExternalStoragePublicDirectory(
-                                                Environment.DIRECTORY_PICTURES
-                                            ).absolutePath + "/FestivalPost/$image_name.jpg"
-                                        ).execute()
+                                try {
+                                    SavePhotoAsync(
+                                        Environment.getExternalStoragePublicDirectory(
+                                            Environment.DIRECTORY_PICTURES
+                                        ).absolutePath + "/FestivalPost/$image_name.jpg"
+                                    ).execute()
 
-                                    } catch (e: Exception) {
+                                } catch (e: Exception) {
 
-                                    }
-                                    interstitialAd = InterstitialAd(this@SaveAndShareActivity, "IMG_16_9_APP_INSTALL#701945100529313_701945517195938")
-                                    val interstitialAdListener: InterstitialAdListener = object : InterstitialAdListener {
-                                        override fun onInterstitialDisplayed(ad: Ad) {
-                                            // Interstitial ad displayed callback
-                                            Log.e("TAG", "Interstitial ad displayed.")
-                                        }
-
-                                        override fun onInterstitialDismissed(ad: Ad) {
-                                            // Interstitial dismissed callback
-                                            Log.e("TAG", "Interstitial ad dismissed.")
-                                        }
-
-                                        override fun onError(ad: Ad, adError: AdError) {
-                                            // Ad error callback
-                                            Log.e("TAG", "Interstitial ad failed to load: " + adError.errorMessage)
-                                        }
-
-                                        override fun onAdLoaded(ad: Ad) {
-                                            // Interstitial ad is loaded and ready to be displayed
-                                            Log.d("TAG", "Interstitial ad is loaded and ready to be displayed!")
-                                            // Show the ad
-                                            interstitialAd!!.show()
-                                        }
-
-                                        override fun onAdClicked(ad: Ad) {
-                                            // Ad clicked callback
-                                            Log.d("TAG", "Interstitial ad clicked!")
-                                        }
-
-                                        override fun onLoggingImpression(ad: Ad) {
-                                            // Ad impression logged callback
-                                            Log.d("TAG", "Interstitial ad impression logged!")
-                                        }
-                                    }
-                                    //interstitialAd!!.loadAd(interstitialAd!!.buildShowAdConfig())
-                                    //interstitialAd!!.show()
-                                    interstitialAd!!.loadAd(interstitialAd!!.buildLoadAdConfig()
-                                        .withAdListener(interstitialAdListener)
-                                        .build());
                                 }
+                                interstitialAd = InterstitialAd(this@SaveAndShareActivity, "637278886950456_683765512301793")
+                                val interstitialAdListener: InterstitialAdListener = object : InterstitialAdListener {
+                                    override fun onInterstitialDisplayed(ad: Ad) {
+                                        // Interstitial ad displayed callback
+                                        Log.e("TAG", "Interstitial ad displayed.")
+                                    }
 
+                                    override fun onInterstitialDismissed(ad: Ad) {
+                                        // Interstitial dismissed callback
+                                        Log.e("TAG", "Interstitial ad dismissed.")
+                                    }
 
+                                    override fun onError(ad: Ad, adError: AdError) {
+                                        // Ad error callback
+                                        Log.e("TAG", "Interstitial ad failed to load: " + adError.errorMessage)
+                                    }
+
+                                    override fun onAdLoaded(ad: Ad) {
+                                        // Interstitial ad is loaded and ready to be displayed
+                                        Log.d("TAG", "Interstitial ad is loaded and ready to be displayed!")
+                                        // Show the ad
+                                        interstitialAd!!.show()
+                                    }
+
+                                    override fun onAdClicked(ad: Ad) {
+                                        // Ad clicked callback
+                                        Log.d("TAG", "Interstitial ad clicked!")
+                                    }
+
+                                    override fun onLoggingImpression(ad: Ad) {
+                                        // Ad impression logged callback
+                                        Log.d("TAG", "Interstitial ad impression logged!")
+                                    }
+                                }
+                                //interstitialAd!!.loadAd(interstitialAd!!.buildShowAdConfig())
+                                //interstitialAd!!.show()
+                                interstitialAd!!.loadAd(interstitialAd!!.buildLoadAdConfig()
+                                    .withAdListener(interstitialAdListener)
+                                    .build());
+                            }
                             } else {
                                 if (sharePhoto) {
                                     /*if (imagePath != null && !imagePath.equals(
@@ -448,9 +449,6 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
     }
 
 
-
-
-
     override fun onResume() {
         super.onResume()
 
@@ -503,12 +501,12 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                 KEY_CURRENT_BUSINESS,
                 this@SaveAndShareActivity
             )
-        apiManager!!.savephotos(
-            ApiEndpoints.savephotos,
-            image,
-            businessItem!!.busi_id.toString(),
-            sessionManager!!.getValueString(USER_TOKEN)
-        )
+            apiManager!!.savephotos(
+                ApiEndpoints.savephotos,
+                image,
+                businessItem!!.busi_id.toString(),
+                sessionManager!!.getValueString(USER_TOKEN)
+            )
             return null
         }
 
@@ -553,20 +551,20 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(detailAct)
                             /*if (imagePath != null && !imagePath.equals("", ignoreCase = true)) {*/
-                                val uri = Uri.parse(
-                                    Environment.getExternalStoragePublicDirectory(
-                                        Environment.DIRECTORY_PICTURES
-                                    ).absolutePath + "/FestivalPost/$image_name.jpg"
+                            val uri = Uri.parse(
+                                Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_PICTURES
+                                ).absolutePath + "/FestivalPost/$image_name.jpg"
+                            )
+                            val share = Intent(Intent.ACTION_SEND)
+                            share.type = "image/*"
+                            share.putExtra(Intent.EXTRA_STREAM, uri)
+                            startActivity(
+                                Intent.createChooser(
+                                    share,
+                                    "Share Design!"
                                 )
-                                val share = Intent(Intent.ACTION_SEND)
-                                share.type = "image/*"
-                                share.putExtra(Intent.EXTRA_STREAM, uri)
-                                startActivity(
-                                    Intent.createChooser(
-                                        share,
-                                        "Share Design!"
-                                    )
-                                )
+                            )
                             /*}*/
                             finish()
                         }
@@ -622,12 +620,14 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
                 resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
             resolver.openOutputStream(Objects.requireNonNull(imageUri))
         } else {
-            val folder=File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost")
+            val folder =
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost")
             if (!folder.exists()) {
                 folder.mkdirs()
                 folder.mkdir()
             }
-            val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/FestivalPost"
+            val imagesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/FestivalPost"
             val image = File(imagesDir, "$name.jpg")
             FileOutputStream(image)
         }
@@ -639,10 +639,6 @@ class SaveAndShareActivity() : AppBaseActivity(), ApiResponseListener {
         private get() = "image_" + SimpleDateFormat("yyyy_MMM_dd_HH_mm_ss", Locale.ENGLISH).format(
             Date()
         )
-
-
-
-
 
 
 }

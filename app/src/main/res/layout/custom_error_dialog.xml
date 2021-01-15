@@ -39,6 +39,7 @@
         android:padding="@dimen/_5sdp"
         />
 
+
     <Button
         android:id="@+id/btnOk"
         android:layout_width="wrap_content"
@@ -46,9 +47,12 @@
         android:background="@drawable/bg_gradient"
         android:textColor="@color/colorWhite"
         android:layout_gravity="end"
-        android:text="OK"
+        android:text="Ok"
         android:layout_marginTop="@dimen/_4sdp"
         android:textSize="@dimen/_15ssp"
         />
+
+
+
 
 </LinearLayout>

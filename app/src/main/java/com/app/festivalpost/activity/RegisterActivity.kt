@@ -52,6 +52,7 @@ class RegisterActivity : AppBaseActivity() {
     var device_token : String?=null
     var device_id : String?=null
     var device_type : String?=null
+    var mobileNumber : String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,13 +76,23 @@ class RegisterActivity : AppBaseActivity() {
         etName!!.onFocusChangeListener = this
         etNumber!!.onFocusChangeListener = this
 
-        val isLoogedIn=sessionManager!!.getBooleanValue(Constants.SharedPref.IS_LOGGED_IN)
-
-        if (isLoogedIn!!)
+        val bundle=intent.extras
+        if (bundle!=null)
         {
-            launchActivity<HomeActivity> {  }
-            finish()
+            if (bundle.containsKey("mobile_number"))
+            {
+                mobileNumber=bundle["mobile_number"] as String?
+            }
+            etNumber!!.setText(mobileNumber)
         }
+        else
+        {
+            mobileNumber=null
+        }
+
+
+
+
 
         /*FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
             val token = instanceIdResult.token
@@ -146,7 +157,12 @@ class RegisterActivity : AppBaseActivity() {
          } else if (etNumber!!.text.toString().length != 10) {
              Global.getAlertDialog(this, "Opps..!", "Enter valid Number!")
          } else {
-             sendVerificationCode("+" + spinner.selectedCountryCode + etNumber!!.editableText.toString())
+             if (mobileNumber==null) {
+                 sendVerificationCode("+" + spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
+             }else{
+                 sendVerificationCode("+" + spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
+                 //loadRegisterData()
+             }
              //performSubmit()
              //loadRegisterData()
          }

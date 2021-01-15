@@ -151,7 +151,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
                 showProgress(false)
                 if (it.status!!) {
-                    launchActivity<HomeActivity> {
+                    /*launchActivity<HomeActivity> {*/
                         try {
                             sessionManager!!.setStringValue(
                                 Constants.SharedPref.USER_TOKEN,
@@ -179,16 +179,20 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                                 Constants.SharedPref.IS_LOGGED_IN,
                                 true
                             )
-                            finish()
+                            sendVerificationCode("+" +spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
+                            /*finish()*/
                         } catch (e: java.lang.Exception) {
 
                         }
 
-                    }
+                    /*}*/
 
 
                 } else {
                     toast(it.message!!)
+                    launchActivity<RegisterActivity> { putExtra("mobile_number",etNumber!!.editableText.toString())
+                        finish()
+                    }
                 }
 
 
@@ -247,7 +251,8 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
             mAuth!!.signInWithCredential(credential).addOnCompleteListener { task ->
                 showProgress(false)
                 if (task.isSuccessful) {
-                    login()
+                    //login()
+                    launchActivity<HomeActivity> { finish() }
                 } else {
                     Toast.makeText(
                         this,
@@ -369,6 +374,8 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
 
     }
+
+
 
 
 

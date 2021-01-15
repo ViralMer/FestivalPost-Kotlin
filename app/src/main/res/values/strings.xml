@@ -5,10 +5,10 @@
     <string name="toast_image_intent_null">Null</string>
     <string name="lbl_choose_from_gallery">Gallery</string>
 
-    <string name="txt_dont_account">Don\'t have account ?</string>
+    <string name="txt_dont_account">Don\'t an have account?</string>
     <string name="txt_dont_otp">Don\'t receive OTP ?</string>
     <string name="txt_signup">Sign up</string>
-    <string name="txt_already_account">Already have account ?</string>
+    <string name="txt_already_account">Already have account an?</string>
     <string name="txt_sign_in">Sign In</string>
 
     <string name="txt_send_otp">Send OTP</string>

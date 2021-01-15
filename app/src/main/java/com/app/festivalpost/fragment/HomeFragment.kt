@@ -83,6 +83,7 @@ class HomeFragment : BaseFragment() {
         openAddImageDialog()
         sessionManager = SessionManager(activity!!)
         token = sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
+        Log.d("Token",""+token)
         rcvCustomCategory = view.findViewById(R.id.customCategory)
         rcvCustomFestival = view.findViewById(R.id.customFestival)
         viewPager = view.findViewById(R.id.sliderviewPager)
@@ -131,7 +132,7 @@ class HomeFragment : BaseFragment() {
                 materialAlertDialogBuilder.setView(view).setCancelable(true)
                 val b = materialAlertDialogBuilder.create()
                 btnCancel.setOnClickListener { b.dismiss() }
-                btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> { } }
+                btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> {} }
                 b.show()
             } else {
                 activity!!.launchActivity<ChooseFrameActivityNew> { }

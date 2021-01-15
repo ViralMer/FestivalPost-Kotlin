@@ -188,7 +188,7 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
 
         ivBack.onClick { onBackPressed() }
         tvaction.setOnClickListener {
-            if (businessItemArrayList.size <= 5) {
+            if (businessItemArrayList.size <= 4) {
                 val act = Intent(this@ManageBusinessActivity, AddBusinessActivity::class.java)
                 startActivity(act)
             } else {
@@ -218,10 +218,19 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
         val b = `object` as CurrentBusinessItem?
         currentBusinessID = "" + b!!.busi_id
         showProgress(true)
+        if (b.plan_name=="Premium")
+        {
+            sessionManager!!.setBooleanValue(Constants.KeyIntent.IS_PREMIUM,true)
+        }
+        else
+        {
+            sessionManager!!.setBooleanValue(Constants.KeyIntent.IS_PREMIUM,false)
+        }
         callApi(
 
             getRestApis().markascurrentbusiness(currentBusinessID,token!!), onApiSuccess = {
                 sessionManager!!.setStringValue(KEY_FRAME_LIST, Gson().toJson(it.frameList))
+
                 put(it.current_business, Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
                 showProgress(false)
                 if (it.status!!)
