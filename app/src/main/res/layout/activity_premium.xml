@@ -57,6 +57,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                  >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:text="@string/txt_suitable_plan"
+                    android:textSize="@dimen/_17sdp" />
+
 
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/planviewPager"

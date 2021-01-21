@@ -24,6 +24,7 @@ import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
 import com.app.festivalpost.activity.*
 import com.app.festivalpost.adapter.*
+import com.app.festivalpost.api.RestClient
 import com.app.festivalpost.models.*
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.KeyIntent.CURRENT_DATE
@@ -45,6 +46,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_home.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 
@@ -95,23 +99,49 @@ class HomeFragment : BaseFragment() {
         linearFestival = view.findViewById(R.id.linearFestival)
 
 
-        tvPremium!!.onClick {
-            activity!!.launchActivity<PremiumActivity> { }
+        tvPremium!!.setOnClickListener {
+            val currentBusinessItem =
+                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, activity!!)
+            if (currentBusinessItem == null) {
+                val materialAlertDialogBuilder = AlertDialog.Builder(activity!!)
+                val inflater =
+                    activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
+                val tvTitle: TextView
+                val tvMessage: TextView
+                val btnOk: Button
+                val btnCancel: Button
+                tvTitle = view.findViewById(R.id.tvTitle)
+                tvMessage = view.findViewById(R.id.tvMessage)
+                btnOk = view.findViewById(R.id.btnOk)
+                btnCancel = view.findViewById(R.id.btnCancel)
+                tvTitle.text = "Sorry!!"
+                tvMessage.text = "For making post please add your business details first."
+                materialAlertDialogBuilder.setView(view).setCancelable(true)
+                val b = materialAlertDialogBuilder.create()
+                btnCancel.setOnClickListener { b.dismiss() }
+                btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> {} }
+                b.show()
+            }
+            else{
+                activity!!.launchActivity<PremiumActivity> { }
+            }
+
         }
 
-        imageLogo1!!.onClick {
+        imageLogo1!!.setOnClickListener {
             activity!!.launchActivity<ManageBusinessActivity> {
 
             }
         }
 
-        tvviewall!!.onClick {
+        tvviewall!!.setOnClickListener {
             activity!!.launchActivity<FestivalViewAllActivitty> { }
         }
 
         loadHomePageData()
 
-        tvCustom!!.onClick {
+        tvCustom!!.setOnClickListener {
             val currentBusinessItem =
                 get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, activity!!)
             if (currentBusinessItem == null) {
@@ -360,8 +390,144 @@ class HomeFragment : BaseFragment() {
 
     private fun loadHomePageData() {
         showProgress()
-        try {
-            callApi(
+        RestClient.getClient.getHomePageData(token!!).enqueue(object :
+            Callback<HomePageResponse> {
+            override fun onResponse(
+                call: Call<HomePageResponse>,
+                response: Response<HomePageResponse>
+            ) {
+                hideProgress()
+                val res = response.body()
+                hideProgress()
+                if (response.code() == 500) {
+                    Toast.makeText(activity, "Please Try Again", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (res!!.status!!) {
+                        sessionManager!!.setBooleanValue(LOG_OUT, res.logout!!)
+                        sessionManager!!.setBooleanValue(IS_PREMIUM, res.premium!!)
+                        sessionManager!!.setStringValue(CURRENT_DATE, res.current_date!!)
+                        sessionManager!!.setStringValue(
+                            KEY_FRAME_LIST,
+                            Gson().toJson(res.frameList)
+                        )
+                        try {
+                            if (res.current_business.status === "1") {
+                                put(res.current_business, KEY_CURRENT_BUSINESS, activity!!)
+                            } else {
+                                put(null, KEY_CURRENT_BUSINESS, activity!!)
+                            }
+                        }
+                        catch (e:Exception)
+                        {
+
+                        }
+
+
+
+                        val currentBusinessItem =
+                            get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, activity!!)
+                        if (currentBusinessItem != null) {
+                            if (currentBusinessItem!!.plan_name == "Free") {
+                                tvPremium!!.show()
+                            } else {
+                                tvPremium!!.hide()
+                            }
+                            Glide.with(activity!!).load(currentBusinessItem!!.busi_logo)
+                                .placeholder(R.drawable.placeholder_img).error(
+                                    R.drawable.placeholder_img
+                                ).into(imageLogo!!)
+                        }
+
+                        sliderArrayList = res.slider
+                        festivalArrayList = res.festival
+                        categoryArrayList = res.cateogry
+
+                        NUM_PAGES = sliderArrayList.size
+
+                        rcvCustomFestival!!.layoutManager = LinearLayoutManager(
+                            activity,
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        val customFestivalAdapter =
+                            CustomFestivalItemAdapter(activity!!, festivalArrayList)
+                        rcvCustomFestival!!.adapter = customFestivalAdapter
+
+
+                        rcvCustomCategory!!.layoutManager = GridLayoutManager(activity, 3)
+                        val customCategoryAdapter =
+                            CategoryItemAdapter(activity!!, categoryArrayList)
+                        rcvCustomCategory!!.adapter = customCategoryAdapter
+
+                        if (sliderArrayList.size > 0) {
+                            viewPager!!.adapter = PagerAdapter()
+                            dots.attachViewPager(viewPager)
+                            dots.setDotDrawable(
+                                R.drawable.bg_circle_primary,
+                                R.drawable.black_dot
+                            )
+                            PagerAdapter().notifyDataSetChanged()
+                        }
+
+                        viewPager!!.setOnPageChangeListener(object :
+                            ViewPager.OnPageChangeListener {
+                            override fun onPageScrolled(
+                                position: Int,
+                                positionOffset: Float,
+                                positionOffsetPixels: Int
+                            ) {
+                                currentPage = position
+                            }
+
+                            override fun onPageSelected(position: Int) {
+
+                            }
+
+                            override fun onPageScrollStateChanged(state: Int) {
+
+                            }
+
+                        })
+
+                        if (festivalArrayList.size > 0) {
+                            linearFestival!!.show()
+                        } else {
+                            linearFestival!!.hide()
+
+                        }
+
+                        if (categoryArrayList.size > 0) {
+                            linearCategory!!.show()
+                        } else {
+                            linearCategory!!.hide()
+                        }
+
+                    } else {
+                        hideProgress()
+                        if (res.message == "user not valid") {
+                            val intent = Intent(
+                                activity, LoginActivity::class.java
+                            )
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            activity!!.finish()
+                            sessionManager!!.setBooleanValue(IS_LOGGED_IN, false)
+
+                        }
+                        linearFestival!!.hide()
+                        linearCategory!!.hide()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<HomePageResponse>, t: Throwable) {
+                hideProgress()
+            }
+
+        })
+    }
+            /*callApi(
                 getRestApis().getHomePageData(token!!),
                 onApiSuccess = { res ->
                     hideProgress()
@@ -481,9 +647,9 @@ class HomeFragment : BaseFragment() {
         catch (e:Exception)
         {
 
-        }
+        }*/
 
-    }
+
 
 
     private fun showBusinessCategoryDialog(context: Context) {
@@ -520,11 +686,16 @@ class HomeFragment : BaseFragment() {
                 }
 
             }
+            else{
+                toast("Please try again")
+            }
         } catch (e: Exception) {
 
         }
 
     }
+
+
 
 
     companion object {

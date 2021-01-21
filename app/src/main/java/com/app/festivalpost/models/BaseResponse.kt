@@ -2,7 +2,7 @@ package com.emegamart.lelys.models
 
 import com.google.gson.annotations.SerializedName
 
-open class BaseResponse(val message: String? = null,val status: String? = null)
+open class BaseResponse(val message: String? = null,val status: Boolean? = null)
 
 
 open class Card {

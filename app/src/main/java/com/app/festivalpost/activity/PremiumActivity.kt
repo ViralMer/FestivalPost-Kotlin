@@ -24,6 +24,8 @@ import com.anjlab.android.iab.v3.BillingProcessor.IBillingHandler
 import com.anjlab.android.iab.v3.TransactionDetails
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
+import com.app.festivalpost.api.RestApis
+import com.app.festivalpost.api.RestClient
 import com.app.festivalpost.apifunctions.ApiEndpoints
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.apifunctions.ApiResponseListener
@@ -44,26 +46,26 @@ import com.razorpay.PaymentData
 import com.razorpay.PaymentResultListener
 import com.razorpay.PaymentResultWithDataListener
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
-class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,PaymentResultWithDataListener {
-    var apiManager: ApiManager? = null
+class PremiumActivity : AppBaseActivity(), PaymentResultWithDataListener {
     var status = false
     var message = ""
-    var planItemArrayList= arrayListOf<PlanItemDetails>()
-    var userItem: UserItem? = null
+    var planItemArrayList= arrayListOf<PlanListItemResponse?>()
     var businessItem: CurrentBusinessItem? = null
-    var score = "0"
-    var billingProcessor: BillingProcessor? = null
-    var readyToPurchase = false
-    var checkout:Checkout?=null
-    var business_id:String?=null
-    var clicked_plan_model: PlanItem? = null
+
+    var business_id:String?=""
     private var viewPager: ViewPager? = null
     private var sessionManager: SessionManager? = null
     private var token: String? = null
-    var device_type : String?=null
-    var payment_id : String?=null
+    var device_type : String?=""
+    var payment_id : String?=""
+    var planSelectedId : String?=""
+    var planSelectedPrice : String?=""
+
 
 
 
@@ -74,43 +76,33 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
         sessionManager= SessionManager(this)
         token=sessionManager!!.getValueString(Constants.SharedPref.USER_TOKEN)
         device_type=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
-        apiManager = ApiManager(this@PremiumActivity)
-        if (!BillingProcessor.isIabServiceAvailable(this)) {
-            Toast.makeText(
-                this,
-                "In-app billing service is unavailable, please upgrade Android Market/Play to version >= 3.9.16",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        billingProcessor = BillingProcessor(
-            this,
-            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAucS4g/HdN2QHpDYB1NTn/VKNOlGypG6/k4sn8+MjbdGuPsGqtkSRl+XE5NPdTmKcBd2IxT0WHSPYxYp+2QmYKMzQw9pT1+8G1qu2XJL+cqby81AH8MIMpWXGMP/ZX91Kme6ZQspi4OPi7dFZYfrBv0IoH7vk5gOWzH8An1lAisE5DkYXVHPYBI1wEVsFo11w+k8vOF/L/ob+mhZLwezO4uxOF7hEJKv4U5yCkQLv8URjV5Gl8eZdAlxZyhTzLRZtcQVp/aZH1x+aEldo+XaMD2BvjJ/0CaEQoKaO4DrJ25ja/o2is6vQGfnu/A4goZMYdQR08goW9zezs/45Px7aHwIDAQAB",
-            null,
-            this
-        )
-        billingProcessor!!.initialize()
+
         setActionbar()
-        val bundle=intent.extras
-        if (bundle!=null)
-        {
-            if (bundle.containsKey("business_id"))
+        try {
+            val bundle=intent.extras
+            if (bundle!=null)
             {
-                business_id=bundle["business_id"] as String?
+                if (bundle.containsKey("business_id"))
+                {
+                    business_id=bundle["business_id"] as String?
+                }
             }
-
-
+            else
+            {
+                val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
+                business_id=businessItem!!.busi_id.toString()
+            }
+        }
+        catch (e:java.lang.Exception)
+        {
 
         }
-        else{
-            val businessItem = get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS,this)
-            business_id=businessItem!!.busi_id.toString()
-        }
 
 
-        planItemArrayList!!.add(PlanItemDetails("1","Premium Plan","\u20B9 "+1199))
+
+        loadPlanData()
 
         viewPager = findViewById(R.id.planviewPager)
-        viewPager!!.adapter = PagerAdapter()
 
 
 
@@ -144,35 +136,16 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val view = LayoutInflater.from(this@PremiumActivity).inflate(R.layout.item_premium, container, false)
-            val tvPlanName=view.findViewById<View>(R.id.tvPlanName) as TextView
-            val tvPlanPrice=view.findViewById<View>(R.id.tvPlanPrice) as TextView
-            val tvPlanMoths=view.findViewById<View>(R.id.tvPlanmonths) as TextView
-            val tvPurchase=view.findViewById<View>(R.id.tvPurchase) as TextView
+            val iv_plan=view.findViewById<View>(R.id.iv_plan) as ImageView
             val planItemDetails = planItemArrayList!![position]
 
-            tvPlanName.text=planItemDetails.name
-            tvPlanPrice.text=planItemDetails.price
-            tvPlanMoths.text=getString(R.string.lbl_one_year)
-            if (position==0)
-            {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    tvPurchase.background=ContextCompat.getDrawable(this@PremiumActivity,R.drawable.bg_gradient_blue)
-                }
-            }
-            /*if (position==1)
-            {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    tvPurchase.background=ContextCompat.getDrawable(this@PremiumActivity,R.drawable.bg_gradient_purple)
-                }
-            }
-            if (position==2)
-            {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    tvPurchase.background=ContextCompat.getDrawable(this@PremiumActivity,R.drawable.bg_gradient_pink)
-                }
-            }*/
+            Glide.with(this@PremiumActivity).load(planItemDetails!!.image).into(iv_plan)
 
-            tvPurchase.onClick {
+            iv_plan.onClick {
+                planSelectedId=planItemDetails.id
+                planSelectedPrice=planItemDetails.price
+
+                Log.d("PlanID",""+planSelectedId)
                 handleRazorPay()
             }
 
@@ -191,9 +164,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     public override fun onDestroy() {
         super.onDestroy()
         // very important:
-        if (billingProcessor != null) {
-            billingProcessor!!.release()
-        }
+
 
     }
 
@@ -206,142 +177,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
         ib_cancel_premium.setOnClickListener { onBackPressed() }
     }
 
-    override fun isConnected(requestService: String?, isConnected: Boolean) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@PremiumActivity)
-            if (!isConnected) {
-                Global.noInternetConnectionDialog(this@PremiumActivity)
-            }
-        }
-    }
 
-    override fun onSuccessResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@PremiumActivity)
-            if (requestService.equals(ApiEndpoints.purchaseplan, ignoreCase = true)) {
-                try {
-                    Log.d("response", responseString!!)
-                    processPurchaseResponse(responseString)
-                    if (status) {
-                        Global.showSuccessDialog(this@PremiumActivity, message)
-
-                    } else {
-                        Global.showFailDialog(this@PremiumActivity, message)
-                    }
-                } catch (e: Exception) {
-                }
-            }
-        }
-    }
-
-    override fun onErrorResponse(
-        requestService: String?,
-        responseString: String?,
-        responseCode: Int
-    ) {
-        Handler(Looper.getMainLooper()).post {
-            Global.dismissProgressDialog(this@PremiumActivity)
-            Global.showFailDialog(this@PremiumActivity, responseString)
-        }
-    }
-
-    
-    fun processResponse(responseString: String?) {
-        planItemArrayList = ArrayList()
-        status = false
-        message = ""
-        try {
-            val jsonObject = JSONObject(responseString)
-            if (jsonObject.has("status")) {
-                status = jsonObject.getBoolean("status")
-            }
-            if (jsonObject.has("message")) {
-                message = jsonObject.getString("message")
-            }
-            if (status) {
-                if (jsonObject.has("plans")) {
-                    val jsonArray = jsonObject.getJSONArray("plans")
-                    if (jsonArray.length() > 0) {
-                        for (i in 0 until jsonArray.length()) {
-                            val j = jsonArray.getJSONObject(i)
-                            val b = Gson().fromJson(j.toString(), PlanItem::class.java)
-
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    fun processPurchaseResponse(responseString: String?) {
-        status = false
-        message = ""
-        try {
-            val jsonObject = JSONObject(responseString)
-            if (jsonObject.has("status")) {
-                status = jsonObject.getBoolean("status")
-            }
-            if (jsonObject.has("message")) {
-                message = jsonObject.getString("message")
-            }
-            if (jsonObject.has("user_credit")) {
-                val score_int = jsonObject.getInt("user_credit")
-
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun onBuyPointsButtonClicked(SKU_USD: String?) {
-        billingProcessor!!.purchase(this@PremiumActivity, SKU_USD)
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (!billingProcessor!!.handleActivityResult(requestCode, resultCode, data)) {
-            Log.d(
-                "Request1",
-                "RequestCode : " + requestCode + "resultCode: " + resultCode + "data:" + data
-            )
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
-    override fun onProductPurchased(productId: String, details: TransactionDetails?) {
-        billingProcessor!!.consumePurchase(productId)
-        Global.showProgressDialog(this@PremiumActivity)
-        apiManager!!.purchaseplan(
-            ApiEndpoints.purchaseplan,
-            "",
-            businessItem!!.busi_id.toString(),
-            clicked_plan_model!!.planId.toString(),
-            details!!.purchaseInfo.purchaseData.orderId,
-            score
-        )
-    }
-
-    override fun onPurchaseHistoryRestored() {
-        for (i in billingProcessor!!.listOwnedProducts().indices) Log.d(
-            "sfsfsdf",
-            "Owned Managed Product: \$sku"
-        )
-
-    }
-
-    override fun onBillingError(errorCode: Int, error: Throwable?) {
-
-    }
-
-    override fun onBillingInitialized() {
-        readyToPurchase = true
-    }
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -350,8 +186,9 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
     private fun handleRazorPay() {
         val checkout = Checkout()
         checkout.setImage(R.mipmap.ic_launcher_new)
-        //checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
-        checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
+        //
+        checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
+        //checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
 
         try {
             val options = JSONObject()
@@ -359,7 +196,8 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
             options.put("description", sessionManager!!.getValueString(USER_NUMBER))
             options.put("currency", "INR")
             //options.put("order_id", "orderid_123465")
-            options.put("amount", (1199 * 100).toDouble())
+            val planPrice=planSelectedPrice!!.toInt()
+            options.put("amount", (planPrice * 100).toDouble())
             options.put("image", "https://rzp-mobile.s3.amazonaws.com/images/rzp.png")
 
             Log.d(this.localClassName, options.toString())
@@ -412,6 +250,36 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
             })
     }
 
+    private fun loadPlanData() {
+        showProgress(true)
+        RestClient.getClient.plans().enqueue(object : Callback<PlanListResponse>{
+            override fun onResponse(
+                call: Call<PlanListResponse>,
+                response: Response<PlanListResponse>
+            ) {
+                showProgress(false)
+                val res=response.body()
+                if (res!!.status!!)
+                {
+                    planItemArrayList=res!!.data!!
+                    viewPager!!.adapter = PagerAdapter()
+                }
+                else{
+                        Toast.makeText(this@PremiumActivity,"Please try again",Toast.LENGTH_SHORT).show()
+                }
+
+
+
+            }
+
+            override fun onFailure(call: Call<PlanListResponse>, t: Throwable) {
+                showProgress(false)
+                Toast.makeText(this@PremiumActivity,"Something went wrong",Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
 
     inner class AsyncTaskExampleNew : AsyncTask<Void?, Void?, Void?>() {
         override fun onPreExecute() {
@@ -421,7 +289,7 @@ class PremiumActivity : AppBaseActivity(), ApiResponseListener, IBillingHandler,
 
         override fun doInBackground(vararg p0: Void?): Void? {
             try {
-                loadAccoutData("1234",payment_id!!,business_id!!,"2")
+                loadAccoutData("1234",payment_id!!,business_id!!,planSelectedId!!)
             } catch (e: Exception) {
                 //p.dismiss();
             }

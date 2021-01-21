@@ -778,10 +778,15 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                     if (report.areAllPermissionsGranted()) {
                         val builder = AlertDialog.Builder(this@CustomPhotoFrameActivity)
                         builder.setTitle("Choose Photo")
-                        val animals = arrayOf( /*"Camera", */"Gallery")
+                            val animals = arrayOf( "Camera", "Gallery")
                         builder.setItems(animals) { dialog, which ->
                             when (which) {
                                 0 -> with(this@CustomPhotoFrameActivity)
+                                    .cameraOnly()
+                                    .crop()
+                                    .start()
+
+                                1 -> with(this@CustomPhotoFrameActivity)
                                     .galleryOnly()
                                     .crop()
                                     .start()
@@ -2282,7 +2287,7 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             {
                 tvframephone1!!.setTextColor(allselectedcolor)
             }
-            if(index1== 1+plus)
+            if(index1== 1 + plus)
             {
                 tvframephone1!!.setTextColor(allselectedcolor)
 

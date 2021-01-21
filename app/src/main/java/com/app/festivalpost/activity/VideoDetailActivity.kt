@@ -139,7 +139,11 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
                 sessionManager!!.getValueString(CURRENT_DATE),
                 bundle.getString("video_date")
             )
+
+
         }
+        sessionManager!!.getValueString(CURRENT_DATE)
+        Log.d("CurrentDate",""+sessionManager!!.getValueString(CURRENT_DATE))
 
 
 

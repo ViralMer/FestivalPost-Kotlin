@@ -5,6 +5,7 @@ import com.app.festivalpost.utils.Constants.Config.DEFAULT_URL
 import com.app.festivalpost.utils.Constants.Config.VERSION
 import com.google.gson.GsonBuilder
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -28,10 +29,10 @@ class RetrofitClientFactory {
 class ResponseInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
-        return response.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; charset=utf-8"), response.body()!!.bytes())).build()
+        return response.newBuilder().body(ResponseBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), response.body!!.bytes())).build()
     }
 }
 
 fun cancelAllApi() {
-    okHttpClient?.dispatcher()?.cancelAll()
+    //okHttpClient?.dispatcher()?.cancelAll()
 }

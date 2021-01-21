@@ -93,6 +93,22 @@ data class PurchasePlanResponse(
     val message: String? = null,
     val status: Boolean? = false,
 )
+data class PlanListItemResponse(
+    val id: String? = null,
+    val plan_name: String? = null,
+    val price: String? = null,
+    val plan_validity: String? = null,
+    val plan_validity_type: String? = null,
+    val order_no: Int? = 0,
+    val image: String? = null,
+)
+
+data class PlanListResponse(
+    val data: ArrayList<PlanListItemResponse?>,
+    val message: String? = null,
+    val status: Boolean? = false,
+)
+
 
 data class VideoItem(
     val video_id: String? = null,

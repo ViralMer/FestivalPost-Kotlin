@@ -25,7 +25,7 @@ fun getRestApis(): RestApis {
 }
 
 fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aError: String) -> Unit = {}, onNetworkError: () -> Unit = {}) {
-    Log.d("api_calling", call.request().url().toString() + " " + bodyToString(call.request()))
+    //Log.d("api_calling", call.request().url().toString() + " " + bodyToString(call.request()))
     call.enqueue(object : Callback<T> {
         override fun onResponse(call: Call<T>, response: Response<T>) {
             when {
@@ -34,14 +34,14 @@ fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aErr
                     if (body != null) {
                         try {
                             onApiSuccess(body)
-                            logData(call.request(), Gson().toJson(body), response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis())
+                            //logData(call.request(), Gson().toJson(body), response.raw().receivedResponseAtMillis - response.raw().sentRequestAtMillis())
                         }
                         catch (e:JSONException)
                         {
                         }
                     } else {
                         onApiError("Please try again later.")
-                        logData(call.request(), "Response body is null", response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis(), true)
+                        //logData(call.request(), "Response body is null", response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis(), true)
                         //val code=getErrorMessageByHttpCode(response.code())
                         //Log.d("ResponseCode",""+code)
                     }
@@ -49,7 +49,7 @@ fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aErr
                 else -> {
                     val string = getJsonMsg(response.errorBody()!!)
                     onApiError(string)
-                    logData(call.request(), string, response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis(), isError = true)
+                    //logData(call.request(), string, response.raw().receivedResponseAtMillis() - response.raw().sentRequestAtMillis(), isError = true)
                 }
             }
         }
@@ -76,8 +76,8 @@ fun <T> callApi(call: Call<T>, onApiSuccess: (T) -> Unit = {}, onApiError: (aErr
 fun bodyToString(request: Request?): String {
     try {
         val buffer = Buffer()
-        if (request!!.body() != null) {
-            request.body()!!.writeTo(buffer)
+        if (request!!.body != null) {
+            request.body!!.writeTo(buffer)
         } else
             return ""
         return buffer.readUtf8()
@@ -88,9 +88,9 @@ fun bodyToString(request: Request?): String {
 
 fun logData(request: Request, response: String, time: Long = 0L, isError: Boolean = false) {
     try {
-        Log.d("api_headers", Gson().toJson(request.headers()))
+        Log.d("api_headers", Gson().toJson(request.headers))
         Log.d("api_response_arrived in", (time / 1000L).toString() + " second")
-        Log.d("api_url", request.url().toString())
+        Log.d("api_url", request.url.toString())
         Log.d("api_request", bodyToString(request))
         if (isError) {
             Log.e("api_response", response)

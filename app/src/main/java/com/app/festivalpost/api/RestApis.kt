@@ -86,6 +86,10 @@ interface RestApis {
     fun getAllFestivalVideo(@Field("date")date:String,@Field("token")token:String):Call<VideoItemResponse>
 
     @FormUrlEncoded
+    @POST("removemybusiness")
+    fun removemybusiness(@Field("token")token:String,@Field("id")bussiness_id:String):Call<BaseResponse>
+
+    @FormUrlEncoded
     @POST("purchaseplan")
     fun purchaseplan(@Field("order_id")order_id:String,
                      @Field("purchase_id")payment_id:String,
@@ -94,6 +98,9 @@ interface RestApis {
                      @Field("device")device_id:String,
                      @Field("token")token:String
                      ):Call<PurchasePlanResponse>
+
+    @GET("plans")
+    fun plans():Call<PlanListResponse>
 
 
 

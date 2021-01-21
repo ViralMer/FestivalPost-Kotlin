@@ -1850,17 +1850,23 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
     }
 
     fun openAddImageDialog() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
                         val builder = AlertDialog.Builder(this@ChooseFrameActivityNew)
                         builder.setTitle("Choose")
-                        val animals = arrayOf("Gallery")
+                        val animals = arrayOf("Camera", "Gallery")
                         builder.setItems(animals) { dialog, which ->
                             when (which) {
+
                                 0 -> with(this@ChooseFrameActivityNew)
+                                    .cameraOnly()
+                                    .crop()
+                                    .start()
+
+                                1 -> with(this@ChooseFrameActivityNew)
                                     .galleryOnly()
                                     .crop()
                                     .start()
@@ -1891,7 +1897,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         try {
             if (resultcode == RESULT_OK) {
                 val imageuri = imagereturnintent!!.data // Get intent
-                Log.d("URI Path : ", "" + imageuri.toString())
+                Log.d("URI Path : ", ""+imageuri.toString())
                 val realpath = getFilePath(imagereturnintent)
                 profilePath = realpath
                 val imgparams = FrameLayout.LayoutParams(

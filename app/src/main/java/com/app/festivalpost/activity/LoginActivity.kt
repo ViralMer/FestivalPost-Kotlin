@@ -31,15 +31,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.iid.FirebaseInstanceId
 import com.hbb20.CountryCodePicker
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.et_number
-import kotlinx.android.synthetic.main.activity_login.spinner
-import kotlinx.android.synthetic.main.activity_register.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -59,10 +51,10 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     private var linearlogin: LinearLayout? = null
     private var tvsignup: TextView? = null
 
-    var user_token: String? = null
-    var device_token: String? = null
-    var device_id: String? = null
-    var device_type: String? = null
+    var user_token: String? = ""
+    var device_token: String? = ""
+    var device_id: String? = ""
+    var device_type: String? = ""
 
     private val SMS_CONSENT_REQUEST = 2
     private lateinit var smsVerificationReceiver: BroadcastReceiver
@@ -108,15 +100,15 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
 
 
-        linearlogin!!.onClick {
+        linearlogin!!.setOnClickListener {
             performLogin()
         }
 
-        tvsignup!!.onClick {
+        tvsignup!!.setOnClickListener {
             launchActivity<RegisterActivity> { finish() }
         }
 
-        ivBack!!.onClick {
+        ivBack!!.setOnClickListener {
             onBackPressed()
         }
 
@@ -360,7 +352,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
         tvresendOtp.onClick {
             resendVerificationCode(
-                "+" + spinner.selectedCountryCode + "" + etNumber!!.text.toString(),
+                "+" + spinnerCountry!!.selectedCountryCode + "" + etNumber!!.editableText.toString(),
                 token!!
             )
         }

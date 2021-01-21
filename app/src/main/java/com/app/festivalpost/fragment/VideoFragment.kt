@@ -1,45 +1,37 @@
 package com.app.festivalpost.fragment
 
 import android.Manifest
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
-import android.os.Looper.getMainLooper
-import android.os.StrictMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.viewpager.widget.ViewPager
 import com.app.festivalpost.R
-import com.app.festivalpost.activity.FestivalViewAllActivitty
 import com.app.festivalpost.activity.FestivalViewAllVideoActivity
-import com.app.festivalpost.activity.LoginActivity
-import com.app.festivalpost.adapter.CategoryItemAdapter
-import com.app.festivalpost.adapter.CustomFestivalItemAdapter
 import com.app.festivalpost.adapter.CustomFestivalVideoItemAdapter
 import com.app.festivalpost.adapter.VideoCategoryItemAdapter
-import com.app.festivalpost.models.*
+import com.app.festivalpost.api.RestClient
+import com.app.festivalpost.models.VideoPageItem
+import com.app.festivalpost.models.VideoPageResponse
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.SessionManager
-import com.app.festivalpost.utils.extensions.callApi
-import com.app.festivalpost.utils.extensions.getRestApis
-import com.emegamart.lelys.utils.extensions.*
+import com.emegamart.lelys.utils.extensions.hide
+import com.emegamart.lelys.utils.extensions.launchActivity
+import com.emegamart.lelys.utils.extensions.onClick
+import com.emegamart.lelys.utils.extensions.show
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.android.synthetic.main.fragment_video.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Suppress("DEPRECATION")
 class VideoFragment : BaseFragment() {
@@ -108,57 +100,111 @@ class VideoFragment : BaseFragment() {
 
     private fun loadVideoPageData() {
         showProgress()
-        callApi(
-            getRestApis().getVideoPageData(token!!),
-            onApiSuccess = { res ->
+        RestClient.getClient.getVideoPageData(token!!).enqueue(object :
+            Callback<VideoPageResponse> {
+            override fun onResponse(
+                call: Call<VideoPageResponse>,
+                response: Response<VideoPageResponse>
+            ) {
                 hideProgress()
-                if (res.status!!) {
+                val res = response.body()
+                hideProgress()
+                if (response.code() == 500) {
+                    Toast.makeText(activity, "Please Try Again", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (res!!.status!!) {
 
-                    festivalVideoArrayList = res.festival
-                    categoryVideoArrayList = res.category
+                        festivalVideoArrayList = res.festival
+                        categoryVideoArrayList = res.category
 
-                    rcvCustomFestivalVideo!!.layoutManager = LinearLayoutManager(
-                        activity,
-                        LinearLayoutManager.HORIZONTAL,
-                        false
-                    )
-                    val customFestivalAdapter =
-                        CustomFestivalVideoItemAdapter(activity!!, festivalVideoArrayList)
-                    rcvCustomFestivalVideo!!.adapter = customFestivalAdapter
+                        rcvCustomFestivalVideo!!.layoutManager = LinearLayoutManager(
+                            activity,
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        val customFestivalAdapter =
+                            CustomFestivalVideoItemAdapter(activity!!, festivalVideoArrayList)
+                        rcvCustomFestivalVideo!!.adapter = customFestivalAdapter
 
-                    rcvCustomCategoryVideo!!.layoutManager = GridLayoutManager(activity, 3)
-                    val customCategoryAdapter =
-                        VideoCategoryItemAdapter(activity!!, categoryVideoArrayList)
-                    rcvCustomCategoryVideo!!.adapter = customCategoryAdapter
+                        rcvCustomCategoryVideo!!.layoutManager = GridLayoutManager(activity, 3)
+                        val customCategoryAdapter =
+                            VideoCategoryItemAdapter(activity!!, categoryVideoArrayList)
+                        rcvCustomCategoryVideo!!.adapter = customCategoryAdapter
 
-                    if (festivalVideoArrayList.size > 0) {
-                        linearFestivalVideo!!.show()
-                    } else {
-                        linearFestivalVideo!!.hide()
+                        if (festivalVideoArrayList.size > 0) {
+                            linearFestivalVideo!!.show()
+                        } else {
+                            linearFestivalVideo!!.hide()
+
+                        }
+
+                        if (categoryVideoArrayList.size > 0) {
+                            linearCategoryVideo!!.show()
+                        } else {
+                            linearCategoryVideo!!.hide()
+                        }
+
 
                     }
+                }
+            }
 
-                    if (categoryVideoArrayList.size > 0) {
-                        linearCategoryVideo!!.show()
-                    } else {
-                        linearCategoryVideo!!.hide()
-                    }
+            override fun onFailure(call: Call<VideoPageResponse>, t: Throwable) {
 
+            }
+
+        })
+    }
+    /*callApi(
+        getRestApis().getVideoPageData(token!!),
+        onApiSuccess = { res ->
+            hideProgress()
+            if (res.status!!) {
+
+                festivalVideoArrayList = res.festival
+                categoryVideoArrayList = res.category
+
+                rcvCustomFestivalVideo!!.layoutManager = LinearLayoutManager(
+                    activity,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
+                val customFestivalAdapter =
+                    CustomFestivalVideoItemAdapter(activity!!, festivalVideoArrayList)
+                rcvCustomFestivalVideo!!.adapter = customFestivalAdapter
+
+                rcvCustomCategoryVideo!!.layoutManager = GridLayoutManager(activity, 3)
+                val customCategoryAdapter =
+                    VideoCategoryItemAdapter(activity!!, categoryVideoArrayList)
+                rcvCustomCategoryVideo!!.adapter = customCategoryAdapter
+
+                if (festivalVideoArrayList.size > 0) {
+                    linearFestivalVideo!!.show()
+                } else {
+                    linearFestivalVideo!!.hide()
 
                 }
-            },
-            onApiError = {
-                if (activity == null) return@callApi
-                hideProgress()
+
+                if (categoryVideoArrayList.size > 0) {
+                    linearCategoryVideo!!.show()
+                } else {
+                    linearCategoryVideo!!.hide()
+                }
 
 
-            },
-            onNetworkError = {
-                if (activity == null) return@callApi
-                hideProgress()
-                toast("Please Connect your network")
-            })
-    }
+            }
+        },
+        onApiError = {
+            if (activity == null) return@callApi
+            hideProgress()
+
+
+        },
+        onNetworkError = {
+            if (activity == null) return@callApi
+            hideProgress()
+            toast("Please Connect your network")
+        })*/
 
 
 }

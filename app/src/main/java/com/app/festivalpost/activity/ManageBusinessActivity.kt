@@ -15,20 +15,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.festivalpost.AppBaseActivity
 import com.app.festivalpost.R
 import com.app.festivalpost.adapter.BusinessItemAdapter
+import com.app.festivalpost.api.RestClient
 import com.app.festivalpost.apifunctions.ApiManager
 import com.app.festivalpost.globals.Constant
+import com.app.festivalpost.models.BusinessItemResponse
 import com.app.festivalpost.models.CurrentBusinessItem
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
 import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
+import com.emegamart.lelys.models.BaseResponse
 import com.emegamart.lelys.utils.extensions.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_account.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
-class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
+class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener,FontOnItemClickListener {
     private var lvdata: RecyclerView? = null
     var businessItemArrayList = arrayListOf<CurrentBusinessItem?>()
     var businessItemAdapter:BusinessItemAdapter?=null
@@ -57,11 +63,42 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
     private fun loadManageBusinessAllData()
     {
         showProgress(true)
+        /*RestClient.getClient.getAllMyBusiness(token!!).enqueue(object :Callback<BusinessItemResponse>
+        {
+            override fun onResponse(
+                call: Call<BusinessItemResponse>,
+                response: Response<BusinessItemResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val res=response.body()
+                    if (res!!.status!!)
+                    {
+                        lvdata!!.show()
+                        businessItemArrayList = res.data
+                        businessItemAdapter = BusinessItemAdapter(this@ManageBusinessActivity, businessItemArrayList)
+                        lvdata!!.adapter = businessItemAdapter
+                    }
+                    else{
+                        lvdata!!.hide()
+                    }
+
+                }
+                showProgress(false)
+                lvdata!!.hide()
+            }
+
+            override fun onFailure(call: Call<BusinessItemResponse>, t: Throwable) {
+                showProgress(false)
+                lvdata!!.hide()
+            }
+
+        })*/
         callApi(
             getRestApis().getAllMyBusiness(token!!), onApiSuccess = {
                 showProgress(false)
                 lvdata!!.show()
                 businessItemArrayList = it.data
+
                 businessItemAdapter = BusinessItemAdapter(this, businessItemArrayList)
                 lvdata!!.adapter = businessItemAdapter
 
@@ -246,6 +283,59 @@ class ManageBusinessActivity : AppBaseActivity(),OnItemClickListener {
                 showProgress(false)
 
             })
+    }
+
+    override fun onFontItemClicked(`object`: Any?, index: Int) {
+        val b = `object` as CurrentBusinessItem?
+        val currentBusinessID1 = "" + b!!.busi_id
+        showProgress(true)
+        val materialAlertDialogBuilder = AlertDialog.Builder(this)
+        val inflater =
+            getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
+        val tvTitle: TextView
+        val tvMessage: TextView
+        val btnOk: Button
+        val btnCancel: Button
+        tvTitle = view.findViewById(R.id.tvTitle)
+        tvMessage = view.findViewById(R.id.tvMessage)
+        btnOk = view.findViewById(R.id.btnOk)
+        btnCancel = view.findViewById(R.id.btnCancel)
+        btnOk.text = "Ok"
+        btnCancel.text = "Cancel"
+        tvTitle.text = "Warning"
+        tvMessage.text = "Are you sure want to delete Business?"
+        materialAlertDialogBuilder.setView(view).setCancelable(true)
+        val b1 = materialAlertDialogBuilder.create()
+        btnCancel.setOnClickListener { b1.dismiss(); showProgress(false) }
+        btnOk.setOnClickListener {
+            RestClient.getClient.removemybusiness(token!!,currentBusinessID1).enqueue(object : Callback<BaseResponse> {
+                override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                    showProgress(false)
+                    b1.dismiss()
+
+                    if (response.isSuccessful) {
+                        val res = response.body()
+                        if (res!!.status!!) {
+                            loadManageBusinessAllData()
+                            Toast.makeText(this@ManageBusinessActivity, "Your Business Delete Successfully", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@ManageBusinessActivity, "Something Went wrong", Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                    showProgress(false)
+                    b1.dismiss()
+                    Toast.makeText(this@ManageBusinessActivity, "Please try again", Toast.LENGTH_SHORT).show()
+                }
+
+            })
+        }
+        b1.show()
+
     }
 
 

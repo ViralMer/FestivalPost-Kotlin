@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_350sdp"
+        android:visibility="gone"
         android:layout_marginStart="@dimen/spacing_middle"
         android:layout_marginTop="@dimen/spacing_middle"
         android:layout_marginEnd="@dimen/spacing_middle"
@@ -202,9 +203,21 @@
         android:layout_marginTop="@dimen/_5sdp"
         android:textColor="@color/white"
         android:textStyle="bold"
+        android:visibility="gone"
         android:padding="@dimen/_15sdp"
         android:textSize="@dimen/_20sdp"
         android:gravity="center"
+
+        />
+
+    <ImageView
+        android:id="@+id/iv_plan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="@dimen/_5sdp"
+        android:src="@drawable/ic_phone"
 
         />
 

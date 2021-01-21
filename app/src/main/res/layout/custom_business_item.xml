@@ -102,40 +102,57 @@
                 android:layout_width="@dimen/_24sdp"
                 android:layout_height="@dimen/_24sdp"
                 android:layout_gravity="center"
+
                 android:layout_marginRight="@dimen/_5sdp"
                 android:gravity="center"
                 android:src="@drawable/edit" />
 
+            <LinearLayout
 
-            <TextView
-                android:id="@+id/tvupgrade"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_gradient"
-                android:gravity="center"
-                android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:text="@string/txt_upgrade_now"
-                android:textColor="@color/colorWhite"
-                android:textSize="14dp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvedit"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/small_button_bg"
-                android:gravity="center"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:text="@string/txt_edit"
-                android:textColor="@color/colorBlack"
-                android:textSize="14dp"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:layout_marginBottom="@dimen/_5sdp"
+
+                android:orientation="vertical"
+
+
+                >
+
+                <TextView
+                    android:id="@+id/tvupgrade"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_gradient"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/_8sdp"
+                    android:paddingRight="@dimen/_8sdp"
+                    android:text="@string/txt_upgrade_now"
+
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDelete"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/bg_gradient_red"
+
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/_8sdp"
+                    android:paddingRight="@dimen/_8sdp"
+                    android:text="@string/txt_delete"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>

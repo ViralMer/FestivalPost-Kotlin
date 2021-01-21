@@ -20,14 +20,12 @@ import com.app.festivalpost.utils.SessionManager
 import com.app.festivalpost.utils.extensions.callApi
 import com.app.festivalpost.utils.extensions.getRestApis
 import com.emegamart.lelys.utils.extensions.*
-import com.google.android.gms.tasks.TaskExecutors
-import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
-import com.google.firebase.iid.FirebaseInstanceId
+
 import com.hbb20.CountryCodePicker
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.concurrent.TimeUnit
@@ -48,11 +46,11 @@ class RegisterActivity : AppBaseActivity() {
     private var linearregister: LinearLayout?=null
     private var tvsignin:TextView?=null
 
-    var user_token : String?=null
-    var device_token : String?=null
-    var device_id : String?=null
-    var device_type : String?=null
-    var mobileNumber : String?=null
+    var user_token : String?=""
+    var device_token : String?=""
+    var device_id : String?=""
+    var device_type : String?=""
+    var mobileNumber : String?=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,16 +98,16 @@ class RegisterActivity : AppBaseActivity() {
             // send it to server
         }*/
 
-        linearregister!!.onClick {
+        linearregister!!.setOnClickListener {
             performRegister()
 
         }
 
-        tvsignin!!.onClick {
+        tvsignin!!.setOnClickListener {
             launchActivity<LoginActivity> {  }
         }
 
-        ivBack!!.onClick {
+        ivBack!!.setOnClickListener {
             onBackPressed()
         }
 
@@ -135,15 +133,15 @@ class RegisterActivity : AppBaseActivity() {
 
         val alertDialog = builder.create()
 
-        btn_done.onClick {
+        btn_done.setOnClickListener {
             performSubmit()
         }
 
-        btn_cancel.onClick {
+        btn_cancel.setOnClickListener {
             alertDialog.dismiss()
         }
 
-        tvresendOtp.onClick { resendVerificationCode("+" +spinner.selectedCountryCode+""+et_number.text.toString(),token!!) }
+        tvresendOtp.setOnClickListener { resendVerificationCode("+" +spinnerCountry!!.selectedCountryCode+""+et_number.text.toString(),token!!) }
 
         alertDialog.show()
 
