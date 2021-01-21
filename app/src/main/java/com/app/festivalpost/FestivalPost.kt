@@ -32,9 +32,9 @@ class FestivalPost : MultiDexApplication() {
         super.onCreate()
         appInstance = this
         sessionManager= SessionManager(this)
-        FirebaseApp.initializeApp(appInstance)
-        val deviceInfo = DeviceInfo1(this)
+        FirebaseApp.initializeApp(this)
         AudienceNetworkAds.initialize(this);
+        val deviceInfo = DeviceInfo1(this)
         sessionManager!!.setStringValue(DEVICE_TYPE,"Android")
         sessionManager!!.setStringValue(DEVICE_ID,deviceInfo.deviceUDID)
 

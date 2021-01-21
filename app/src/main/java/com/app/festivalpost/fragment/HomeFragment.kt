@@ -98,7 +98,7 @@ class HomeFragment : BaseFragment() {
         linearCategory = view.findViewById(R.id.linearCategory)
         linearFestival = view.findViewById(R.id.linearFestival)
 
-
+        loadHomePageData()
         tvPremium!!.setOnClickListener {
             val currentBusinessItem =
                 get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, activity!!)
@@ -139,7 +139,7 @@ class HomeFragment : BaseFragment() {
             activity!!.launchActivity<FestivalViewAllActivitty> { }
         }
 
-        loadHomePageData()
+
 
         tvCustom!!.setOnClickListener {
             val currentBusinessItem =
@@ -410,17 +410,12 @@ class HomeFragment : BaseFragment() {
                             KEY_FRAME_LIST,
                             Gson().toJson(res.frameList)
                         )
-                        try {
-                            if (res.current_business.status === "1") {
+
+                            if (res.current_business.status == "1") {
                                 put(res.current_business, KEY_CURRENT_BUSINESS, activity!!)
                             } else {
                                 put(null, KEY_CURRENT_BUSINESS, activity!!)
                             }
-                        }
-                        catch (e:Exception)
-                        {
-
-                        }
 
 
 

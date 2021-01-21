@@ -140,7 +140,7 @@ class PremiumActivity : AppBaseActivity(), PaymentResultWithDataListener {
             val planItemDetails = planItemArrayList!![position]
 
             Glide.with(this@PremiumActivity).load(planItemDetails!!.image).into(iv_plan)
-
+            Log.d("PlanImahe",""+planItemDetails.image)
             iv_plan.onClick {
                 planSelectedId=planItemDetails.id
                 planSelectedPrice=planItemDetails.price

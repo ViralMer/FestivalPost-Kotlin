@@ -66,6 +66,15 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         ivBack = toolbar.findViewById(R.id.ivBack)
         mAuth = FirebaseAuth.getInstance();
+
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
+            val token = instanceIdResult.token
+            sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN, token)
+            Log.d("DEviceToken12",""+sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN) +" Device id: " +sessionManager!!.getValueString(
+                Constants.KeyIntent.DEVICE_ID
+            )+ " Devicce_type:"+device_type)
+
+        }
         device_token = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
         device_id = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
         device_type = sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
@@ -130,20 +139,23 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
 
 
     private fun login() {
-        showProgress(true)
-        callApi(
+        if (device_token==null)
+        {
+            device_token=""
+            showProgress(true)
+            callApi(
 
-            getRestApis().login(
-                etNumber!!.editableText.toString(),
-                device_id!!,
-                device_type!!,
-                device_token!!
-            ),
-            onApiSuccess = {
+                getRestApis().login(
+                    etNumber!!.editableText.toString(),
+                    device_id!!,
+                    device_type!!,
+                    device_token!!
+                ),
+                onApiSuccess = {
 
-                showProgress(false)
-                if (it.status!!) {
-                    /*launchActivity<HomeActivity> {*/
+                    showProgress(false)
+                    if (it.status!!) {
+                        /*launchActivity<HomeActivity> {*/
                         try {
                             sessionManager!!.setStringValue(
                                 Constants.SharedPref.USER_TOKEN,
@@ -171,34 +183,108 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
                                 Constants.SharedPref.IS_LOGGED_IN,
                                 true
                             )
-                            sendVerificationCode("+" +spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
+                            sendVerificationCode("+" + spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
                             /*finish()*/
                         } catch (e: java.lang.Exception) {
 
                         }
 
-                    /*}*/
+                        /*}*/
 
 
-                } else {
-                    toast(it.message!!)
-                    launchActivity<RegisterActivity> { putExtra("mobile_number",etNumber!!.editableText.toString())
-                        finish()
+                    } else {
+                        toast(it.message!!)
+                        launchActivity<RegisterActivity> {
+                            putExtra("mobile_number", etNumber!!.editableText.toString())
+                            finish()
+                        }
                     }
-                }
 
 
-            },
-            onApiError = {
-                showProgress(false)
-                toast("Something Went Wrong")
+                },
+                onApiError = {
+                    showProgress(false)
+                    toast("Something Went Wrong")
 
-            },
-            onNetworkError = {
-                showProgress(false)
-                toast("Please Connect your network")
+                },
+                onNetworkError = {
+                    showProgress(false)
+                    toast("Please Connect your network")
 
-            })
+                })
+        }
+        else {
+            showProgress(true)
+            callApi(
+
+                getRestApis().login(
+                    etNumber!!.editableText.toString(),
+                    device_id!!,
+                    device_type!!,
+                    device_token!!
+                ),
+                onApiSuccess = {
+
+                    showProgress(false)
+                    if (it.status!!) {
+                        /*launchActivity<HomeActivity> {*/
+                        try {
+                            sessionManager!!.setStringValue(
+                                Constants.SharedPref.USER_TOKEN,
+                                it.token!!
+                            )
+
+                            var dataarraylist = arrayListOf<UserDataItem?>()
+                            dataarraylist = it.data
+                            for (i in 0 until dataarraylist.size) {
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_NAME,
+                                    dataarraylist[i]!!.name!!
+                                )
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_NUMBER,
+                                    dataarraylist[i]!!.mobile!!
+                                )
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_EMAIL,
+                                    dataarraylist[i]!!.email!!
+                                )
+
+                            }
+                            sessionManager!!.setBooleanValue(
+                                Constants.SharedPref.IS_LOGGED_IN,
+                                true
+                            )
+                            sendVerificationCode("+" + spinnerCountry!!.selectedCountryCode + etNumber!!.editableText.toString())
+                            /*finish()*/
+                        } catch (e: java.lang.Exception) {
+
+                        }
+
+                        /*}*/
+
+
+                    } else {
+                        toast(it.message!!)
+                        launchActivity<RegisterActivity> {
+                            putExtra("mobile_number", etNumber!!.editableText.toString())
+                            finish()
+                        }
+                    }
+
+
+                },
+                onApiError = {
+                    showProgress(false)
+                    toast("Something Went Wrong")
+
+                },
+                onNetworkError = {
+                    showProgress(false)
+                    toast("Please Connect your network")
+
+                })
+        }
     }
 
 

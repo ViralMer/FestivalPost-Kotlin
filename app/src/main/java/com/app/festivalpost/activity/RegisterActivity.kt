@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
+import com.google.firebase.iid.FirebaseInstanceId
 
 import com.hbb20.CountryCodePicker
 import kotlinx.android.synthetic.main.activity_register.*
@@ -57,6 +58,13 @@ class RegisterActivity : AppBaseActivity() {
         setContentView(R.layout.activity_register)
         sessionManager= SessionManager(this)
         mAuth = FirebaseAuth.getInstance()
+
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
+            val token = instanceIdResult.token
+            sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN,token)
+            // send it to server
+        }
+
         device_token=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TOKEN)
         device_id=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_ID)
         device_type=sessionManager!!.getValueString(Constants.KeyIntent.DEVICE_TYPE)
@@ -92,11 +100,7 @@ class RegisterActivity : AppBaseActivity() {
 
 
 
-        /*FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
-            val token = instanceIdResult.token
-            sessionManager!!.setStringValue(Constants.KeyIntent.DEVICE_TOKEN,token)
-            // send it to server
-        }*/
+
 
         linearregister!!.setOnClickListener {
             performRegister()
@@ -214,41 +218,126 @@ class RegisterActivity : AppBaseActivity() {
     }
 
     private fun loadRegisterData() {
-        showProgress(true)
-        callApi(
-            getRestApis().register(etName!!.editableText.toString(), etNumber!!.editableText.toString(),device_id!!,device_type!!,device_token!!),
-            onApiSuccess = {
-                if (it.status!!) {
-                    showProgress(false)
-                    launchActivity<HomeActivity> {
-                        try {
-                            sessionManager!!.setStringValue(Constants.SharedPref.USER_TOKEN,it.token!!)
+        if (device_token==null)
+        {
+            device_token=""
+            showProgress(true)
+            callApi(
+                getRestApis().register(
+                    etName!!.editableText.toString(),
+                    etNumber!!.editableText.toString(),
+                    device_id!!,
+                    device_type!!,
+                    device_token!!
+                ),
+                onApiSuccess = {
+                    if (it.status!!) {
+                        showProgress(false)
+                        launchActivity<HomeActivity> {
+                            try {
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_TOKEN,
+                                    it.token!!
+                                )
 
-                            var dataarraylist= arrayListOf<UserDataItem?>()
-                            dataarraylist=it.data
-                            for (i in 0 until dataarraylist.size) {
-                                sessionManager!!.setStringValue(Constants.SharedPref.USER_NAME,dataarraylist[i]!!.name!!)
-                                sessionManager!!.setStringValue(Constants.SharedPref.USER_NUMBER,dataarraylist[i]!!.mobile!!)
-                                sessionManager!!.setStringValue(Constants.SharedPref.USER_EMAIL,dataarraylist[i]!!.email!!)
+                                var dataarraylist = arrayListOf<UserDataItem?>()
+                                dataarraylist = it.data
+                                for (i in 0 until dataarraylist.size) {
+                                    sessionManager!!.setStringValue(
+                                        Constants.SharedPref.USER_NAME,
+                                        dataarraylist[i]!!.name!!
+                                    )
+                                    sessionManager!!.setStringValue(
+                                        Constants.SharedPref.USER_NUMBER,
+                                        dataarraylist[i]!!.mobile!!
+                                    )
+                                    sessionManager!!.setStringValue(
+                                        Constants.SharedPref.USER_EMAIL,
+                                        dataarraylist[i]!!.email!!
+                                    )
+
+                                }
+                                sessionManager!!.setBooleanValue(
+                                    Constants.SharedPref.IS_LOGGED_IN,
+                                    true
+                                )
+                                finish()
+                            } catch (e: java.lang.Exception) {
 
                             }
-                            sessionManager!!.setBooleanValue(Constants.SharedPref.IS_LOGGED_IN, true)
-                            finish()
-                        } catch (e: java.lang.Exception) {
 
                         }
-
                     }
-                }
-            },
-            onApiError = {
-                showProgress(false)
+                },
+                onApiError = {
+                    showProgress(false)
 
-            },
-            onNetworkError = {
-                showProgress(false)
+                },
+                onNetworkError = {
+                    showProgress(false)
 
-            })
+                })
+        }
+        else {
+
+
+            showProgress(true)
+            callApi(
+                getRestApis().register(
+                    etName!!.editableText.toString(),
+                    etNumber!!.editableText.toString(),
+                    device_id!!,
+                    device_type!!,
+                    device_token!!
+                ),
+                onApiSuccess = {
+                    if (it.status!!) {
+                        showProgress(false)
+                        launchActivity<HomeActivity> {
+                            try {
+                                sessionManager!!.setStringValue(
+                                    Constants.SharedPref.USER_TOKEN,
+                                    it.token!!
+                                )
+
+                                var dataarraylist = arrayListOf<UserDataItem?>()
+                                dataarraylist = it.data
+                                for (i in 0 until dataarraylist.size) {
+                                    sessionManager!!.setStringValue(
+                                        Constants.SharedPref.USER_NAME,
+                                        dataarraylist[i]!!.name!!
+                                    )
+                                    sessionManager!!.setStringValue(
+                                        Constants.SharedPref.USER_NUMBER,
+                                        dataarraylist[i]!!.mobile!!
+                                    )
+                                    sessionManager!!.setStringValue(
+                                        Constants.SharedPref.USER_EMAIL,
+                                        dataarraylist[i]!!.email!!
+                                    )
+
+                                }
+                                sessionManager!!.setBooleanValue(
+                                    Constants.SharedPref.IS_LOGGED_IN,
+                                    true
+                                )
+                                finish()
+                            } catch (e: java.lang.Exception) {
+
+                            }
+
+                        }
+                    }
+                },
+                onApiError = {
+                    showProgress(false)
+
+                },
+                onNetworkError = {
+                    showProgress(false)
+
+                })
+        }
     }
 
     private fun sendVerificationCode(number: String?) {
