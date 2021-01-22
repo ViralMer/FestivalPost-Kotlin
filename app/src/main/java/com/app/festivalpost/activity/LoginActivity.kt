@@ -141,7 +141,7 @@ class LoginActivity : AppBaseActivity(), View.OnFocusChangeListener {
     private fun login() {
         if (device_token==null)
         {
-            device_token=""
+            device_token="abc"
             showProgress(true)
             callApi(
 

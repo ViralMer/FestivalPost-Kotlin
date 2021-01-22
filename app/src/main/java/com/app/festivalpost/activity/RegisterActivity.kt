@@ -220,7 +220,7 @@ class RegisterActivity : AppBaseActivity() {
     private fun loadRegisterData() {
         if (device_token==null)
         {
-            device_token=""
+            device_token="abc"
             showProgress(true)
             callApi(
                 getRestApis().register(

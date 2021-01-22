@@ -187,8 +187,8 @@ class PremiumActivity : AppBaseActivity(), PaymentResultWithDataListener {
         val checkout = Checkout()
         checkout.setImage(R.mipmap.ic_launcher_new)
         //
-        checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
-        //checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
+        //checkout.setKeyID("rzp_test_nxkzWJTVTnu6dj")
+        checkout.setKeyID("rzp_live_AorAULQtjNzfuq")
 
         try {
             val options = JSONObject()
