@@ -262,7 +262,9 @@ class VideoDetailActivity : AppBaseActivity(), OnItemClickListener {
 
     private fun download() {
         val DB = DownloadVideo()
-        DB.execute("")
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.CUPCAKE) {
+            DB.execute("")
+        }
     }
 
     private inner class DownloadVideo : AsyncTask<String?, String?, String?>() {
