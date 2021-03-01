@@ -103,7 +103,7 @@
         <item name="android:textColor">@color/textColorPrimary</item>
         <item name="android:textSize">@dimen/font_size_xlarge</item>
         <item name="fontPath">@string/font_semibold</item>
-        <item name="android:layout_marginLeft">@dimen/spacing_standard</item>
+
         <item name="android:layout_centerVertical">true</item>
     </style>
 

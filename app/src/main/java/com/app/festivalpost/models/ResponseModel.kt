@@ -14,6 +14,7 @@ data class HomePageResponse(
     val slider: ArrayList<AdvertsieItem?>,
     val festival: ArrayList<HomePageItem?>,
     val cateogry: ArrayList<HomePageItem?>,
+    val business_category: ArrayList<BusinessCategoryItem?>,
     val frameList: ArrayList<FrameListItem1>,
     val current_business: CurrentBusinessItem,
     val premium: Boolean? = false,
@@ -24,6 +25,26 @@ data class HomePageResponse(
     val message: String? = null,
 )
 
+data class BusinessCategoryCustomItemResponse(
+    val image_id: String? = null,
+    val image_url: String? = null,
+    val image_type: String? = null,
+    val image_language_id: String? = null,
+    var is_selected: Boolean? = false,
+)
+
+data class BusinessCategoryItem(
+    val category_name: String? = null,
+    val id: String? = null,
+    val image: String? = null,
+    var is_selected: Boolean? = false,
+):Serializable
+
+data class BusinessCategoryItemResponse(
+    val buss_images: ArrayList<BusinessCategoryCustomItemResponse?>,
+    val status: Boolean? = false,
+    val message: String? = null
+)
 
 data class DaysPageResponse(
     val festival: ArrayList<HomePageItem?>,

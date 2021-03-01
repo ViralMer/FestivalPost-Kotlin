@@ -614,6 +614,9 @@
     <string name="lbl_plan_two"><strike>3299 Rs.</strike></string>
     <string name="lbl_offer">*Offer valid till 26th January</string>
     <string name="hint_otp">Enter your otp</string>
+    <string name="head_business_categories">Business Category</string>
     <string name="txt_suitable_plan">Select the suitable plan for grow your business</string>
+    <string name="lbl_categories">Categories</string>
+    <string name="hint_search_your_category">Search your category</string>
 
 </resources>

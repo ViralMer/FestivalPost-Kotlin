@@ -29,6 +29,10 @@ interface RestApis {
     fun getCategoryImages(@Field("postcategoryid")postcategoryid:String):Call<CategoryImagesResponse>
 
     @FormUrlEncoded
+    @POST("getBusinessCategoryImages")
+    fun getBusinessCategoryImages(@Field("token")token:String,@Field("buss_cat_id")buss_cat_id:String):Call<BusinessCategoryItemResponse>
+
+    @FormUrlEncoded
     @POST("getmyprofile")
     fun getProfile(@Field("token")token:String):Call<ProfileResponse>
 

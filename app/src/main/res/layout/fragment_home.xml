@@ -227,11 +227,6 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                </LinearLayout>
-
-
-
-
                 <LinearLayout
                     android:id="@+id/linearFestival"
                     android:layout_width="match_parent"
@@ -258,6 +253,9 @@
                         android:layout_gravity="center"
                         android:gravity="start"
                         android:layout_weight="10"
+
+                        android:textStyle="bold"
+                        android:layout_marginLeft="@dimen/_12sdp"
                         android:text="@string/head_upcoming_festivals" />
 
                     <TextView
@@ -267,10 +265,11 @@
                         android:padding="@dimen/_5sdp"
                         android:background="@drawable/bg_gradient"
                         android:text="@string/view_all"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="12dp"
 
-                        android:layout_margin="@dimen/_4sdp"
+                        android:textSize="12dp"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
                         android:textStyle="bold" />
                     </LinearLayout>
                     <androidx.recyclerview.widget.RecyclerView
@@ -278,10 +277,62 @@
                         android:layout_marginTop="@dimen/_5sdp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+
                         />
 
                 </LinearLayout>
 
+
+                <LinearLayout
+                    android:id="@+id/linearBusinessCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="visible"
+                        android:layout_marginTop="@dimen/_5sdp">
+
+                    <TextView
+                        style="@style/Heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="start"
+
+                        android:textStyle="bold"
+                        android:layout_marginLeft="@dimen/_12sdp"
+                        android:layout_weight="10"
+                        android:text="@string/head_business_categories"
+                         />
+
+                    <TextView
+                        android:id="@+id/tvcategoryviewall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_5sdp"
+                        android:background="@drawable/bg_gradient"
+                        android:text="@string/view_all"
+
+                        android:textSize="12dp"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rcvBusinessCustomCategory"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/linearCategory"
@@ -292,14 +343,21 @@
                     android:layout_marginTop="@dimen/_5sdp"
                     >
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="visible"
+                        android:layout_marginTop="@dimen/_5sdp">
                     <TextView
                         style="@style/Heading"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="start"
+                        android:layout_marginLeft="@dimen/_12sdp"
                         android:text="@string/head_categories" />
-
+                    </LinearLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/customCategory"
                         android:layout_marginTop="@dimen/_5sdp"
@@ -308,8 +366,7 @@
                         android:orientation="vertical" />
 
                 </LinearLayout>
-
-
+                </LinearLayout>
 
             </LinearLayout>
 

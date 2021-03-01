@@ -34,9 +34,8 @@ import com.app.festivalpost.utils.Constants.SharedPref.IS_LOGGED_IN
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_CURRENT_BUSINESS
 import com.app.festivalpost.utils.Constants.SharedPref.KEY_FRAME_LIST
 import com.app.festivalpost.utils.SessionManager
-import com.app.festivalpost.utils.extensions.callApi
-import com.app.festivalpost.utils.extensions.getRestApis
 import com.bumptech.glide.Glide
+import com.app.festivalpost.activity.ChooseFrameActivityNew
 import com.emegamart.lelys.utils.extensions.*
 import com.google.gson.Gson
 import com.karumi.dexter.Dexter
@@ -58,14 +57,18 @@ class HomeFragment : BaseFragment() {
     private var sliderArrayList = arrayListOf<AdvertsieItem?>()
     private var festivalArrayList = arrayListOf<HomePageItem?>()
     private var categoryArrayList = arrayListOf<HomePageItem?>()
+    private var businessCategoryItemList = arrayListOf<BusinessCategoryItem?>()
     private var viewPager: ViewPager? = null
     private var rcvCustomFestival: RecyclerView? = null
     private var rcvCustomCategory: RecyclerView? = null
+    private var rcvBusinessCustomCategory: RecyclerView? = null
     private var linearFestival: LinearLayout? = null
     private var linearCategory: LinearLayout? = null
-    private var tvPremium: TextView? = null
+    private var linearBusinessCategory: LinearLayout? = null
+
     private var tvCustom: TextView? = null
     private var tvviewall: TextView? = null
+    private var tvcategoryviewall: TextView? = null
     private var sessionManager: SessionManager? = null
 
 
@@ -90,43 +93,46 @@ class HomeFragment : BaseFragment() {
         Log.d("Token",""+token)
         rcvCustomCategory = view.findViewById(R.id.customCategory)
         rcvCustomFestival = view.findViewById(R.id.customFestival)
+        rcvBusinessCustomCategory = view.findViewById(R.id.rcvBusinessCustomCategory)
         viewPager = view.findViewById(R.id.sliderviewPager)
-        tvPremium = view.findViewById(R.id.tvPremium)
+        tvPremium1 = view.findViewById(R.id.tvPremium)
         tvCustom = view.findViewById(R.id.tvCustom)
         imageLogo1 = view.findViewById(R.id.imageLogo)
         tvviewall = view.findViewById(R.id.tvviewall)
+        tvcategoryviewall = view.findViewById(R.id.tvcategoryviewall)
         linearCategory = view.findViewById(R.id.linearCategory)
         linearFestival = view.findViewById(R.id.linearFestival)
+        linearBusinessCategory = view.findViewById(R.id.linearBusinessCategory)
 
         loadHomePageData()
-        tvPremium!!.setOnClickListener {
-            val currentBusinessItem =
-                get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, activity!!)
-            if (currentBusinessItem == null) {
-                val materialAlertDialogBuilder = AlertDialog.Builder(activity!!)
-                val inflater =
-                    activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
-                val tvTitle: TextView
-                val tvMessage: TextView
-                val btnOk: Button
-                val btnCancel: Button
-                tvTitle = view.findViewById(R.id.tvTitle)
-                tvMessage = view.findViewById(R.id.tvMessage)
-                btnOk = view.findViewById(R.id.btnOk)
-                btnCancel = view.findViewById(R.id.btnCancel)
-                tvTitle.text = "Sorry!!"
-                tvMessage.text = "For making post please add your business details first."
-                materialAlertDialogBuilder.setView(view).setCancelable(true)
-                val b = materialAlertDialogBuilder.create()
-                btnCancel.setOnClickListener { b.dismiss() }
-                btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> {} }
-                b.show()
+        tvPremium1!!.setOnClickListener {
+            if (tvPremium1!!.text.toString()=="Buy Premium") {
+                val currentBusinessItem =
+                    get<CurrentBusinessItem>(Constants.SharedPref.KEY_CURRENT_BUSINESS, activity!!)
+                if (currentBusinessItem == null) {
+                    val materialAlertDialogBuilder = AlertDialog.Builder(activity!!)
+                    val inflater =
+                        activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    val view = inflater.inflate(R.layout.custom_add_busines_dialog, null)
+                    val tvTitle: TextView
+                    val tvMessage: TextView
+                    val btnOk: Button
+                    val btnCancel: Button
+                    tvTitle = view.findViewById(R.id.tvTitle)
+                    tvMessage = view.findViewById(R.id.tvMessage)
+                    btnOk = view.findViewById(R.id.btnOk)
+                    btnCancel = view.findViewById(R.id.btnCancel)
+                    tvTitle.text = "Sorry!!"
+                    tvMessage.text = "For making post please add your business details first."
+                    materialAlertDialogBuilder.setView(view).setCancelable(true)
+                    val b = materialAlertDialogBuilder.create()
+                    btnCancel.setOnClickListener { b.dismiss() }
+                    btnOk.setOnClickListener { activity!!.launchActivity<AddBusinessActivity> {} }
+                    b.show()
+                } else {
+                    activity!!.launchActivity<PremiumActivity> { }
+                }
             }
-            else{
-                activity!!.launchActivity<PremiumActivity> { }
-            }
-
         }
 
         imageLogo1!!.setOnClickListener {
@@ -137,6 +143,12 @@ class HomeFragment : BaseFragment() {
 
         tvviewall!!.setOnClickListener {
             activity!!.launchActivity<FestivalViewAllActivitty> { }
+        }
+
+        tvcategoryviewall!!.setOnClickListener {
+            activity!!.launchActivity<CategoryViewAllActivitty> {
+                putExtra("category_list", businessCategoryItemList)
+            }
         }
 
 
@@ -423,9 +435,9 @@ class HomeFragment : BaseFragment() {
                             get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, activity!!)
                         if (currentBusinessItem != null) {
                             if (currentBusinessItem!!.plan_name == "Free") {
-                                tvPremium!!.show()
+                                tvPremium1!!.show()
                             } else {
-                                tvPremium!!.hide()
+                                tvPremium1!!.hide()
                             }
                             Glide.with(activity!!).load(currentBusinessItem!!.busi_logo)
                                 .placeholder(R.drawable.placeholder_img).error(
@@ -436,6 +448,7 @@ class HomeFragment : BaseFragment() {
                         sliderArrayList = res.slider
                         festivalArrayList = res.festival
                         categoryArrayList = res.cateogry
+                        businessCategoryItemList = res.business_category
 
                         NUM_PAGES = sliderArrayList.size
 
@@ -453,6 +466,16 @@ class HomeFragment : BaseFragment() {
                         val customCategoryAdapter =
                             CategoryItemAdapter(activity!!, categoryArrayList)
                         rcvCustomCategory!!.adapter = customCategoryAdapter
+
+
+                        rcvBusinessCustomCategory!!.layoutManager = LinearLayoutManager(
+                            activity,
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        val businessCategoryAdapter =
+                            CustomBusinessCategoryItemAdapter(activity!!, businessCategoryItemList)
+                        rcvBusinessCustomCategory!!.adapter = businessCategoryAdapter
 
                         if (sliderArrayList.size > 0) {
                             viewPager!!.adapter = PagerAdapter()
@@ -497,6 +520,12 @@ class HomeFragment : BaseFragment() {
                             linearCategory!!.hide()
                         }
 
+                        if (businessCategoryItemList.size > 0) {
+                            linearBusinessCategory!!.show()
+                        } else {
+                            linearBusinessCategory!!.hide()
+                        }
+
                     } else {
                         hideProgress()
                         if (res.message == "user not valid") {
@@ -512,6 +541,7 @@ class HomeFragment : BaseFragment() {
                         }
                         linearFestival!!.hide()
                         linearCategory!!.hide()
+                        linearBusinessCategory!!.hide()
                     }
                 }
             }
@@ -542,9 +572,9 @@ class HomeFragment : BaseFragment() {
                             get<CurrentBusinessItem>(KEY_CURRENT_BUSINESS, activity!!)
                         if (currentBusinessItem != null) {
                             if (currentBusinessItem!!.plan_name == "Free") {
-                                tvPremium!!.show()
+                                tvPremium1!!.show()
                             } else {
-                                tvPremium!!.hide()
+                                tvPremium1!!.hide()
                             }
                             Glide.with(this).load(currentBusinessItem!!.busi_logo)
                                 .placeholder(R.drawable.placeholder_img).error(
@@ -674,9 +704,11 @@ class HomeFragment : BaseFragment() {
                             imageLogo1!!
                         )
                     if (currentBusinessItem.plan_name == "Free") {
-                        tvPremium!!.show()
+                        tvPremium1!!.show()
                     } else {
-                        tvPremium!!.hide()
+                        tvPremium1!!.show()
+                        tvPremium1!!.text="Active Plan"
+                        tvPremium1!!.setTextColor(resources.getColor(R.color.green))
                     }
                 }
 
@@ -696,6 +728,7 @@ class HomeFragment : BaseFragment() {
     companion object {
         var alertDialog: AlertDialog? = null
         var imageLogo1: AppCompatImageView? = null
+        var tvPremium1: TextView? = null
     }
 
 

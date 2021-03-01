@@ -15,7 +15,8 @@ object Constants {
 
     object Config {
         const  val DEFAULT_URL = "http://festivalpost.in/admin/api/"
-        const val  VERSION = "userapi/v3/"
+        //const val  VERSION = "userapi/v3/"
+        const val  VERSION = "userapi/v4/"
 
 
     }

@@ -23,6 +23,8 @@
     <color name="teal_700">#00796B</color>
 
     <color name="ucrop_color_toolbar">@color/teal_500</color>
+    <color name="color_orange">#F8430A</color>
+    <color name="color_green">#0EED17</color>
     <color name="ucrop_color_statusbar">@color/teal_700</color>
     <color name="ucrop_color_widget_active">@color/teal_500</color>
     <color name="ucrop_color_toolbar_widget">#fff</color>

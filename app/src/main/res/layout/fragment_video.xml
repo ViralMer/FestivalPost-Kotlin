@@ -148,6 +148,7 @@
                         android:layout_gravity="center"
                         android:gravity="start"
                         android:layout_weight="10"
+                        android:layout_marginLeft="@dimen/_12sdp"
                         android:text="@string/head_festivals" />
 
                     <TextView
@@ -188,6 +189,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="start"
+                        android:layout_marginLeft="@dimen/_12sdp"
                         android:text="@string/head_categories" />
 
                     <androidx.recyclerview.widget.RecyclerView
