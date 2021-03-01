@@ -14,8 +14,8 @@ android {
         applicationId "com.app.festivalpost"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 50
-        versionName "2.0.8"
+        versionCode 51
+        versionName "2.0.9"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
