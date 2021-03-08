@@ -1611,6 +1611,14 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
+                        ivwebsiteselect!!.setImageResource(R.drawable.website_select)
+                    }
                 }
                 else if (index1 == 8 + plus) {
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
@@ -1734,7 +1742,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         tvframephone!!.text = businessItem.busi_mobile
                         ivphoneselect!!.setImageResource(R.drawable.mobile_select)
                     }
-                } else if (index1 == 11 + plus) {
+                } else if (index1 == 12 + plus) {
                     if (businessItem.busi_name != "" && businessItem.busi_name != null) {
                         linearName!!.visibility = View.VISIBLE
                         frameName!!.visibility = View.VISIBLE

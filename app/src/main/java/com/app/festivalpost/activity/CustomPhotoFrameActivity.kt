@@ -1421,6 +1421,14 @@ class CustomPhotoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                         tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
+                        ivwebsiteselect!!.setImageResource(R.drawable.website_select)
+                    }
                 }
                 else if (index1 == 8 + plus) {
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {

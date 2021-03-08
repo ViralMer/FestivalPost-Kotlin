@@ -135,11 +135,11 @@
 
                         <ImageView
                             android:id="@+id/ivPhone"
-                            android:layout_width="@dimen/_7sdp"
+                            android:layout_width="@dimen/_8sdp"
                             android:layout_height="@dimen/_8sdp"
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/_2sdp"
-                            android:background="@drawable/ic_call_blue"
+                            android:background="@drawable/ic_call_frame"
                             tools:visibility="visible"
                             android:visibility="gone" />
 
@@ -247,6 +247,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
 
+            android:layout_gravity="center"
             tools:visibility="visible"
 
 
@@ -256,6 +257,8 @@
                 android:id="@+id/linearEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:background="@drawable/rounded_border_tv_new"
                 android:orientation="horizontal"
                 tools:visibility="visible"
@@ -269,7 +272,8 @@
                     android:layout_marginLeft="@dimen/_2sdp"
                     android:layout_marginTop="2px"
                     android:visibility="gone"
-                    android:background="@drawable/ic_email_orange"
+                    android:background="@drawable/ic_frame_email"
+                    android:backgroundTint="@color/white"
                     tools:visibility="visible"
                      />
 
@@ -317,13 +321,14 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="visible"
         tools:visibility="visible"
-        android:layout_gravity="bottom|end"
-        android:gravity="center|end"
+        android:layout_gravity="center|bottom|end"
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/_200sdp"
         android:layout_marginBottom="@dimen/_19sdp"
         >
 
@@ -331,8 +336,8 @@
         android:id="@+id/frameWebsite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:gravity="end"
+        android:layout_gravity="center"
+        android:gravity="center"
         tools:visibility="visible"
         android:visibility="gone">
 
@@ -342,8 +347,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_border_tv_new"
             tools:visibility="visible"
-            android:layout_gravity="end"
-            android:gravity="end"
+            android:layout_gravity="end|center"
+            android:gravity="end|center"
             android:orientation="horizontal"
             android:visibility="gone">
 

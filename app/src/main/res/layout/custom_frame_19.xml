@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/frameLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
@@ -172,9 +173,9 @@ android:layout_height="@dimen/_60sdp"
                     android:layout_height="@dimen/_7sdp"
                     android:layout_gravity="top|start"
                     android:elevation="1dp"
-                    android:tint="@color/colorWhite"
                     android:src="@drawable/ic_remove"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    app:tint="@color/colorWhite" />
 
             </FrameLayout>
 

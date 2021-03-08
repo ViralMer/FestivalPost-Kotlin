@@ -98,8 +98,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
-        android:gravity="start"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:orientation="horizontal">
 
 
         <LinearLayout
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_24sdp"
-                android:layout_marginLeft="@dimen/_30sdp"
+
                 android:visibility="visible">
 
 
@@ -140,11 +140,11 @@
 
                         <ImageView
                             android:id="@+id/ivPhone"
-                            android:layout_width="@dimen/_7sdp"
+                            android:layout_width="@dimen/_8sdp"
                             android:layout_height="@dimen/_8sdp"
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/_2sdp"
-                            android:background="@drawable/ic_call_cyan"
+                            android:background="@drawable/ic_call_ft"
                             tools:visibility="visible"
                             android:visibility="gone" />
 
@@ -234,16 +234,176 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_24sdp"
+            >
+
+            <FrameLayout
+                android:id="@+id/frameEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+
+                tools:visibility="visible"
+
+
+                >
+
+                <LinearLayout
+                    android:id="@+id/linearEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_border_tv_new"
+                    android:orientation="horizontal"
+                    tools:visibility="visible"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivEmail"
+                        android:layout_width="@dimen/_8sdp"
+                        android:layout_height="@dimen/_8sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:layout_marginTop="2px"
+                        android:visibility="gone"
+                        android:background="@drawable/ic_email_ft"
+                        tools:visibility="visible"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvframeemail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_8sdp"
+                        android:visibility="gone"
+                        tools:text="ganehs@gmail.com"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/viewwebsite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:text="|"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_6sdp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgEmailClose"
+                    android:layout_width="@dimen/_8sdp"
+                    android:layout_height="@dimen/_8sdp"
+                    android:layout_gravity="top|start"
+                    android:elevation="1dp"
+
+                    android:src="@drawable/ic_remove"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            tools:visibility="visible"
+            android:layout_gravity="bottom|end"
+            android:gravity="center"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_24sdp"
+            >
+
+            <FrameLayout
+                android:id="@+id/frameWebsite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="end"
+                tools:visibility="visible"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/linearWebsite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_border_tv_new"
+                    tools:visibility="visible"
+                    android:layout_gravity="end"
+                    android:gravity="end"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivWebsite"
+                        android:layout_width="@dimen/_8sdp"
+                        android:layout_height="@dimen/_8sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:background="@drawable/ic_website_ft"
+                        tools:visibility="visible"
+
+                        android:visibility="gone"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvframeweb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        tools:visibility="visible"
+                        android:visibility="gone"
+                        tools:text="www.ganesh.com"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/_8sdp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgWebsiteClose"
+                    android:layout_width="@dimen/_8sdp"
+                    android:layout_height="@dimen/_8sdp"
+                    android:layout_gravity="top|start"
+                    android:elevation="1dp"
+                    android:src="@drawable/ic_remove"
+
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+   <!-- <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="visible"
         android:layout_gravity="bottom"
         android:gravity="center"
-        android:layout_marginLeft="@dimen/_80sdp"
+        android:layout_marginLeft="@dimen/_95sdp"
         android:layout_marginRight="@dimen/_20sdp"
         android:layout_marginBottom="@dimen/_24sdp"
         >
@@ -276,7 +436,7 @@
                     android:layout_marginLeft="@dimen/_2sdp"
                     android:layout_marginTop="2px"
                     android:visibility="gone"
-                    android:background="@drawable/ic_email_cyan"
+                    android:background="@drawable/ic_email_ft"
                     tools:visibility="visible"
                     />
 
@@ -321,17 +481,18 @@
 
 
 
-    </LinearLayout>
+    </LinearLayout>-->
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="visible"
         tools:visibility="visible"
         android:layout_gravity="bottom|end"
-        android:gravity="center|end"
-        android:layout_marginBottom="@dimen/_19sdp"
+        android:gravity="center"
+        android:layout_marginRight="@dimen/_35sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         >
 
         <FrameLayout
@@ -340,7 +501,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:gravity="end"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:visibility="gone">
 
             <LinearLayout
@@ -356,13 +517,13 @@
 
                 <ImageView
                     android:id="@+id/ivWebsite"
-                    android:layout_width="@dimen/_7sdp"
-                    android:layout_height="@dimen/_7sdp"
+                    android:layout_width="@dimen/_8sdp"
+                    android:layout_height="@dimen/_8sdp"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/_2sdp"
-                    android:background="@drawable/ic_baseline_public_24"
+                    android:background="@drawable/ic_website_ft"
                     tools:visibility="visible"
-                    android:backgroundTint="@color/colorWhite"
+
                     android:visibility="gone"
                     />
 
@@ -378,7 +539,7 @@
                     android:visibility="gone"
                     tools:text="www.ganesh.com"
                     android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/_7sdp" />
+                    android:textSize="@dimen/_8sdp" />
 
             </LinearLayout>
 
@@ -394,7 +555,7 @@
 
         </FrameLayout>
 
-    </LinearLayout>
+    </LinearLayout>-->
 
     <LinearLayout
         android:layout_width="wrap_content"

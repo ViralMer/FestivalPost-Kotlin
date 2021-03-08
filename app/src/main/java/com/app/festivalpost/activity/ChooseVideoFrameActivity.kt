@@ -1083,6 +1083,15 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                         tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
                     }
+
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
+                        ivwebsiteselect!!.setImageResource(R.drawable.website_select)
+                    }
                 }
                 else if (index1 == 8 + plus) {
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
@@ -1734,7 +1743,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                         if (video_type!! == "0") {
                             sessionManager!!.setStringValue(
                                 "image_name",
-                                "/data/data/com.digitalpost.app/files/$filename"
+                                "/data/data/com.app.festivalpost/files/$filename"
                             )
                             download()
                         } else {
@@ -1753,11 +1762,11 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                                 ) { dialog, _ -> dialog.dismiss() }
                                 .show()
                         }
-                        showProgress(false)
+                        //showProgress(false)
                     } else {
                         sessionManager!!.setStringValue(
                             "image_name",
-                            "/data/data/com.digitalpost.app/files/$filename"
+                            "/data/data/com.app.festivalpost/files/$filename"
                         )
                         download()
 
@@ -2133,7 +2142,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
             c.requestMethod = "GET"
             c.doOutput = true
             c.connect()
-            val videoname = "/data/data/com.digitalpost.app/files/$videoName"
+            val videoname = "/data/data/com.app.festivalpost/files/$videoName"
             val videoname1 = videoName
             sessionManager!!.setStringValue("video_name", videoname)
             val file: File
