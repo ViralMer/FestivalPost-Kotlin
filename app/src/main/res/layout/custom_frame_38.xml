@@ -56,9 +56,9 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         tools:visibility="visible"
-        android:layout_gravity="top|start"
+        android:layout_gravity="top|end"
         android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_12sdp"
         >
 
         <LinearLayout
@@ -83,7 +83,7 @@
                 android:textStyle="bold"
                 tools:text="fsdfdsfdsfdsfdsfds"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/_8sdp" />
+                android:textSize="@dimen/_9sdp" />
         </LinearLayout>
 
         <ImageView

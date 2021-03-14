@@ -31,6 +31,8 @@ import com.app.festivalpost.photoeditor.OnPhotoEditorListener
 import com.app.festivalpost.photoeditor.PhotoEditor
 import com.app.festivalpost.photoeditor.PhotoEditorView
 import com.app.festivalpost.photoeditor.ViewType
+import com.app.festivalpost.utility.MultiTouchListener
+import com.app.festivalpost.utility.MultiTouchListenerNew
 import com.app.festivalpost.utility.MultiTouchListenerNewNotRotate
 import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
@@ -720,7 +722,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
         ivnameClose = frame_view.findViewById(R.id.imgNameClose)
         val imagemultiTouchListenerNew = MultiTouchListenerNewNotRotate()
         val phonemultiTouchListenerNew = MultiTouchListenerNotMoveble()
-        val namemultiTouchListenerNer = MultiTouchListenerNotMoveble()
+        val namemultiTouchListenerNer = MultiTouchListenerNewNotRotate()
         val emailmultiTouchListenerNew = MultiTouchListenerNotMoveble()
         val websitemultiTouchListenerNew = MultiTouchListenerNotMoveble()
         val addressmultiTouchListenerNew = MultiTouchListenerNotMoveble()
@@ -1012,7 +1014,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
             }
         })
         namemultiTouchListenerNer.setOnGestureControl(object :
-            MultiTouchListenerNotMoveble.OnGestureControl {
+            MultiTouchListenerNewNotRotate.OnGestureControl {
             override fun onClick() {
                 linearName!!.setBackgroundResource(R.drawable.rounded_border_tv_new)
                 linearPhone!!.setBackgroundResource(0)
@@ -1128,6 +1130,13 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
 
                 }
                 else if (index1 == 1 + plus) {
+                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
+                        linearName!!.visibility = View.VISIBLE
+                        frameName!!.visibility = View.VISIBLE
+                        tvframename!!.visibility = View.VISIBLE
+                        tvframename!!.text = businessItem.busi_name
+                        ivnameSelect!!.setImageResource(R.drawable.name_select)
+                    }
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
                         linearLogo!!.visibility = View.VISIBLE
                         ivframelogo!!.visibility = View.VISIBLE
@@ -1165,6 +1174,13 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
 
                 }
                 else if (index1 == 2 + plus) {
+                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
+                        linearName!!.visibility = View.VISIBLE
+                        frameName!!.visibility = View.VISIBLE
+                        tvframename!!.visibility = View.VISIBLE
+                        tvframename!!.text = businessItem.busi_name
+                        ivnameSelect!!.setImageResource(R.drawable.name_select)
+                    }
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
                         linearLogo!!.visibility = View.VISIBLE
                         ivframelogo!!.visibility = View.VISIBLE
@@ -1443,13 +1459,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                     }
                 }
                 else if (index1 == 14 + plus) {
-                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
-                        linearName!!.visibility = View.VISIBLE
-                        frameName!!.visibility = View.VISIBLE
-                        tvframename!!.visibility = View.VISIBLE
-                        tvframename!!.text = businessItem.busi_name
-                        ivnameSelect!!.setImageResource(R.drawable.name_select)
-                    }
+
                     if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
                         linearLogo!!.visibility = View.VISIBLE
                         ivframelogo!!.visibility = View.VISIBLE
@@ -1631,13 +1641,7 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                 else if (index1 == 19 + plus) {
                     linearWebsite!!.hide()
                     linearAddress!!.hide()
-                    if (businessItem.busi_name != "" && businessItem.busi_name != null) {
-                        linearName!!.visibility = View.VISIBLE
-                        frameName!!.visibility = View.VISIBLE
-                        tvframename!!.visibility = View.VISIBLE
-                        tvframename!!.text = businessItem.busi_name
-                        ivnameSelect!!.setImageResource(R.drawable.name_select)
-                    }
+
                     if (businessItem.busi_logo != "") {
                         linearLogo!!.visibility = View.VISIBLE
                         ivframelogo!!.visibility = View.VISIBLE
@@ -1696,6 +1700,132 @@ class ChooseFrameActivityNew : AppBaseActivity(), OnItemClickListener, FontOnIte
                         frameEmail!!.visibility = View.VISIBLE
                         tvframeemail!!.text = businessItem.busi_email
                         ivemailselect!!.setImageResource(R.drawable.email_select)
+                    }
+                }
+                else if (index1 == 21 + plus) {
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
+                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
+                        Glide.with(this).load(businessItem.busi_logo)
+                            .into(ivframelogo!!)
+                    }
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
+                        linearAddress!!.visibility = View.VISIBLE
+                        ivLocation!!.visibility = View.VISIBLE
+                        tvframelocation!!.visibility = View.VISIBLE
+                        frameAddress!!.visibility = View.VISIBLE
+                        tvframelocation!!.text = businessItem.busi_address
+                        ivaddressselect!!.setImageResource(R.drawable.location_select)
+                    }
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
+                        ivemailselect!!.setImageResource(R.drawable.email_select)
+                    }
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
+                        ivwebsiteselect!!.setImageResource(R.drawable.website_select)
+                    }
+                }
+                else if (index1 == 26 + plus) {
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
+                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
+                        Glide.with(this).load(businessItem.busi_logo)
+                            .into(ivframelogo!!)
+                    }
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
+                        linearAddress!!.visibility = View.VISIBLE
+                        ivLocation!!.visibility = View.VISIBLE
+                        tvframelocation!!.visibility = View.VISIBLE
+                        frameAddress!!.visibility = View.VISIBLE
+                        tvframelocation!!.text = businessItem.busi_address
+                        ivaddressselect!!.setImageResource(R.drawable.location_select)
+                    }
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
+                        ivemailselect!!.setImageResource(R.drawable.email_select)
+                    }
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
+                        ivwebsiteselect!!.setImageResource(R.drawable.website_select)
+                    }
+                }
+                else if (index1 == 27 + plus) {
+                    if (businessItem.busi_logo != "" && businessItem.busi_logo != null) {
+                        linearLogo!!.visibility = View.VISIBLE
+                        ivframelogo!!.visibility = View.VISIBLE
+                        frameLogo!!.visibility = View.VISIBLE
+                        ivlogoselect!!.setImageResource(R.drawable.logo_select)
+                        Glide.with(this).load(businessItem.busi_logo)
+                            .into(ivframelogo!!)
+                    }
+                    if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
+                        framePhone!!.visibility = View.VISIBLE
+                        linearPhone!!.visibility = View.VISIBLE
+                        ivcall!!.visibility = View.VISIBLE
+                        tvframephone!!.visibility = View.VISIBLE
+                        tvframephone!!.text = businessItem.busi_mobile
+                        ivphoneselect!!.setImageResource(R.drawable.mobile_select)
+                    }
+                    if (businessItem.busi_address != null && businessItem.busi_address != "") {
+                        linearAddress!!.visibility = View.VISIBLE
+                        ivLocation!!.visibility = View.VISIBLE
+                        tvframelocation!!.visibility = View.VISIBLE
+                        frameAddress!!.visibility = View.VISIBLE
+                        tvframelocation!!.text = businessItem.busi_address
+                        ivaddressselect!!.setImageResource(R.drawable.location_select)
+                    }
+                    if (businessItem.busi_email != null && businessItem.busi_email != "") {
+                        linearEmail!!.visibility = View.VISIBLE
+                        ivEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.visibility = View.VISIBLE
+                        frameEmail!!.visibility = View.VISIBLE
+                        tvframeemail!!.text = businessItem.busi_email
+                        ivemailselect!!.setImageResource(R.drawable.email_select)
+                    }
+                    if (businessItem.busi_website != null && businessItem.busi_website != "") {
+                        linearWebsite!!.visibility = View.VISIBLE
+                        ivWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.visibility = View.VISIBLE
+                        frameWebsite!!.visibility = View.VISIBLE
+                        tvframeweb!!.text = businessItem.busi_website
+                        ivwebsiteselect!!.setImageResource(R.drawable.website_select)
                     }
                 }
 

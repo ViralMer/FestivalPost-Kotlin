@@ -54,7 +54,7 @@
         android:id="@+id/frameName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_14sdp"
+        android:layout_marginTop="@dimen/_13sdp"
         android:layout_marginLeft="@dimen/_15sdp"
         android:visibility="gone"
         tools:visibility="visible">
@@ -79,7 +79,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/_7sdp"
+                android:textSize="@dimen/_9sdp"
                 android:textStyle="bold"
                 tools:text="Aman Thayam" />
         </LinearLayout>

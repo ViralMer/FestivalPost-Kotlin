@@ -706,7 +706,7 @@ class HomeFragment : BaseFragment() {
                     if (currentBusinessItem.plan_name == "Free") {
                         tvPremium1!!.show()
                     } else {
-                        tvPremium1!!.show()
+                        tvPremium1!!.hide()
                         tvPremium1!!.text="Active Plan"
                         tvPremium1!!.setTextColor(resources.getColor(R.color.green))
                     }
@@ -714,7 +714,7 @@ class HomeFragment : BaseFragment() {
 
             }
             else{
-                toast("Please try again")
+                //toast("Please try again")
             }
         } catch (e: Exception) {
 

@@ -18,8 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|start"
-        android:layout_marginLeft="@dimen/_28sdp"
-        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginLeft="@dimen/_23sdp"
+        android:layout_marginTop="@dimen/_3sdp"
         android:layout_marginRight="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:visibility="visible">
@@ -61,7 +61,7 @@
         tools:visibility="visible"
         android:layout_gravity="top|end"
         android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_12sdp"
         >
 
         <LinearLayout
@@ -86,7 +86,7 @@
                 android:textStyle="bold"
                 tools:text="fsdfdsfdsfdsfdsfds"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/_8sdp" />
+                android:textSize="@dimen/_9sdp" />
         </LinearLayout>
 
         <ImageView

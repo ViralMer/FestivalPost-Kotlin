@@ -58,7 +58,7 @@ android:layout_height="@dimen/_60sdp"
         tools:visibility="visible"
         android:layout_gravity="top|start"
         android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_12sdp"
         >
 
         <LinearLayout
@@ -83,7 +83,7 @@ android:layout_height="@dimen/_60sdp"
                 android:textStyle="bold"
                 tools:text="fsdfdsfdsfdsfdsfds"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/_8sdp" />
+                android:textSize="@dimen/_9sdp" />
         </LinearLayout>
 
         <ImageView
