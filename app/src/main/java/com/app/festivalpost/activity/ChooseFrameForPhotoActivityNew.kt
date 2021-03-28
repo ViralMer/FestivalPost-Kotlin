@@ -40,6 +40,7 @@ import com.app.festivalpost.utility.MultiTouchListenerNotMoveble
 import com.app.festivalpost.utils.Constants
 import com.app.festivalpost.utils.SessionManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.emegamart.lelys.utils.extensions.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
@@ -1516,7 +1517,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1574,7 +1575,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1618,7 +1619,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1664,7 +1665,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1718,7 +1719,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1762,7 +1763,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1804,7 +1805,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1855,7 +1856,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1898,7 +1899,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -1957,7 +1958,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2010,7 +2011,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2035,7 +2036,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2080,7 +2081,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2115,7 +2116,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2141,7 +2142,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2183,7 +2184,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2225,7 +2226,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE
@@ -2583,7 +2584,7 @@ class ChooseFrameForPhotoActivityNew : AppBaseActivity(), OnItemClickListener,Fo
                         frameLogo!!.visibility = View.VISIBLE
                         ivlogoselect!!.setImageResource(R.drawable.logo_select)
                         Glide.with(this).load(businessItem.busi_logo)
-                            .into(ivframelogo!!)
+                            .override(SIZE_ORIGINAL, SIZE_ORIGINAL).into(ivframelogo!!)
                     }
                     if (businessItem.busi_mobile != null && businessItem.busi_mobile != "") {
                         framePhone!!.visibility = View.VISIBLE

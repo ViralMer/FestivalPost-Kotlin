@@ -33,6 +33,7 @@
                 android:id="@+id/ivframelogo"
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="@dimen/_60sdp"
+                android:src="@drawable/ic_demo_icon"
                 android:layout_gravity="left|center"
                 android:layout_margin="@dimen/_2sdp" />
 
