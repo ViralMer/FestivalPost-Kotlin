@@ -2158,7 +2158,7 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
 
                 mPhotoEditor!!.clearHelperBox()
 
-                showProgress(false)
+                showProgress(true)
                 layroot!!.setBackgroundColor(R.color.transparent)
                 layroot!!.isDrawingCacheEnabled = true
                 layroot!!.buildDrawingCache(true)
@@ -2182,7 +2182,9 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
 
                     if (!sessionManager!!.getBooleanValue(Constants.KeyIntent.IS_PREMIUM)!!
                     ) {
+
                         if (video_type!! == "0") {
+                            //showProgress(true)
                             sessionManager!!.setStringValue(
                                 "image_name",
                                 "/data/data/com.app.festivalpost/files/$filename"
@@ -2204,13 +2206,15 @@ class ChooseVideoFrameActivity : AppBaseActivity(), OnItemClickListener, FontOnI
                                 ) { dialog, _ -> dialog.dismiss() }
                                 .show()
                         }
-                        //showProgress(false)
+                        showProgress(false)
                     } else {
+                        showProgress(true)
                         sessionManager!!.setStringValue(
                             "image_name",
                             "/data/data/com.app.festivalpost/files/$filename"
                         )
                         download()
+                        //showProgress(false)
 
                     }
 

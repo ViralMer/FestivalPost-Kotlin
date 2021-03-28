@@ -58,6 +58,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
     var message = ""
     var businessItem: CurrentBusinessItem? = null
     var ivlogo: ImageView? = null
+    var ivAddImage: ImageView? = null
     var profilePath = ""
     var edName:AppCompatEditText?=null
     var edEmail:AppCompatEditText?=null
@@ -92,7 +93,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
         setActionbar()
         apiManager= ApiManager(this)
         ivlogo = findViewById(R.id.ivlogo)
-
+        ivAddImage = findViewById(R.id.ivAddImage)
 
         edName=findViewById(R.id.et_business_name)
         edEmail=findViewById(R.id.et_business_email)
@@ -121,6 +122,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
             category_value=businessItem!!.business_category
             edCategory!!.setText(businessItem!!.business_category)
             if (!businessItem!!.busi_logo.equals("")) {
+                ivAddImage!!.visibility=View.GONE
                 Glide.with(this).load(businessItem!!.busi_logo)
                     .into(ivlogo!!)
             }
@@ -194,6 +196,7 @@ class AddBusinessActivity : AppBaseActivity(),OnItemClickListener,ApiResponseLis
                 val imageuri = imagereturnintent!!.data // Get intent
                 // data
                 Log.d("URI Path : ", "" + imageuri.toString())
+                ivAddImage!!.visibility=View.GONE
                 ivlogo!!.setImageURI(imageuri)
                 val realpath: String = ImagePicker.Companion.getFilePath(imagereturnintent)!!
                 profilePath = realpath

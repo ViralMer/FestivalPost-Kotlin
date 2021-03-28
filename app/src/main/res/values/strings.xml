@@ -557,8 +557,8 @@
     <string name="lbl_add_business"><font color='#48A8BC'>A</font>dd Business</string>
     <string name="lbl_tap_choose"><![CDATA[Tap & Choose]]></string>
     <string name="hint_business_name">Enter your business name</string>
-    <string name="hint_mobile_one">Enter your business mobile 1</string>
-    <string name="hint_mobile_two">Mobile 2 (Optional)</string>
+    <string name="hint_mobile_one">Enter your primary mobile number</string>
+    <string name="hint_mobile_two">Enter your secondary mobile number</string>
     <string name="hint_business_email">Enter your business email</string>
     <string name="hint_business_website">Enter your business website</string>
     <string name="hint_business_address">Enter your business address</string>
@@ -618,5 +618,6 @@
     <string name="txt_suitable_plan">Select the suitable plan for grow your business</string>
     <string name="lbl_categories">Categories</string>
     <string name="hint_search_your_category">Search your category</string>
+    <string name="lbl_upload_business_logo">Upload your business logo</string>
 
 </resources>

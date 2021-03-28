@@ -79,6 +79,13 @@
             android:padding="10dp">
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+
             <FrameLayout
                 android:id="@+id/framePhoto"
                 android:layout_width="wrap_content"
@@ -94,6 +101,16 @@
                     android:background="@drawable/rect_bg"
                     android:layout_width="100dp"
                     android:layout_height="100dp"/>
+
+                <ImageView
+                    android:id="@+id/ivAddImage"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/_2sdp"
+                    android:layout_margin="15dp"
+                    android:src="@drawable/ic_baseline_add_24"
+                    android:background="@drawable/rect_bg"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_70sdp"/>
 
                 <TextView
                     android:id="@+id/tvTapChoose"
@@ -113,8 +130,23 @@
 
 
 
+
             </FrameLayout>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/antipastopro_medium_trial"
+                    android:text="@string/lbl_upload_business_logo"
+
+                    />
+
+            </LinearLayout>
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_business_name"
                 android:layout_width="match_parent"
